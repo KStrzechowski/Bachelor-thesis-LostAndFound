@@ -1,0 +1,18 @@
+name: $(date:yyyyMMdd)$(rev:.r)_$(SourceBranchName)-$(BuildId)-GatewayWebApiBuildWithTests
+
+pool: Default
+
+trigger:
+  paths:
+    include:
+    - Backend/Gateway/*
+
+stages:
+  - template: Templates/build-with-tests-webapi-template.yml
+    parameters:
+      webapiProjectDirectory: Backend/Gateway/src/LostAndFound.Gateway
+      unitTestProjectDirectory: Backend/Gateway/tests/LostAndFound.Gateway.UnitTests
+      runUnitTests: true
+      integrationTestProjectDirectory: Backend/Gateway/tests/LostAndFound.Gateway.IntegrationTests
+      runIntegrationTests: true
+      artifactName: LostAndFound.Gateway
