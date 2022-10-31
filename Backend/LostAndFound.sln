@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.PublicationSer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.AuthService", "AuthService\src\LostAndFound.AuthService\LostAndFound.AuthService.csproj", "{BBF76573-2E8F-465D-8069-CD8EF9974E20}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ChateService.UnitTests", "ChatService\tests\LostAndFound.ChateService.UnitTests\LostAndFound.ChateService.UnitTests.csproj", "{A22C5AB0-E90D-4278-8B0E-869E653703B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ChatService.UnitTests", "ChatService\tests\LostAndFound.ChatService.UnitTests\LostAndFound.ChatService.UnitTests.csproj", "{A22C5AB0-E90D-4278-8B0E-869E653703B4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ProfileService.UnitTests", "ProfileService\tests\LostAndFound.ProfileService.UnitTests\LostAndFound.ProfileService.UnitTests.csproj", "{BE0C58CB-BE3D-441B-915A-170CF3341AF9}"
 EndProject
