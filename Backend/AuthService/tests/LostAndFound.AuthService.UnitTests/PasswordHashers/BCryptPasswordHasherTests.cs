@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using Xunit;
 
-namespace LostAndFound.AuthService.UnitTests
+namespace LostAndFound.AuthService.UnitTests.PasswordHashers
 {
     public class BCryptPasswordHasherTests
     {
