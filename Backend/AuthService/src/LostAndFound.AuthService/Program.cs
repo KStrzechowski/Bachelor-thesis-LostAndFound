@@ -10,7 +10,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 var authenticationSettings = new AuthenticationSettings();
-builder.Configuration.Bind("Authentication", authenticationSettings);
+builder.Configuration.Bind("LostAndFoundAuthentication", authenticationSettings);
 builder.Services.AddSingleton(authenticationSettings);
 
 builder.Services.AddHealthChecks();

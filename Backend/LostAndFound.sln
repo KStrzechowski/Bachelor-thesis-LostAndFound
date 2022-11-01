@@ -61,13 +61,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A380A34F-476
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DCBA8301-F58C-48D4-85EB-3D98432FECE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.ProfileService.IntegrationTests", "ProfileService\tests\LostAndFound.ProfileService.IntegrationTests\LostAndFound.ProfileService.IntegrationTests.csproj", "{5867C240-D99C-4725-8C28-84B928BBF6CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ProfileService.IntegrationTests", "ProfileService\tests\LostAndFound.ProfileService.IntegrationTests\LostAndFound.ProfileService.IntegrationTests.csproj", "{5867C240-D99C-4725-8C28-84B928BBF6CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.PublicationService.IntegrationTests", "PublicationService\tests\LostAndFound.PublicationService.IntegrationTests\LostAndFound.PublicationService.IntegrationTests.csproj", "{581CE9A9-31F1-48BC-8072-A60B28BDE149}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.PublicationService.IntegrationTests", "PublicationService\tests\LostAndFound.PublicationService.IntegrationTests\LostAndFound.PublicationService.IntegrationTests.csproj", "{581CE9A9-31F1-48BC-8072-A60B28BDE149}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.Gateway.IntegrationTests", "Gateway\tests\LostAndFound.Gateway.IntegrationTests\LostAndFound.Gateway.IntegrationTests.csproj", "{258C578D-092A-4494-A487-5E9BA8F6C9B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.Gateway.IntegrationTests", "Gateway\tests\LostAndFound.Gateway.IntegrationTests\LostAndFound.Gateway.IntegrationTests.csproj", "{258C578D-092A-4494-A487-5E9BA8F6C9B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.ChatService.IntegrationTests", "ChatService\tests\LostAndFound.ChatService.IntegrationTests\LostAndFound.ChatService.IntegrationTests.csproj", "{625D5162-5896-4D9D-A589-B775E8EF642B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ChatService.IntegrationTests", "ChatService\tests\LostAndFound.ChatService.IntegrationTests\LostAndFound.ChatService.IntegrationTests.csproj", "{625D5162-5896-4D9D-A589-B775E8EF642B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.ChatService.CoreLibrary", "ChatService\src\LostAndFound.ChatService.CoreLibrary\LostAndFound.ChatService.CoreLibrary.csproj", "{7EFF11E4-F0FA-4770-910C-5BA17201688F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.Gateway.CoreLibrary", "Gateway\src\LostAndFound.Gateway.CoreLibrary\LostAndFound.Gateway.CoreLibrary.csproj", "{10338336-8A8A-45D2-815F-D7D2874292A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.ProfileService.CoreLibrary", "ProfileService\src\LostAndFound.ProfileService.CoreLibrary\LostAndFound.ProfileService.CoreLibrary.csproj", "{9C3890B3-E07A-437D-88D2-2BA3121E3FAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.PublicationService.CoreLibrary", "PublicationService\src\LostAndFound.PublicationService.CoreLibrary\LostAndFound.PublicationService.CoreLibrary.csproj", "{EA2A2CC7-346A-49FE-A76E-060937C90880}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +155,22 @@ Global
 		{625D5162-5896-4D9D-A589-B775E8EF642B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{625D5162-5896-4D9D-A589-B775E8EF642B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{625D5162-5896-4D9D-A589-B775E8EF642B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EFF11E4-F0FA-4770-910C-5BA17201688F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EFF11E4-F0FA-4770-910C-5BA17201688F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EFF11E4-F0FA-4770-910C-5BA17201688F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EFF11E4-F0FA-4770-910C-5BA17201688F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10338336-8A8A-45D2-815F-D7D2874292A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10338336-8A8A-45D2-815F-D7D2874292A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10338336-8A8A-45D2-815F-D7D2874292A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10338336-8A8A-45D2-815F-D7D2874292A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C3890B3-E07A-437D-88D2-2BA3121E3FAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C3890B3-E07A-437D-88D2-2BA3121E3FAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C3890B3-E07A-437D-88D2-2BA3121E3FAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C3890B3-E07A-437D-88D2-2BA3121E3FAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA2A2CC7-346A-49FE-A76E-060937C90880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA2A2CC7-346A-49FE-A76E-060937C90880}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA2A2CC7-346A-49FE-A76E-060937C90880}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA2A2CC7-346A-49FE-A76E-060937C90880}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,6 +204,10 @@ Global
 		{581CE9A9-31F1-48BC-8072-A60B28BDE149} = {DCBA8301-F58C-48D4-85EB-3D98432FECE5}
 		{258C578D-092A-4494-A487-5E9BA8F6C9B2} = {7EF67F2D-5B21-4CE9-AE44-CB412C031286}
 		{625D5162-5896-4D9D-A589-B775E8EF642B} = {5CECA0D2-0CD1-4737-BF2F-53DFD1E3B084}
+		{7EFF11E4-F0FA-4770-910C-5BA17201688F} = {552C6892-7F51-4FF7-A6DD-8893C379AFD6}
+		{10338336-8A8A-45D2-815F-D7D2874292A6} = {F68E7085-174B-4F0D-B566-719B9FBE6095}
+		{9C3890B3-E07A-437D-88D2-2BA3121E3FAC} = {B2E91A50-16AC-4A84-AEAF-D2D0D8B44780}
+		{EA2A2CC7-346A-49FE-A76E-060937C90880} = {A380A34F-4769-4694-84C9-B9B4132278C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5BDF6858-EE9C-4EA7-8CFE-454D939A4A80}
