@@ -4,7 +4,7 @@ using LostAndFound.AuthService.DataAccess.Repositories;
 
 namespace LostAndFound.AuthService.Core.FluentValidators
 {
-    public class RegisterUserRequestDtoValidator : AbstractValidator<RegisterUserRequestDto>
+    public class RegisterUserRequestDtoValidator : AbstractValidator<RegisterUserAccountRequestDto>
     {
         public RegisterUserRequestDtoValidator(IUsersRepository usersRepository)
         {

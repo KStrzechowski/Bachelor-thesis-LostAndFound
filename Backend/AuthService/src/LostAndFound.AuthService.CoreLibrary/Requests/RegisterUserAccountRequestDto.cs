@@ -3,7 +3,7 @@
     /// <summary>
     /// User data for account registration
     /// </summary>
-    public class RegisterUserRequestDto
+    public class RegisterUserAccountRequestDto
     {
         /// <summary>
         /// Valid and unique email address

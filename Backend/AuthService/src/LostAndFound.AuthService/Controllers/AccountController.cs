@@ -11,6 +11,7 @@ namespace LostAndFound.AuthService.Controllers
     /// Account controller responsible for registration, signing-in and signing-out process
     /// </summary>
     [Route("[controller]")]
+    [Produces("application/json")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -30,14 +31,27 @@ namespace LostAndFound.AuthService.Controllers
         /// Register a new user account
         /// </summary>
         /// <param name="dto">User data for account registration</param>
-        /// <returns></returns>
+        /// <returns>Data of newly created user's account</returns>
+        /// <response code="200">Returns new account data</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /account/register
+        ///     {
+        ///        "Email": "user_valid_email@lost.com",
+        ///        "Username": "user_321",
+        ///        "Password": "strongPassword321",
+        ///        "ConfirmPassword": "strongPassword321"
+        ///     }
+        ///
+        /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPost("register")]
-        public async Task<ActionResult> RegisterUser(RegisterUserRequestDto dto)
+        public async Task<ActionResult<RegisteredUserAccountResponseDto>> RegisterUser(RegisterUserAccountRequestDto dto)
         {
-            await _accountService.RegisterUser(dto);
+            var registeredUserAccount = await _accountService.RegisterUser(dto);
 
-            return Ok();
+            return Ok(registeredUserAccount);
         }
 
         /// <summary>
@@ -45,9 +59,20 @@ namespace LostAndFound.AuthService.Controllers
         /// </summary>
         /// <param name="dto">User data for signing in</param>
         /// <returns>Newly generated authentication data</returns>
+        /// <response code="200">Returns authentication data</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /account/login
+        ///     {
+        ///        "Email": "user_valid_email@lost.com",
+        ///        "Password": "strongPassword321"
+        ///     }
+        ///
+        /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPost("login")]
-        public async Task<ActionResult<AuthenticatedUserDto>> Login(LoginRequestDto dto)
+        public async Task<ActionResult<AuthenticatedUserResponseDto>> Login(LoginRequestDto dto)
         {
             var authenticatedUser = await _accountService.AuthenticateUser(dto);
 
@@ -59,9 +84,19 @@ namespace LostAndFound.AuthService.Controllers
         /// </summary>
         /// <param name="dto">User's valid refresh token</param>
         /// <returns>Newly generated authentication data</returns>
+        /// <response code="200">Returns authentication data</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /account/refresh
+        ///     {
+        ///        "RefreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2NjczMjY1MDYsImV4cCI6MTY3MjU4NTk4NiwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMSIsImF1ZCI6Imh0dHBzOi8vbG9zdGFuZGZvdW5kLWRldmVsb3BtZW50LmNvbSJ9.dOJtN2kLymka4CNwucCsJ8PjcgkMUc9sd9x3I_Pr2GE"
+        ///     }
+        ///
+        /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPost("refresh")]
-        public async Task<ActionResult<AuthenticatedUserDto>> Refresh(RefreshRequestDto dto)
+        public async Task<ActionResult<AuthenticatedUserResponseDto>> Refresh(RefreshRequestDto dto)
         {
             var authenticatedUser = await _accountService.RefreshUserAuthentication(dto);
 
@@ -71,7 +106,8 @@ namespace LostAndFound.AuthService.Controllers
         /// <summary>
         /// Logout user account
         /// </summary>
-        /// <returns></returns>
+        /// <response code="204">The logout process was successful</response>
+        /// <response code="401">Problem with authentication of user occurred</response>
         [Authorize]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

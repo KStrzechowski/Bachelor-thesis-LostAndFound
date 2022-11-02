@@ -3,7 +3,7 @@
     /// <summary>
     /// Newly generated authentication data
     /// </summary>
-    public class AuthenticatedUserDto
+    public class AuthenticatedUserResponseDto
     {
         /// <summary>
         /// Valid newly generated Jwt token
