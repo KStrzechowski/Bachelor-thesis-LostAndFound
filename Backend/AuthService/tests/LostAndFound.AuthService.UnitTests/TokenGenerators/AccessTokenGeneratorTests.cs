@@ -102,7 +102,7 @@ namespace LostAndFound.AuthService.UnitTests.TokenGenerators
             _mockedJwtTokenGeneratorMock.VerifyAll();
         }
 
-        private bool CompareListOfClaims(IEnumerable<Claim>? l1, IEnumerable<Claim> l2)
+        private static bool CompareListOfClaims(IEnumerable<Claim>? l1, IEnumerable<Claim> l2)
         {
             if (l1 == null)
             {

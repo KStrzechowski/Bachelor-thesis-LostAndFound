@@ -1,7 +1,10 @@
 using LostAndFound.Gateway.CoreLibrary.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Text;
+using System.Linq;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +30,50 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddSwaggerGen(setupAction =>
+{
+    setupAction.SwaggerDoc(
+        "LostAndFound.Gateway",
+        new Microsoft.OpenApi.Models.OpenApiInfo()
+        {
+            Title = "LostAndFound Gateway",
+            Version = "v1",
+            Description = "Gateway api being part of LostAndFound system. Gateway manages communication from clients to microservices.",
+        });
+
+    var currentAssembly = Assembly.GetExecutingAssembly();
+    var xmlDocs = currentAssembly.GetReferencedAssemblies()
+        .Union(new AssemblyName[] { currentAssembly.GetName() })
+        .Select(a => Path.Combine(AppContext.BaseDirectory, $"{a.Name}.xml"))
+        .Where(f => File.Exists(f)).ToArray();
+    foreach(var xmlDoc in xmlDocs)
+    {
+        setupAction.IncludeXmlComments(xmlDoc);
+    }
+
+    var jwtSecurityScheme = new OpenApiSecurityScheme
+    {
+        BearerFormat = "JWT",
+        Name = "JWT Authentication",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    setupAction.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+    setupAction.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { jwtSecurityScheme, Array.Empty<string>() }
+    });
+});
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -34,6 +81,15 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSwagger();
+app.UseSwaggerUI(setupAction =>
+{
+    setupAction.SwaggerEndpoint(
+        "/swagger/LostAndFound.Gateway/swagger.json",
+        "LostAndFound Gateway");
+    setupAction.RoutePrefix = string.Empty;
+});
 
 app.UseEndpoints(endpoints =>
 {
