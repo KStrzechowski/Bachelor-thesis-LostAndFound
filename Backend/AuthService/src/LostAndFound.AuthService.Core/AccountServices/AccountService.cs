@@ -29,7 +29,7 @@ namespace LostAndFound.AuthService.Core.AccountServices
             _refreshTokenValidator = refreshTokenValidator ?? throw new ArgumentNullException(nameof(refreshTokenValidator));
         }
 
-        public async Task<AuthenticatedUserDto> AuthenticateUser(LoginRequestDto dto)
+        public async Task<AuthenticatedUserResponseDto> AuthenticateUser(LoginRequestDto dto)
         {
             var user = await _usersRepository.GetUserByEmailAsync(dto.Email);
             if (user == null)
@@ -56,7 +56,7 @@ namespace LostAndFound.AuthService.Core.AccountServices
             await _refreshTokenRepository.DeleteAll(userId);
         }
 
-        public async Task<AuthenticatedUserDto> RefreshUserAuthentication(RefreshRequestDto dto)
+        public async Task<AuthenticatedUserResponseDto> RefreshUserAuthentication(RefreshRequestDto dto)
         {
             bool isRefreshTokenValid = _refreshTokenValidator.ValidateRefreshToken(dto.RefreshToken);
             var refreshToken = await _refreshTokenRepository.GetByToken(dto.RefreshToken);
@@ -75,7 +75,7 @@ namespace LostAndFound.AuthService.Core.AccountServices
             return await CreateAuthenticatedUser(user);
         }
 
-        public async Task RegisterUser(RegisterUserRequestDto dto)
+        public async Task<RegisteredUserAccountResponseDto> RegisterUser(RegisterUserAccountRequestDto dto)
         {
             var newUser = new User()
             {
@@ -87,9 +87,16 @@ namespace LostAndFound.AuthService.Core.AccountServices
             newUser.PasswordHash = hashedPassword;
 
             await _usersRepository.AddUserAsync(newUser);
+
+            return new RegisteredUserAccountResponseDto()
+            {
+                Email = newUser.Email,
+                UserIdentifier = Guid.NewGuid().ToString(),
+                Username = newUser.Username,
+            };
         }
 
-        private async Task<AuthenticatedUserDto> CreateAuthenticatedUser(User user)
+        private async Task<AuthenticatedUserResponseDto> CreateAuthenticatedUser(User user)
         {
             var accessToken = _accessTokenGenerator.GenerateAccessToken(user);
             var refreshTokenRaw = _refreshTokenGenerator.GenerateRefreshToken();
@@ -102,7 +109,7 @@ namespace LostAndFound.AuthService.Core.AccountServices
 
             await _refreshTokenRepository.Create(refreshToken);
 
-            return new AuthenticatedUserDto
+            return new AuthenticatedUserResponseDto
             {
                 AccessToken = accessToken.Value,
                 AccessTokenExpirationTime = accessToken.ExpirationTime,
