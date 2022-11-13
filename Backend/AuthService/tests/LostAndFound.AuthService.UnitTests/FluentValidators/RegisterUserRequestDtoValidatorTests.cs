@@ -2,7 +2,7 @@
 using FluentValidation.TestHelper;
 using LostAndFound.AuthService.Core.FluentValidators;
 using LostAndFound.AuthService.CoreLibrary.Requests;
-using LostAndFound.AuthService.DataAccess.Repositories;
+using LostAndFound.AuthService.DataAccess.Repositories.Interfaces;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,24 +12,24 @@ namespace LostAndFound.AuthService.UnitTests.FluentValidators
 {
     public class RegisterUserRequestDtoValidatorTests
     {
-        private readonly Mock<IUsersRepository> _usersRepositoryMock;
+        private readonly Mock<IAccountsRepository> _accountsRepositoryMock;
 
         public RegisterUserRequestDtoValidatorTests()
         {
-            _usersRepositoryMock = new Mock<IUsersRepository>();
+            _accountsRepositoryMock = new Mock<IAccountsRepository>();
         }
 
         [Fact]
         public void Validate_DtoWithAlreadyUsedEmail_ReturnsFailure()
         {
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsEmailInUse(It.IsAny<string>()))
                 .Returns<string>(_ => true);
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsUsernameInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
 
-            var validator = new RegisterUserRequestDtoValidator(_usersRepositoryMock.Object);
+            var validator = new RegisterUserRequestDtoValidator(_accountsRepositoryMock.Object);
             var validDtoModel = GetValidRegisterUserDto();
 
             var result = validator.TestValidate(validDtoModel);
@@ -41,13 +41,13 @@ namespace LostAndFound.AuthService.UnitTests.FluentValidators
         [Fact]
         public void Validate_DtoWithAlreadyUsedUsername_ReturnsFailure()
         {
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsEmailInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsUsernameInUse(It.IsAny<string>()))
                 .Returns<string>(_ => true);
-            var validator = new RegisterUserRequestDtoValidator(_usersRepositoryMock.Object);
+            var validator = new RegisterUserRequestDtoValidator(_accountsRepositoryMock.Object);
             RegisterUserAccountRequestDto validDtoModel = GetValidRegisterUserDto();
 
             var result = validator.TestValidate(validDtoModel);
@@ -57,69 +57,52 @@ namespace LostAndFound.AuthService.UnitTests.FluentValidators
         }
 
         [Fact]
-        public void Validate_DtoWithPasswordsThatDoNotMatch_ReturnsFailure()
-        {
-            _usersRepositoryMock
-                .Setup(repo => repo.IsEmailInUse(It.IsAny<string>()))
-                .Returns<string>(_ => false);
-            _usersRepositoryMock
-                .Setup(repo => repo.IsUsernameInUse(It.IsAny<string>()))
-                .Returns<string>(_ => false);
-            var validator = new RegisterUserRequestDtoValidator(_usersRepositoryMock.Object);
-            var validDtoModel = CreateRegisterUserRequestDto("goodEmail@gmail.com", "goodUsername123", "password1111", "password2222");
-
-            var result = validator.TestValidate(validDtoModel);
-
-            result.ShouldHaveAnyValidationError();
-        }
-
-        [Fact]
         public void Validate_DtoWithUsernameTooShort_ReturnsFailure()
         {
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsEmailInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsUsernameInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
-            var validator = new RegisterUserRequestDtoValidator(_usersRepositoryMock.Object);
-            var validDtoModel = CreateRegisterUserRequestDto("goodEmail@gmail.com", "short", "password1111", "password1111");
+            var validator = new RegisterUserRequestDtoValidator(_accountsRepositoryMock.Object);
+            var validDtoModel = CreateRegisterUserRequestDto("goodEmail@gmail.com", "short", "password1111");
 
             var result = validator.TestValidate(validDtoModel);
 
             result.ShouldHaveAnyValidationError();
-            result.Errors.First().ErrorMessage.Should().Contain("The length of 'Username' must be at least 6 characters");
+            result.Errors.First().ErrorMessage.Should().Contain("The length of 'Username' must be at least 8 characters");
         }
 
         [Fact]
         public void Validate_DtoWithPasswordTooShort_ReturnsFailure()
         {
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsEmailInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsUsernameInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
-            var validator = new RegisterUserRequestDtoValidator(_usersRepositoryMock.Object);
-            var validDtoModel = CreateRegisterUserRequestDto("goodEmail@gmail.com", "User12312", "pass1", "pass1");
+            var validator = new RegisterUserRequestDtoValidator(_accountsRepositoryMock.Object);
+            var validDtoModel = CreateRegisterUserRequestDto("goodEmail@gmail.com", "User12312", "pass1");
 
             var result = validator.TestValidate(validDtoModel);
 
             result.ShouldHaveAnyValidationError();
-            result.Errors.First().ErrorMessage.Should().Contain("The length of 'Password' must be at least 6 characters");
+            result.Errors.First().ErrorMessage.Should().Contain("The length of 'Password' must be at least 8 characters");
         }
 
         [Theory]
         [MemberData(nameof(GetValidRegisterUserRequestDtos))]
         public void Validate_WithValidDto_ReturnsSuccess(RegisterUserAccountRequestDto requestDto)
         {
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsEmailInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsUsernameInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
-            var validator = new RegisterUserRequestDtoValidator(_usersRepositoryMock.Object);
+            var validator = new RegisterUserRequestDtoValidator(_accountsRepositoryMock.Object);
 
             var result = validator.TestValidate(requestDto);
 
@@ -130,13 +113,13 @@ namespace LostAndFound.AuthService.UnitTests.FluentValidators
         [MemberData(nameof(GetInvalidRegisterUserRequestDtos))]
         public void Validate_WithInalidDto_ReturnsFailure(RegisterUserAccountRequestDto requestDto)
         {
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsEmailInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
-            _usersRepositoryMock
+            _accountsRepositoryMock
                 .Setup(repo => repo.IsUsernameInUse(It.IsAny<string>()))
                 .Returns<string>(_ => false);
-            var validator = new RegisterUserRequestDtoValidator(_usersRepositoryMock.Object);
+            var validator = new RegisterUserRequestDtoValidator(_accountsRepositoryMock.Object);
 
             var result = validator.TestValidate(requestDto);
 
@@ -147,12 +130,12 @@ namespace LostAndFound.AuthService.UnitTests.FluentValidators
         {
             yield return new object[]
             {
-                CreateRegisterUserRequestDto("goodEmail@gmail.com", "goodUsername123", "password123", "password123")
+                CreateRegisterUserRequestDto("goodEmail@gmail.com", "goodUsername123", "password123")
             };
 
             yield return new object[]
             {
-                CreateRegisterUserRequestDto("goodEmailwqwe@gmail.com", "simple1314321@!@#!4322", "password1234111", "password1234111")
+                CreateRegisterUserRequestDto("goodEmailwqwe@gmail.com", "simple1314321@!@#!4322", "password1234111")
             };
         }
 
@@ -160,38 +143,37 @@ namespace LostAndFound.AuthService.UnitTests.FluentValidators
         {
             yield return new object[]
             {
-                CreateRegisterUserRequestDto("NotAnEmail", "goodUsername123", "password123", "password123")
+                CreateRegisterUserRequestDto("NotAnEmail", "goodUsername123", "password123")
             };
 
             yield return new object[]
             {
-                CreateRegisterUserRequestDto("NotAnEmail", "", "password123", "password123")
+                CreateRegisterUserRequestDto("NotAnEmail", "", "password123")
             };
 
             yield return new object[]
             {
-                CreateRegisterUserRequestDto("emailCorrect@gg.pl", "", "password123", "password123")
+                CreateRegisterUserRequestDto("emailCorrect@gg.pl", "", "password123")
             };
 
             yield return new object[]
             {
-                CreateRegisterUserRequestDto("emailCorrect@gg.pl", "user12312", "", "")
+                CreateRegisterUserRequestDto("emailCorrect@gg.pl", "user12312", "")
             };
 
             yield return new object[]
             {
-                CreateRegisterUserRequestDto("emailCorrect@gg.pl", "user12312", "koko", "kokosdas")
+                CreateRegisterUserRequestDto("emailCorrect@gg.pl", "user12312", "koko")
             };
         }
 
-        private static RegisterUserAccountRequestDto CreateRegisterUserRequestDto(string email, string usernam, string password, string confirmPassword)
+        private static RegisterUserAccountRequestDto CreateRegisterUserRequestDto(string email, string usernam, string password)
         {
             return new RegisterUserAccountRequestDto()
             {
                 Email = email,
                 Username = usernam,
-                Password = password,
-                ConfirmPassword = confirmPassword
+                Password = password
             };
         }
 
@@ -201,8 +183,7 @@ namespace LostAndFound.AuthService.UnitTests.FluentValidators
             {
                 Email = "goodEmail@gmail.com",
                 Username = "goodUsername123",
-                Password = "password123",
-                ConfirmPassword = "password123",
+                Password = "password123"
             };
         }
     }
