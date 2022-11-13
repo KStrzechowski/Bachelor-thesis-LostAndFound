@@ -41,7 +41,6 @@ namespace LostAndFound.AuthService.Controllers
         ///        "Email": "user_valid_email@lost.com",
         ///        "Username": "user_321",
         ///        "Password": "strongPassword321",
-        ///        "ConfirmPassword": "strongPassword321"
         ///     }
         ///
         /// </remarks>
@@ -49,7 +48,7 @@ namespace LostAndFound.AuthService.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<RegisteredUserAccountResponseDto>> RegisterUser(RegisterUserAccountRequestDto dto)
         {
-            var registeredUserAccount = await _accountService.RegisterUser(dto);
+            var registeredUserAccount = await _accountService.RegisterUserAccount(dto);
 
             return Ok(registeredUserAccount);
         }
@@ -114,7 +113,12 @@ namespace LostAndFound.AuthService.Controllers
         [HttpDelete("logout")]
         public async Task<ActionResult> Logout()
         {
-            string rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (rawUserId == null)
+            {
+                return Unauthorized();
+            }
+
             await _accountService.LogoutUser(rawUserId);
 
             return NoContent();

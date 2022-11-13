@@ -5,6 +5,6 @@ namespace LostAndFound.AuthService.Core.TokenGenerators
 {
     public interface IAccessTokenGenerator
     {
-        AccessToken GenerateAccessToken(User user);
+        AccessToken GenerateAccessToken(Account account);
     }
 }

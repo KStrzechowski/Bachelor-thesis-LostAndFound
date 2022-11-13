@@ -11,7 +11,7 @@ namespace LostAndFound.AuthService.Core.FluentValidators
                 .NotEmpty()
                 .EmailAddress();
 
-            RuleFor(dto => dto.Password).MinimumLength(6);
+            RuleFor(dto => dto.Password).MinimumLength(8);
         }
     }
 }

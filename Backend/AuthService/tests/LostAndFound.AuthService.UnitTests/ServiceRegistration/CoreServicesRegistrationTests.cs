@@ -4,8 +4,9 @@ using LostAndFound.AuthService.Core.DateTimeProviders;
 using LostAndFound.AuthService.Core.TokenGenerators;
 using LostAndFound.AuthService.Core.TokenValidators;
 using LostAndFound.AuthService.CoreLibrary.Settings;
+using LostAndFound.AuthService.DataAccess.Context.Interfaces;
 using LostAndFound.AuthService.DataAccess.Entities;
-using LostAndFound.AuthService.DataAccess.Repositories;
+using LostAndFound.AuthService.DataAccess.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -32,7 +33,7 @@ namespace LostAndFound.AuthService.UnitTests.ServiceRegistration
         [InlineData(typeof(IRefreshTokenGenerator))]
         [InlineData(typeof(IRefreshTokenValidator))]
         [InlineData(typeof(IDateTimeProvider))]
-        [InlineData(typeof(IPasswordHasher<User>))]
+        [InlineData(typeof(IPasswordHasher<Account>))]
         public void AddCoreServices_Execute_ResultsInExpectedServiceIsRegistered(Type type)
         {
             _services.AddCoreServices();
@@ -44,10 +45,10 @@ namespace LostAndFound.AuthService.UnitTests.ServiceRegistration
         [Fact]
         public void AddCoreServices_Execute_ResultsInAccountServiceIsRegistered()
         {
-            var mockedUsersRepository = new Mock<IUsersRepository>();
-            _services.AddSingleton(mockedUsersRepository.Object);
-            var mockedRefreshTokenRepository = new Mock<IRefreshTokenRepository>();
-            _services.AddSingleton(mockedRefreshTokenRepository.Object);
+            var mockedAccountssRepository = new Mock<IAccountsRepository>();
+            _services.AddSingleton(mockedAccountssRepository.Object);
+            var mockedMongoAuthServiceDbContext = new Mock<IMongoAuthServiceDbContext>();
+            _services.AddSingleton(mockedMongoAuthServiceDbContext.Object);
             _services.AddCoreServices();
 
             var serviceProvider = _services.BuildServiceProvider();

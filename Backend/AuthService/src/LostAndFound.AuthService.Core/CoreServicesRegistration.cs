@@ -13,7 +13,7 @@ namespace LostAndFound.AuthService.Core
     {
         public static IServiceCollection AddCoreServices(this IServiceCollection services)
         {
-            services.AddScoped<IPasswordHasher<User>, BCryptPasswordHasher<User>>();
+            services.AddScoped<IPasswordHasher<Account>, BCryptPasswordHasher<Account>>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 

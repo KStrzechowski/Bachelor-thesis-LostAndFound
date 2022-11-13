@@ -19,10 +19,5 @@
         /// Password with minimal length 6
         /// </summary>
         public string Password { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Confirmation of password
-        /// </summary>
-        public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

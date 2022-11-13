@@ -78,12 +78,12 @@ namespace LostAndFound.AuthService.UnitTests.TokenGenerators
         public void GenerateRefreshToken_Execute_InvokeGenerateJwtTokenWithExpectedValues()
         {
             var expectedExpirationDate = _utcDateNowForTests.AddMinutes(_authenticationSettings.AccessTokenExpirationMinutes);
-            User user = GetUserModel();
+            Account account = GetUserModel();
             IEnumerable<Claim> claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim("Username", user.Username),
+                new Claim(ClaimTypes.NameIdentifier, account.UserId.ToString()),
+                new Claim(ClaimTypes.Email, account.Email),
+                new Claim("Username", account.Username),
             };
 
             _mockedJwtTokenGeneratorMock.Setup(j =>
@@ -97,7 +97,7 @@ namespace LostAndFound.AuthService.UnitTests.TokenGenerators
                 .Verifiable();
             var accessTokenGenerator = new AccessTokenGenerator(_authenticationSettings, _mockedJwtTokenGeneratorMock.Object, _mockedDateTimeProvider.Object);
 
-            var accessToken = accessTokenGenerator.GenerateAccessToken(user);
+            var accessToken = accessTokenGenerator.GenerateAccessToken(account);
 
             _mockedJwtTokenGeneratorMock.VerifyAll();
         }
@@ -119,13 +119,12 @@ namespace LostAndFound.AuthService.UnitTests.TokenGenerators
             return true;
         }
 
-        private static User GetUserModel()
+        private static Account GetUserModel()
         {
-            return new User()
+            return new Account()
             {
                 Email = "email@gmail.com",
                 Username = "koko19",
-                Id = Guid.NewGuid(),
             };
         }
     }

@@ -4,26 +4,24 @@ using LostAndFound.AuthService.CoreLibrary.Exceptions;
 using LostAndFound.AuthService.CoreLibrary.Requests;
 using LostAndFound.AuthService.CoreLibrary.Responses;
 using LostAndFound.AuthService.DataAccess.Entities;
-using LostAndFound.AuthService.DataAccess.Repositories;
+using LostAndFound.AuthService.DataAccess.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace LostAndFound.AuthService.Core.AccountServices
 {
     public class AccountService : IAccountService
     {
-        private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IUsersRepository _usersRepository;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly IPasswordHasher<Account> _passwordHasher;
+        private readonly IAccountsRepository _accountsRepository;
         private readonly IAccessTokenGenerator _accessTokenGenerator;
         private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IRefreshTokenValidator _refreshTokenValidator;
 
-        public AccountService(IPasswordHasher<User> passwordHasher, IUsersRepository usersRepository, IRefreshTokenRepository refreshTokenRepository,
-            IAccessTokenGenerator accessTokenGenerator, IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenValidator refreshTokenValidator)
+        public AccountService(IPasswordHasher<Account> passwordHasher, IAccountsRepository accountsRepository, IAccessTokenGenerator accessTokenGenerator,
+            IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenValidator refreshTokenValidator)
         {
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
-            _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
-            _refreshTokenRepository = refreshTokenRepository ?? throw new ArgumentNullException(nameof(refreshTokenRepository));
+            _accountsRepository = accountsRepository ?? throw new ArgumentNullException(nameof(accountsRepository));
             _accessTokenGenerator = accessTokenGenerator ?? throw new ArgumentNullException(nameof(accessTokenGenerator));
             _refreshTokenGenerator = refreshTokenGenerator ?? throw new ArgumentNullException(nameof(refreshTokenGenerator));
             _refreshTokenValidator = refreshTokenValidator ?? throw new ArgumentNullException(nameof(refreshTokenValidator));
@@ -31,19 +29,19 @@ namespace LostAndFound.AuthService.Core.AccountServices
 
         public async Task<AuthenticatedUserResponseDto> AuthenticateUser(LoginRequestDto dto)
         {
-            var user = await _usersRepository.GetUserByEmailAsync(dto.Email);
-            if (user == null)
+            var account = await _accountsRepository.GetSingleAsync(ac => ac.Email == dto.Email);
+            if (account == null)
             {
-                throw new BadRequestException("User with a specified email does not exist.");
+                throw new BadRequestException("An account with a specified email does not exist.");
             }
 
-            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
+            var result = _passwordHasher.VerifyHashedPassword(account, account.PasswordHash, dto.Password);
             if (result == PasswordVerificationResult.Failed)
             {
                 throw new BadRequestException("Invalid email or password");
             }
 
-            return await CreateAuthenticatedUser(user);
+            return await CreateAuthenticatedUser(account);
         }
 
         public async Task LogoutUser(string rawUserId)
@@ -53,61 +51,54 @@ namespace LostAndFound.AuthService.Core.AccountServices
                 throw new UnauthorizedException();
             }
 
-            await _refreshTokenRepository.DeleteAll(userId);
+            var account = await _accountsRepository.GetSingleAsync(ac => ac.UserId == userId);
+            if (account == null)
+            {
+                throw new UnauthorizedException();
+            }
+
+            await _accountsRepository.RemoveRefreshTokenFromAccountAsync(account.Email);
         }
 
         public async Task<AuthenticatedUserResponseDto> RefreshUserAuthentication(RefreshRequestDto dto)
         {
+            var account = await _accountsRepository.GetSingleAsync(acc => acc.RefreshToken == dto.RefreshToken);
             bool isRefreshTokenValid = _refreshTokenValidator.ValidateRefreshToken(dto.RefreshToken);
-            var refreshToken = await _refreshTokenRepository.GetByToken(dto.RefreshToken);
-            if (!isRefreshTokenValid || refreshToken == null)
+            if (account == null || !isRefreshTokenValid || account.RefreshToken != dto.RefreshToken)
             {
                 throw new BadRequestException("Invalid refresh token.");
             }
 
-            await _refreshTokenRepository.Delete(refreshToken.Id);
-            var user = await _usersRepository.GetUserByIdAsync(refreshToken.UserId);
-            if (user == null)
-            {
-                throw new BadRequestException("Account does not exist for specified user.");
-            }
-
-            return await CreateAuthenticatedUser(user);
+            return await CreateAuthenticatedUser(account);
         }
 
-        public async Task<RegisteredUserAccountResponseDto> RegisterUser(RegisterUserAccountRequestDto dto)
+        public async Task<RegisteredUserAccountResponseDto> RegisterUserAccount(RegisterUserAccountRequestDto dto)
         {
-            var newUser = new User()
+            var newUserAccount = new Account()
             {
                 Email = dto.Email,
                 Username = dto.Username,
+                UserId = Guid.NewGuid(),
+                CreationTime = DateTime.UtcNow,
             };
 
-            var hashedPassword = _passwordHasher.HashPassword(newUser, dto.Password);
-            newUser.PasswordHash = hashedPassword;
-
-            await _usersRepository.AddUserAsync(newUser);
+            newUserAccount.PasswordHash = _passwordHasher.HashPassword(newUserAccount, dto.Password);
+            await _accountsRepository.InsertOneAsync(newUserAccount);
 
             return new RegisteredUserAccountResponseDto()
             {
-                Email = newUser.Email,
-                UserIdentifier = Guid.NewGuid().ToString(),
-                Username = newUser.Username,
+                Email = newUserAccount.Email,
+                UserIdentifier = newUserAccount.UserId.ToString(),
+                Username = newUserAccount.Username,
             };
         }
 
-        private async Task<AuthenticatedUserResponseDto> CreateAuthenticatedUser(User user)
+        private async Task<AuthenticatedUserResponseDto> CreateAuthenticatedUser(Account account)
         {
-            var accessToken = _accessTokenGenerator.GenerateAccessToken(user);
+            var accessToken = _accessTokenGenerator.GenerateAccessToken(account);
             var refreshTokenRaw = _refreshTokenGenerator.GenerateRefreshToken();
 
-            var refreshToken = new RefreshToken()
-            {
-                Token = refreshTokenRaw,
-                UserId = user.Id,
-            };
-
-            await _refreshTokenRepository.Create(refreshToken);
+            await _accountsRepository.UpdateAccountRefreshTokenAsync(account.Email, refreshTokenRaw);
 
             return new AuthenticatedUserResponseDto
             {

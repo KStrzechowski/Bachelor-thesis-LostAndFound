@@ -1,5 +1,5 @@
 ﻿using LostAndFound.AuthService.Core.FluentValidators;
-using LostAndFound.AuthService.DataAccess.Repositories;
+using LostAndFound.AuthService.DataAccess.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
@@ -22,8 +22,8 @@ namespace LostAndFound.AuthService.UnitTests.ServiceRegistration
         [InlineData(typeof(RefreshRequestDtoValidator))]
         public void AddFluentValidators_Execute_ResultsInExpectedValidatorIsRegistered(Type type)
         {
-            var mockedUsersRepository = new Mock<IUsersRepository>();
-            _services.AddSingleton(mockedUsersRepository.Object);
+            var mockedAccountsRepository = new Mock<IAccountsRepository>();
+            _services.AddSingleton(mockedAccountsRepository.Object);
 
             _services.AddFluentValidators();
             var serviceProvider = _services.BuildServiceProvider();

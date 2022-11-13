@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using LostAndFound.AuthService.CoreLibrary.Requests;
-using LostAndFound.AuthService.DataAccess.Repositories;
+using LostAndFound.AuthService.DataAccess.Repositories.Interfaces;
 
 namespace LostAndFound.AuthService.Core.FluentValidators
 {
     public class RegisterUserRequestDtoValidator : AbstractValidator<RegisterUserAccountRequestDto>
     {
-        public RegisterUserRequestDtoValidator(IUsersRepository usersRepository)
+        public RegisterUserRequestDtoValidator(IAccountsRepository accountsRepository)
         {
             RuleFor(dto => dto.Email)
                 .NotNull()
@@ -16,17 +16,15 @@ namespace LostAndFound.AuthService.Core.FluentValidators
             RuleFor(dto => dto.Username)
                 .NotNull()
                 .NotEmpty()
-                .MinimumLength(6);
+                .MinimumLength(8);
 
             RuleFor(dto => dto.Password)
-                .MinimumLength(6);
-            RuleFor(dto => dto.ConfirmPassword)
-                .Equal(dto => dto.Password);
+                .MinimumLength(8);
 
             RuleFor(x => x.Email)
                 .Custom((value, context) =>
                 {
-                    if (usersRepository.IsEmailInUse(value))
+                    if (accountsRepository.IsEmailInUse(value))
                     {
                         context.AddFailure("Email", "That email is taken");
                     }
@@ -35,7 +33,7 @@ namespace LostAndFound.AuthService.Core.FluentValidators
             RuleFor(x => x.Username)
                 .Custom((value, context) =>
                 {
-                    if (usersRepository.IsUsernameInUse(value))
+                    if (accountsRepository.IsUsernameInUse(value))
                     {
                         context.AddFailure("Username", "That username is taken");
                     }
