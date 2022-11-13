@@ -5,7 +5,7 @@ namespace LostAndFound.AuthService.Core.AccountServices
 {
     public interface IAccountService
     {
-        Task<RegisteredUserAccountResponseDto> RegisterUser(RegisterUserAccountRequestDto dto);
+        Task<RegisteredUserAccountResponseDto> RegisterUserAccount(RegisterUserAccountRequestDto dto);
         Task<AuthenticatedUserResponseDto> AuthenticateUser(LoginRequestDto dto);
         Task<AuthenticatedUserResponseDto> RefreshUserAuthentication(RefreshRequestDto dto);
         Task LogoutUser(string userId);

@@ -19,13 +19,13 @@ namespace LostAndFound.AuthService.Core.TokenGenerators
             _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
         }
 
-        public AccessToken GenerateAccessToken(User user)
+        public AccessToken GenerateAccessToken(Account account)
         {
             var claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim("Username", user.Username),
+                new Claim(ClaimTypes.NameIdentifier, account.UserId.ToString()),
+                new Claim(ClaimTypes.Email, account.Email),
+                new Claim("Username", account.Username),
             };
 
             var expirationTime = _dateTimeProvider.UtcNow.AddMinutes(_authenticationSettings.AccessTokenExpirationMinutes);
