@@ -118,5 +118,13 @@ namespace LostAndFound.AuthService.UnitTests.Core.TokenGenerators
                 Assert.Fail("Expected no exception, but got: " + ex.Message);
             }
         }
+
+        [Fact]
+        public void JwtTokenGeneratorConstructor_WithNullDateTimeProvider_ThrowsArgumentNullException()
+        {
+            var act = () => new JwtTokenGenerator(null!);
+
+            act.Should().Throw<ArgumentNullException>();
+        }
     }
 }

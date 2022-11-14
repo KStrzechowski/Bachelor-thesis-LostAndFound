@@ -146,5 +146,13 @@ namespace LostAndFound.AuthService.UnitTests.Core.TokenValidators
 
             result.Should().Be(result2);
         }
+
+        [Fact]
+        public void RefreshTokenValidatorConstructor_WithNullAuthenticationSettings_ThrowsArgumentNullException()
+        {
+            var act = () => new RefreshTokenValidator(null!);
+
+            act.Should().Throw<ArgumentNullException>();
+        }
     }
 }
