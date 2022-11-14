@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LostAndFound.PublicationService.CoreLibrary\LostAndFound.PublicationService.CoreLibrary.csproj" />
+    <ProjectReference Include="..\LostAndFound.PublicationService.DataAccess\LostAndFound.PublicationService.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

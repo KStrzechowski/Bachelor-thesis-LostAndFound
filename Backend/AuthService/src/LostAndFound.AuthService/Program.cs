@@ -118,4 +118,6 @@ app.UseEndpoints(endpoints =>
 app.Run();
 
 // Make the implicit Program class public so test projects can access it
+#pragma warning disable CA1050 // Declare types in namespaces
 public partial class Program { }
+#pragma warning restore CA1050 // Declare types in namespaces

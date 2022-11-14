@@ -1,4 +1,5 @@
 using LostAndFound.ProfileService.CoreLibrary.Settings;
+using LostAndFound.ProfileService.DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -14,6 +15,7 @@ builder.Services.AddSingleton(authenticationSettings);
 builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 
+builder.Services.AddDataAccessServices(builder.Configuration);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(config =>
@@ -100,4 +102,6 @@ app.UseEndpoints(endpoints =>
 app.Run();
 
 // Make the implicit Program class public so test projects can access it
+#pragma warning disable CA1050 // Declare types in namespaces
 public partial class Program { }
+#pragma warning restore CA1050 // Declare types in namespaces
