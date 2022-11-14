@@ -27,6 +27,16 @@ stages:
             displayName: "Run script: npm clean install and build"
             workingDirectory: ${{ parameters.frontendProjectDirectory }}
 
+          - script: |
+              npm test -- --watchAll=false || exit 1
+            displayName: 'unit test'
+            workingDirectory: ${{ parameters.frontendProjectDirectory }}
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Results junit.xml'
+            inputs:
+              testResultsFiles: junit.xml
+
           - task: ArchiveFiles@2
             displayName: "Archive files"
             inputs:
