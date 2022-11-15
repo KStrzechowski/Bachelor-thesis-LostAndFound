@@ -23,6 +23,12 @@ namespace LostAndFound.ProfileService.Core.MappingProfiles
                 .ForMember(dto => dto.Description, opt => opt.MapFrom(o => o.Description))
                 .ForMember(dto => dto.City, opt => opt.MapFrom(o => o.City))
                 .ForMember(dto => dto.AverageProfileRating, opt => opt.MapFrom(o => o.AverageRating));
+
+            CreateMap<UpdateProfileDetailsRequestDto, ProfileEntity>()
+                .ForMember(entity => entity.Name, opt => opt.MapFrom(dto => dto.Name))
+                .ForMember(entity => entity.Surname, opt => opt.MapFrom(dto => dto.Surname))
+                .ForMember(entity => entity.City, opt => opt.MapFrom(dto => dto.City))
+                .ForMember(entity => entity.Description, opt => opt.MapFrom(dto => dto.Description));
         }
     }
 }

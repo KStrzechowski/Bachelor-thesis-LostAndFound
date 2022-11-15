@@ -20,8 +20,8 @@ namespace LostAndFound.ProfileService.Controllers
         /// <summary>
         /// Default ProfileController constructor
         /// </summary>
-        /// <param name="userProfileService"></param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="userProfileService">Instance of IUserProfileService interface</param>
+        /// <exception cref="ArgumentNullException">Throws ArgumentNullException when IUserProfileService is null</exception>
         public ProfileController(IUserProfileService userProfileService)
         {
             _userProfileService = userProfileService ?? throw new ArgumentNullException(nameof(userProfileService));
@@ -35,6 +35,12 @@ namespace LostAndFound.ProfileService.Controllers
         /// <response code="200">Returns profile details</response>
         /// <response code="401">Problem with authentication of user occurred</response>
         /// <response code="404">Could not find profile corresponding to authenticated user</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET /profile
+        ///
+        /// </remarks>
         [Authorize]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -79,8 +85,9 @@ namespace LostAndFound.ProfileService.Controllers
         /// <summary>
         /// Update authenticated user profile details
         /// </summary>
-        /// <param name="updateProfileDetailsRequestDto"></param>
+        /// <param name="updateProfileDetailsRequestDto">Updated user profile details data</param>
         /// <returns>Updated user profile details</returns>
+        /// <response code="200">Returns updated profile details</response>
         /// <response code="401">Problem with authentication of user occurred</response>
         /// <response code="404">Could not find profile corresponding to authenticated user</response>
         /// <remarks>
@@ -109,13 +116,19 @@ namespace LostAndFound.ProfileService.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Retrieve user profile details with identifier <paramref name="userId"/>
         /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        /// 
+        /// <param name="userId">User identifier</param>
+        /// <returns>User profile details</returns>
+        /// <response code="200">Returns profile details</response>
         /// <response code="401">Problem with authentication of user occurred</response>
         /// <response code="404">Could not find profile corresponding to authenticated user</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET /profile/2b1bafcd-b2fd-492b-b050-9b7027653716
+        ///
+        /// </remarks>
         [Authorize]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

@@ -26,6 +26,8 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
         public async Task<ProfileDetailsResponseDto> CreateUserProfile(CreateProfileRequestDto createProfileRequestDto)
         {
             var newProfileEntity = _mapper.Map<Profile>(createProfileRequestDto);
+            newProfileEntity.CreationTime = _dateTimeProvider.UtcNow;
+
             if (newProfileEntity == null)
             {
                 throw new BadRequestException("The profile information is incorrect.");

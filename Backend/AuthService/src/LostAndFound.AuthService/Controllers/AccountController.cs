@@ -107,6 +107,12 @@ namespace LostAndFound.AuthService.Controllers
         /// </summary>
         /// <response code="204">The logout process was successful</response>
         /// <response code="401">Problem with authentication of user occurred</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     DELETE /account/logout
+        ///
+        /// </remarks>
         [Authorize]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
