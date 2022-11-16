@@ -1,4 +1,4 @@
-using LostAndFound.AuthService.Core;
+using LostAndFound.ProfileService.Core;
 using LostAndFound.ProfileService.Core.FluentValidators;
 using LostAndFound.ProfileService.CoreLibrary.Settings;
 using LostAndFound.ProfileService.DataAccess;

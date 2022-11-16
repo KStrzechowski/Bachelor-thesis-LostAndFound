@@ -1,8 +1,9 @@
-﻿using LostAndFound.ProfileService.Core.UserProfileServices;
+﻿using LostAndFound.ProfileService.Core.DateTimeProviders;
+using LostAndFound.ProfileService.Core.UserProfileServices;
 using LostAndFound.ProfileService.Core.UserProfileServices.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LostAndFound.AuthService.Core
+namespace LostAndFound.ProfileService.Core
 {
     public static class CoreServicesRegistration
     {
@@ -11,6 +12,7 @@ namespace LostAndFound.AuthService.Core
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IUserProfileService, UserProfileService>();
+            services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 
             return services;
         }

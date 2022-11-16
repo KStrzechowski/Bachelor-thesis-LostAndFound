@@ -12,7 +12,16 @@ namespace LostAndFound.ProfileService.Core.MappingProfiles
             CreateMap<CreateProfileRequestDto, ProfileEntity>()
                 .ForMember(entity => entity.UserId, opt => opt.MapFrom(dto => dto.UserId))
                 .ForMember(entity => entity.Email, opt => opt.MapFrom(dto => dto.Email))
-                .ForMember(entity => entity.Username, opt => opt.MapFrom(dto => dto.Username));
+                .ForMember(entity => entity.Username, opt => opt.MapFrom(dto => dto.Username))
+                .ForMember(entity => entity.Name, opt => opt.Ignore())
+                .ForMember(entity => entity.Surname, opt => opt.Ignore())
+                .ForMember(entity => entity.City, opt => opt.Ignore())
+                .ForMember(entity => entity.PictureId, opt => opt.Ignore())
+                .ForMember(entity => entity.AverageRating, opt => opt.Ignore())
+                .ForMember(entity => entity.Comments, opt => opt.Ignore())
+                .ForMember(entity => entity.Id, opt => opt.Ignore())
+                .ForMember(entity => entity.CreationTime, opt => opt.Ignore())
+                .ForMember(entity => entity.Description, opt => opt.Ignore());
 
             CreateMap<ProfileEntity, ProfileDetailsResponseDto>()
                 .ForMember(dto => dto.UserId, opt => opt.MapFrom(o => o.UserId))
@@ -28,7 +37,15 @@ namespace LostAndFound.ProfileService.Core.MappingProfiles
                 .ForMember(entity => entity.Name, opt => opt.MapFrom(dto => dto.Name))
                 .ForMember(entity => entity.Surname, opt => opt.MapFrom(dto => dto.Surname))
                 .ForMember(entity => entity.City, opt => opt.MapFrom(dto => dto.City))
-                .ForMember(entity => entity.Description, opt => opt.MapFrom(dto => dto.Description));
+                .ForMember(entity => entity.Description, opt => opt.MapFrom(dto => dto.Description))
+                .ForMember(entity => entity.UserId, opt => opt.Ignore())
+                .ForMember(entity => entity.Email, opt => opt.Ignore())
+                .ForMember(entity => entity.Username, opt => opt.Ignore())
+                .ForMember(entity => entity.PictureId, opt => opt.Ignore())
+                .ForMember(entity => entity.AverageRating, opt => opt.Ignore())
+                .ForMember(entity => entity.Comments, opt => opt.Ignore())
+                .ForMember(entity => entity.Id, opt => opt.Ignore())
+                .ForMember(entity => entity.CreationTime, opt => opt.Ignore());
         }
     }
 }

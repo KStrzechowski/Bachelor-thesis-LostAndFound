@@ -54,7 +54,6 @@ namespace LostAndFound.ProfileService.Controllers
             return Ok(profileDetailsDto);
         }
 
-
         /// <summary>
         /// Create new user profile
         /// </summary>
