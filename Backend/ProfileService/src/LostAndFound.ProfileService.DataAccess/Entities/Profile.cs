@@ -16,13 +16,4 @@ namespace LostAndFound.ProfileService.DataAccess.Entities
         public float AverageRating { get; set; }
         public IEnumerable<Comment> Comments { get; set; } = Enumerable.Empty<Comment>();
     }
-
-    public class Comment
-    {
-        public string Content { get; set; } = string.Empty;
-        public float Rating { get; set; }
-        public DateTime CreationTime { get; set; }
-        public DateTime LastModificationDate { get; set; }
-        public Guid AuthorId { get; set; }
-    }
 }
