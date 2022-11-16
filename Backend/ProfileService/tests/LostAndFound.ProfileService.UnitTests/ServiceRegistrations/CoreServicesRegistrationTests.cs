@@ -49,6 +49,20 @@ namespace LostAndFound.ProfileService.UnitTests.ServiceRegistrations
         }
 
         [Fact]
+        public void AddCoreServices_Execute_ResultsInProfileCommentServiceIsRegistered()
+        {
+            var mockedAccountssRepository = new Mock<IProfilesRepository>();
+            _services.AddSingleton(mockedAccountssRepository.Object);
+            var mockedMongoAuthServiceDbContext = new Mock<IMongoProfileServiceDbContext>();
+            _services.AddSingleton(mockedMongoAuthServiceDbContext.Object);
+            _services.AddCoreServices();
+
+            var serviceProvider = _services.BuildServiceProvider();
+
+            Assert.NotNull(serviceProvider.GetService(typeof(IProfileCommentService)));
+        }
+
+        [Fact]
         public void AddApplicationBusinessLogicServices_Execute_AutoMapperServiceIsRegistered()
         {
 
