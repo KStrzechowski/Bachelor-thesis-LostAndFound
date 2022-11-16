@@ -9,12 +9,10 @@ namespace LostAndFound.AuthService.Core.FluentValidators
         public RegisterUserRequestDtoValidator(IAccountsRepository accountsRepository)
         {
             RuleFor(dto => dto.Email)
-                .NotNull()
                 .NotEmpty()
                 .EmailAddress();
 
             RuleFor(dto => dto.Username)
-                .NotNull()
                 .NotEmpty()
                 .MinimumLength(8);
 

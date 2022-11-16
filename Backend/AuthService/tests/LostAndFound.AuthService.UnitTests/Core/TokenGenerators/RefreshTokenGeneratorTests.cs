@@ -90,5 +90,17 @@ namespace LostAndFound.AuthService.UnitTests.Core.TokenGenerators
 
             refreshToken.Should().Be(expectedExpirationDate.ToString());
         }
+
+        [Fact]
+        public void RefreshTokenGeneratorConstructor_WithOneNullArguments_ThrowsArgumentNullException()
+        {
+            var actAuthenticationSettingsNull = () => new RefreshTokenGenerator(null!, _mockedJwtTokenGeneratorMock.Object, _mockedDateTimeProvider.Object);
+            var actJwtTokenGeneratorNull = () => new RefreshTokenGenerator(_authenticationSettings!, null!, _mockedDateTimeProvider.Object);
+            var actDateTimeProvider = () => new RefreshTokenGenerator(_authenticationSettings!, _mockedJwtTokenGeneratorMock.Object, null!);
+
+            actAuthenticationSettingsNull.Should().Throw<ArgumentNullException>();
+            actJwtTokenGeneratorNull.Should().Throw<ArgumentNullException>();
+            actDateTimeProvider.Should().Throw<ArgumentNullException>();
+        }
     }
 }

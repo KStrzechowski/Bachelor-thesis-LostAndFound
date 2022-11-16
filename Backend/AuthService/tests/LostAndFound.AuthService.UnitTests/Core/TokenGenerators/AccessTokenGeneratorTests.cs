@@ -102,6 +102,18 @@ namespace LostAndFound.AuthService.UnitTests.Core.TokenGenerators
             _mockedJwtTokenGeneratorMock.VerifyAll();
         }
 
+        [Fact]
+        public void AccessTokenGeneratorConstructor_WithOneNullArguments_ThrowsArgumentNullException()
+        {
+            var actAuthenticationSettingsNull = () => new RefreshTokenGenerator(null!, _mockedJwtTokenGeneratorMock.Object, _mockedDateTimeProvider.Object);
+            var actJwtTokenGeneratorNull = () => new RefreshTokenGenerator(_authenticationSettings!, null!, _mockedDateTimeProvider.Object);
+            var actDateTimeProvider = () => new RefreshTokenGenerator(_authenticationSettings!, _mockedJwtTokenGeneratorMock.Object, null!);
+
+            actAuthenticationSettingsNull.Should().Throw<ArgumentNullException>();
+            actJwtTokenGeneratorNull.Should().Throw<ArgumentNullException>();
+            actDateTimeProvider.Should().Throw<ArgumentNullException>();
+        }
+
         private static bool CompareListOfClaims(IEnumerable<Claim>? l1, IEnumerable<Claim> l2)
         {
             if (l1 == null)
