@@ -1,0 +1,27 @@
+parameters:
+  - name: nodeVersion
+    type: string
+    default: "16.x"
+
+  - name: mobileProjectDirectory
+    type: string
+
+  - name: artifactName
+    type: string
+
+stages:
+  - stage: BuildReactNativeApp
+    displayName: Build ReactNativeApp
+    jobs:
+      - job: Build
+        displayName: Build ReactNativeApp
+        steps:
+          - task: NodeTool@0
+            displayName: "Install Node.js"
+            inputs:
+              versionSpec: "${{ parameters.nodeVersion }}"
+
+          - script: |
+              npm ci
+            displayName: "Run script: npm clean install"
+            workingDirectory: ${{ parameters.mobileProjectDirectory }}

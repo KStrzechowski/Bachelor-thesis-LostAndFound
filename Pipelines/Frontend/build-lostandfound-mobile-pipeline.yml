@@ -1,0 +1,15 @@
+name: $(date:yyyyMMdd)$(rev:.r)_$(SourceBranchName)-$(BuildId)-FrontendMobileBuild
+
+pool: Default
+
+trigger:
+  paths:
+    include:
+    - Frontend/LostAndFoundMobile/*
+
+stages:
+  - template: Templates/build-react-native-app-template.yml
+    parameters:
+      frontendProjectDirectory: Frontend/LostAndFoundMobile
+      nodeVersion: 16.x
+      artifactName: lostandfound.mobile
