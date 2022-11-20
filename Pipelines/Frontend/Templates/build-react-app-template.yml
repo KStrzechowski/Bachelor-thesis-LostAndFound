@@ -28,7 +28,7 @@ stages:
             workingDirectory: ${{ parameters.frontendProjectDirectory }}
 
           - script: |
-              npm citest || exit 1
+              npm run citest || exit 1
             displayName: 'Unit tests'
             workingDirectory: ${{ parameters.frontendProjectDirectory }}
 
