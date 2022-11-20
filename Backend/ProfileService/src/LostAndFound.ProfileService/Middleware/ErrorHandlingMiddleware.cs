@@ -19,9 +19,15 @@ namespace LostAndFound.ProfileService.Middleware
             {
                 context.Response.StatusCode = 401;
             }
-            catch (NotFoundException)
+            catch (NotFoundException notFoundException)
             {
                 context.Response.StatusCode = 404;
+                await context.Response.WriteAsync(notFoundException.Message);
+            }
+            catch (ConflictException conflictException)
+            {
+                context.Response.StatusCode = 409;
+                await context.Response.WriteAsync(conflictException.Message);
             }
             catch (Exception)
             {
