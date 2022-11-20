@@ -2,6 +2,7 @@
 using LostAndFound.ProfileService.Core.DateTimeProviders;
 using LostAndFound.ProfileService.Core.UserProfileServices.Interfaces;
 using LostAndFound.ProfileService.CoreLibrary.Exceptions;
+using LostAndFound.ProfileService.CoreLibrary.Internal;
 using LostAndFound.ProfileService.CoreLibrary.Requests;
 using LostAndFound.ProfileService.CoreLibrary.Responses;
 using LostAndFound.ProfileService.DataAccess.Entities;
@@ -22,12 +23,15 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<CommentDataResponseDto> CreateProfileComment(string rawUserId, CreateProfileCommentRequestDto commentRequestDto, Guid profileOwnerId)
+        public async Task<CommentDataResponseDto> CreateProfileComment(string rawUserId, string username, CreateProfileCommentRequestDto commentRequestDto, Guid profileOwnerId)
         {
-            if (!Guid.TryParse(rawUserId, out Guid userId))
+            var userId = ParseUserId(rawUserId);
+            if (userId == profileOwnerId)
             {
-                throw new UnauthorizedException();
+                throw new BadRequestException("The user cannot comment on his own profile.");
             }
+
+            var profileEntity = await GetUserProfile(profileOwnerId);
 
             var commentEntity = _mapper.Map<Comment>(commentRequestDto);
             if (commentEntity == null)
@@ -36,79 +40,107 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             }
             commentEntity.CreationTime = commentEntity.LastModificationDate = _dateTimeProvider.UtcNow;
             commentEntity.AuthorId = userId;
+            commentEntity.AuthorUsername = username;
 
-            var profileEntity = await _profilesRepository.GetSingleAsync(x => x.UserId == profileOwnerId);
-            if (profileEntity == null)
+            bool userCommentExists = profileEntity.Comments.Any(c => c.AuthorId == userId);
+            if (userCommentExists)
             {
-                throw new NotFoundException();
+                throw new ConflictException("The comment already exists.");
             }
 
-            throw new NotImplementedException();
+            await _profilesRepository.InsertNewProfileComment(profileOwnerId, commentEntity);
+
+            return await GetUserProfileCommentData(profileOwnerId, userId);
         }
 
         public async Task DeleteProfileComment(string rawUserId, Guid profileOwnerId)
         {
-            if (!Guid.TryParse(rawUserId, out Guid userId))
-            {
-                throw new UnauthorizedException();
-            }
+            var userId = ParseUserId(rawUserId);
+            var profileEntity = await GetUserProfile(profileOwnerId);
+            var commentEntity = GetUserCommentFromProfile(userId, profileEntity);
 
-            var profileEntity = await _profilesRepository.GetSingleAsync(x => x.UserId == profileOwnerId);
-            if (profileEntity == null)
-            {
-                throw new NotFoundException();
-            }
-
-            int removedCommentsCount = profileEntity.Comments.ToList().RemoveAll(x => x.AuthorId == userId);
-            if (removedCommentsCount < 1)
-            {
-                throw new NotFoundException();
-            }
-
-            await _profilesRepository.ReplaceOneAsync(profileEntity);
+            await _profilesRepository.DeleteProfileComment(profileOwnerId, commentEntity);
         }
 
-        public async Task<ProfileCommentsSectionResponseDto> GetProfileCommentsSection(string rawUserId, Guid profileOwnerId, int pageNumber, int pageSize)
+        public async Task<(ProfileCommentsSectionResponseDto, PaginationMetadata)> GetProfileCommentsSection(string rawUserId, Guid profileOwnerId, int pageNumber, int pageSize)
         {
-            if (!Guid.TryParse(rawUserId, out Guid userId))
+            var userId = ParseUserId(rawUserId);
+            var commentsList = (await GetUserProfile(profileOwnerId)).Comments;
+            var commentsSectionDto = new ProfileCommentsSectionResponseDto();
+
+            var userComment = commentsList.SingleOrDefault(com => com.AuthorId == userId);
+            if (userComment != null)
             {
-                throw new UnauthorizedException();
+                commentsSectionDto.MyComment = _mapper.Map<CommentDataResponseDto>(userComment);
             }
 
-            var profileEntity = await _profilesRepository.GetSingleAsync(x => x.UserId == profileOwnerId);
-            if (profileEntity == null)
+            var commentPage = commentsList.Where(com => com.AuthorId != userId)
+                .OrderByDescending(com => com.CreationTime)
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToList();
+            if (commentPage != null && commentPage.Any())
             {
-                throw new NotFoundException();
+                commentsSectionDto.Comments = _mapper.Map<IEnumerable<CommentDataResponseDto>>(commentPage);
             }
 
-            throw new NotImplementedException();
+            int totalItemCount = commentsList.Length - (userComment == null ? 0 : 1);
+            var paginationMetadata = new PaginationMetadata(totalItemCount, pageSize, pageNumber);
+
+            return (commentsSectionDto, paginationMetadata);
         }
 
         public async Task<CommentDataResponseDto> UpdateProfileComment(string rawUserId, UpdateProfileCommentRequestDto commentRequestDto, Guid profileOwnerId)
         {
+            var userId = ParseUserId(rawUserId);
+            var profileEntity = await GetUserProfile(profileOwnerId);
+            var commentEntity = GetUserCommentFromProfile(userId, profileEntity);
+
+            _mapper.Map(commentRequestDto, commentEntity);
+            commentEntity.LastModificationDate = _dateTimeProvider.UtcNow;
+            await _profilesRepository.UpdateProfileComment(profileOwnerId, commentEntity);
+
+            return await GetUserProfileCommentData(profileOwnerId, userId);
+        }
+
+        private async Task<CommentDataResponseDto> GetUserProfileCommentData(Guid profileOwnerId, Guid userId)
+        {
+            var comment = (await _profilesRepository.GetSingleAsync(x => x.UserId == profileOwnerId))
+                ?.Comments?.SingleOrDefault(c => c.AuthorId == userId);
+
+            return _mapper.Map<CommentDataResponseDto>(comment);
+        }
+
+        private async Task<DataAccess.Entities.Profile> GetUserProfile(Guid profileOwnerId)
+        {
+            var profileEntity = await _profilesRepository.GetSingleAsync(x => x.UserId == profileOwnerId);
+            if (profileEntity == null)
+            {
+                throw new NotFoundException("User profile not found.");
+            }
+
+            return profileEntity;
+        }
+
+        private static Guid ParseUserId(string rawUserId)
+        {
             if (!Guid.TryParse(rawUserId, out Guid userId))
             {
                 throw new UnauthorizedException();
             }
 
-            var profileEntity = await _profilesRepository.GetSingleAsync(x => x.UserId == profileOwnerId);
-            if (profileEntity == null)
-            {
-                throw new NotFoundException();
-            }
+            return userId;
+        }
 
-            var commentEntity = profileEntity.Comments.SingleOrDefault(c => c.AuthorId == userId);
+        private static Comment GetUserCommentFromProfile(Guid userId, DataAccess.Entities.Profile profileEntity)
+        {
+            var commentEntity = profileEntity.Comments.SingleOrDefault(x => x.AuthorId == userId);
             if (commentEntity == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException("Comment does not exist.");
             }
 
-            _mapper.Map(commentRequestDto, commentEntity);
-            commentEntity.LastModificationDate = DateTime.UtcNow;
-
-            await _profilesRepository.ReplaceOneAsync(profileEntity);
-
-            throw new NotImplementedException();
+            return commentEntity;
         }
     }
 }

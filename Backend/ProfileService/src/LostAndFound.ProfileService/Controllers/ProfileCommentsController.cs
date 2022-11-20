@@ -1,9 +1,11 @@
 ﻿using LostAndFound.ProfileService.Core.UserProfileServices.Interfaces;
+using LostAndFound.ProfileService.CoreLibrary.Internal;
 using LostAndFound.ProfileService.CoreLibrary.Requests;
 using LostAndFound.ProfileService.CoreLibrary.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace LostAndFound.ProfileService.Controllers
 {
@@ -48,13 +50,20 @@ namespace LostAndFound.ProfileService.Controllers
         ///
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet]
+        [HttpGet(Name = "GetProfileCommentSection")]
         public async Task<ActionResult<ProfileCommentsSectionResponseDto>> GetProfileCommentsSection(Guid profileOwnerId, int pageNumber = 1, int pageSize = 20)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             pageSize = pageSize > maxCommentsPageSize ? maxCommentsPageSize : pageSize;
 
-            var commentsSectionDto = await _profileCommentService.GetProfileCommentsSection(rawUserId, profileOwnerId, pageNumber, pageSize);
+            var (commentsSectionDto, paginationMetadata) = await _profileCommentService
+                .GetProfileCommentsSection(rawUserId, profileOwnerId, pageNumber, pageSize);
+
+            paginationMetadata.NextPageLink = CreateProfileCommentSectionUri(paginationMetadata, ResourceUriType.NextPage);
+            paginationMetadata.PreviousPageLink = CreateProfileCommentSectionUri(paginationMetadata, ResourceUriType.PreviousPage);
+
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(paginationMetadata));
 
             return Ok(commentsSectionDto);
         }
@@ -68,6 +77,7 @@ namespace LostAndFound.ProfileService.Controllers
         /// <response code="200">Returns new comment data</response>
         /// <response code="401">Problem with authentication of user occurred</response>
         /// <response code="404">Could not find profile corresponding to <paramref name="profileOwnerId"/></response>
+        /// <response code="409">Comment already exists</response>
         /// <remarks>
         /// Sample request:
         ///
@@ -79,14 +89,16 @@ namespace LostAndFound.ProfileService.Controllers
         ///
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost]
         public async Task<ActionResult<CommentDataResponseDto>> CreateProfileComment(Guid profileOwnerId, CreateProfileCommentRequestDto commentRequestDto)
         {
-            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var commentDataDto = await _profileCommentService.CreateProfileComment(rawUserId, commentRequestDto, profileOwnerId);
+            string rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string username = HttpContext.User.FindFirstValue("username");
 
-            return CreatedAtRoute("GetProfileDetails",
-                 commentDataDto);
+            var commentDataDto = await _profileCommentService.CreateProfileComment(rawUserId, username, commentRequestDto, profileOwnerId);
+
+            return Ok(commentDataDto);
         }
 
         /// <summary>
@@ -139,6 +151,44 @@ namespace LostAndFound.ProfileService.Controllers
             await _profileCommentService.DeleteProfileComment(rawUserId, profileOwnerId);
 
             return NoContent();
+        }
+
+
+        private string? CreateProfileCommentSectionUri(PaginationMetadata paginationMetadata, ResourceUriType type)
+        {
+            switch (type)
+            {
+                case ResourceUriType.PreviousPage:
+                    if (paginationMetadata.CurrentPage <= 1)
+                    {
+                        return null;
+                    }
+                    return Url.Link("GetProfileCommentSection",
+                        new
+                        {
+                            pageNumber = paginationMetadata.CurrentPage - 1,
+                            pageSize = paginationMetadata.PageSize
+                        });
+                case ResourceUriType.NextPage:
+                    if (paginationMetadata.CurrentPage >= paginationMetadata.TotalPageCount)
+                    {
+                        return null;
+                    }
+
+                    return Url.Link("GetProfileCommentSection",
+                        new
+                        {
+                            pageNumber = paginationMetadata.CurrentPage + 1,
+                            pageSize = paginationMetadata.PageSize
+                        });
+                default:
+                    return Url.Link("GetProfileCommentSection",
+                        new
+                        {
+                            pageNumber = paginationMetadata.CurrentPage,
+                            pageSize = paginationMetadata.PageSize
+                        });
+            }
         }
     }
 }

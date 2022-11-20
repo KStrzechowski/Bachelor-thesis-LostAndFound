@@ -14,6 +14,6 @@ namespace LostAndFound.ProfileService.DataAccess.Entities
         public string? City { get; set; }
         public string? PictureId { get; set; }
         public float AverageRating { get; set; }
-        public IEnumerable<Comment> Comments { get; set; } = Enumerable.Empty<Comment>();
+        public Comment[] Comments { get; set; } = Array.Empty<Comment>();
     }
 }

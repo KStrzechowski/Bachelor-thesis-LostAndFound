@@ -30,7 +30,6 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             {
                 throw new BadRequestException("The profile information is incorrect.");
             }
-
             newProfileEntity.CreationTime = _dateTimeProvider.UtcNow;
 
             await _profilesRepository.InsertOneAsync(newProfileEntity);
@@ -40,25 +39,19 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
 
         public async Task<ProfileDetailsResponseDto> GetUserProfileDetails(string rawUserId)
         {
-            if (!Guid.TryParse(rawUserId, out Guid userId))
-            {
-                throw new UnauthorizedException();
-            }
+            var userId = ParseUserId(rawUserId);
 
             return await GetUserProfileDetails(userId);
         }
 
         public async Task<ProfileDetailsResponseDto> UpdateProfileDetails(UpdateProfileDetailsRequestDto updateProfileDetailsRequestDto, string rawUserId)
         {
-            if (!Guid.TryParse(rawUserId, out Guid userId))
-            {
-                throw new UnauthorizedException();
-            }
+            var userId = ParseUserId(rawUserId);
 
             var profileEntity = await _profilesRepository.GetSingleAsync(x => x.UserId == userId);
             if (profileEntity == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException("User profile not found.");
             }
 
             _mapper.Map(updateProfileDetailsRequestDto, profileEntity);
@@ -72,10 +65,20 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             var userProfileEntity = await _profilesRepository.GetSingleAsync(x => x.UserId == userId);
             if (userProfileEntity == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException("User profile not found.");
             }
 
             return _mapper.Map<ProfileDetailsResponseDto>(userProfileEntity);
+        }
+
+        private static Guid ParseUserId(string rawUserId)
+        {
+            if (!Guid.TryParse(rawUserId, out Guid userId))
+            {
+                throw new UnauthorizedException();
+            }
+
+            return userId;
         }
     }
 }

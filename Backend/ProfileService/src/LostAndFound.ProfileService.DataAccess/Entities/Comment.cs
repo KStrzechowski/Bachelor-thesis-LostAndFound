@@ -7,5 +7,6 @@
         public DateTime CreationTime { get; set; }
         public DateTime LastModificationDate { get; set; }
         public Guid AuthorId { get; set; }
+        public string AuthorUsername { get; set; } = string.Empty;
     }
 }
