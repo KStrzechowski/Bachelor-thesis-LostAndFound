@@ -10,6 +10,6 @@ trigger:
 stages:
   - template: Templates/build-react-native-app-template.yml
     parameters:
-      frontendProjectDirectory: Frontend/LostAndFoundMobile
+      mobileProjectDirectory: Frontend/LostAndFoundMobile
       nodeVersion: 16.x
       artifactName: lostandfound.mobile
