@@ -1,11 +1,10 @@
-﻿namespace LostAndFound.ProfileService.DataAccess.Settings
+﻿namespace LostAndFound.PublicationService.ThirdPartyServices.Settings
 {
-    public class ProfileServiceDatabaseSettings
+    public class BlobStorageSettings
     {
         private const string settingName = "LostAndFoundBlobStorageSettings";
 
         public static string SettingName => settingName;
         public string ConnectionString { get; set; } = string.Empty;
-        public string DatabaseName { get; set; } = string.Empty;
     }
 }

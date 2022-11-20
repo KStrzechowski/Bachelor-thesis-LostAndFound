@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -12,12 +12,12 @@
     <PackageReference Include="FluentValidation" Version="11.3.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-  </ItemGroup>
+  </ItemGroup>	
 
   <ItemGroup>
-    <ProjectReference Include="..\LostAndFound.ProfileService.CoreLibrary\LostAndFound.ProfileService.CoreLibrary.csproj" />
-    <ProjectReference Include="..\LostAndFound.ProfileService.DataAccess\LostAndFound.ProfileService.DataAccess.csproj" />
-    <ProjectReference Include="..\LostAndFound.ProfileService.ThirdPartyServices\LostAndFound.ProfileService.ThirdPartyServices.csproj" />
+    <ProjectReference Include="..\LostAndFound.PublicationService.CoreLibrary\LostAndFound.PublicationService.CoreLibrary.csproj" />
+    <ProjectReference Include="..\LostAndFound.PublicationService.DataAccess\LostAndFound.PublicationService.DataAccess.csproj" />
+    <ProjectReference Include="..\LostAndFound.PublicationService.ThirdPartyServices\LostAndFound.PublicationService.ThirdPartyServices.csproj" />
   </ItemGroup>
 
 </Project>

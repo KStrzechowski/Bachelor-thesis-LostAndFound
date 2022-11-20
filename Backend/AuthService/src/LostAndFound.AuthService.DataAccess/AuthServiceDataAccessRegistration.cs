@@ -13,7 +13,7 @@ namespace LostAndFound.AuthService.DataAccess
         public static IServiceCollection AddDataAccessServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AuthServiceDatabaseSettings>(
-                configuration.GetSection("LostAndFoundAuthServiceDb"));
+                configuration.GetSection(AuthServiceDatabaseSettings.SettingName));
 
             services.AddSingleton<IMongoAuthServiceDbContext, MongoAuthServiceDbContext>();
             services.AddScoped<IAccountsRepository, AccountsRepository>();

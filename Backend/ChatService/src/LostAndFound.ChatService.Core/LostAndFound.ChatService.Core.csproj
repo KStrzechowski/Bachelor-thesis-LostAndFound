@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LostAndFound.ChatService.CoreLibrary\LostAndFound.ChatService.CoreLibrary.csproj" />
+    <ProjectReference Include="..\LostAndFound.ChatService.DataAccess\LostAndFound.ChatService.DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>
