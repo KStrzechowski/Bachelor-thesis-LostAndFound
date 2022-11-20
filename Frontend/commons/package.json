@@ -1,0 +1,19 @@
+{
+	"name": "commons",
+	"version": "1.0.0",
+	"description": "",
+	"main": "./lib/index.js",
+	"files": [
+		"lib/",
+		"styles/"
+	],
+	"scripts": {
+		"test": "echo Error: no test specified"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"typescript": "^4.9.3"
+	}
+}
