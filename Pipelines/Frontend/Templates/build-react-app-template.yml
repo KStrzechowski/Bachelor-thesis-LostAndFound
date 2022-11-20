@@ -28,14 +28,15 @@ stages:
             workingDirectory: ${{ parameters.frontendProjectDirectory }}
 
           - script: |
-              npm test -- --watchAll=false || exit 1
-            displayName: 'unit test'
+              npm citest || exit 1
+            displayName: 'Unit tests'
             workingDirectory: ${{ parameters.frontendProjectDirectory }}
 
           - task: PublishTestResults@2
             displayName: 'Publish Test Results junit.xml'
             inputs:
-              testResultsFiles: junit.xml
+              testResultsFiles: '**/test-report.xml'
+              testResultsFormat: 'JUnit' 
 
           - task: ArchiveFiles@2
             displayName: "Archive files"
