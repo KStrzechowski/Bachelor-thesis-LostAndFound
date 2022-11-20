@@ -69,13 +69,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.Gateway.Integr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ChatService.IntegrationTests", "ChatService\tests\LostAndFound.ChatService.IntegrationTests\LostAndFound.ChatService.IntegrationTests.csproj", "{625D5162-5896-4D9D-A589-B775E8EF642B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.ChatService.CoreLibrary", "ChatService\src\LostAndFound.ChatService.CoreLibrary\LostAndFound.ChatService.CoreLibrary.csproj", "{7EFF11E4-F0FA-4770-910C-5BA17201688F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ChatService.CoreLibrary", "ChatService\src\LostAndFound.ChatService.CoreLibrary\LostAndFound.ChatService.CoreLibrary.csproj", "{7EFF11E4-F0FA-4770-910C-5BA17201688F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.Gateway.CoreLibrary", "Gateway\src\LostAndFound.Gateway.CoreLibrary\LostAndFound.Gateway.CoreLibrary.csproj", "{10338336-8A8A-45D2-815F-D7D2874292A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.Gateway.CoreLibrary", "Gateway\src\LostAndFound.Gateway.CoreLibrary\LostAndFound.Gateway.CoreLibrary.csproj", "{10338336-8A8A-45D2-815F-D7D2874292A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.ProfileService.CoreLibrary", "ProfileService\src\LostAndFound.ProfileService.CoreLibrary\LostAndFound.ProfileService.CoreLibrary.csproj", "{9C3890B3-E07A-437D-88D2-2BA3121E3FAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ProfileService.CoreLibrary", "ProfileService\src\LostAndFound.ProfileService.CoreLibrary\LostAndFound.ProfileService.CoreLibrary.csproj", "{9C3890B3-E07A-437D-88D2-2BA3121E3FAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.PublicationService.CoreLibrary", "PublicationService\src\LostAndFound.PublicationService.CoreLibrary\LostAndFound.PublicationService.CoreLibrary.csproj", "{EA2A2CC7-346A-49FE-A76E-060937C90880}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.PublicationService.CoreLibrary", "PublicationService\src\LostAndFound.PublicationService.CoreLibrary\LostAndFound.PublicationService.CoreLibrary.csproj", "{EA2A2CC7-346A-49FE-A76E-060937C90880}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ChatService.DataAccess", "ChatService\src\LostAndFound.ChatService.DataAccess\LostAndFound.ChatService.DataAccess.csproj", "{27A897F5-AC3E-477E-8E37-01B584945EE3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ProfileService.DataAccess", "ProfileService\src\LostAndFound.ProfileService.DataAccess\LostAndFound.ProfileService.DataAccess.csproj", "{96946FEB-3DAF-4A0E-B6E6-1275C7142432}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.PublicationService.DataAccess", "PublicationService\src\LostAndFound.PublicationService.DataAccess\LostAndFound.PublicationService.DataAccess.csproj", "{B091ECF7-F377-4BD0-A442-298B0AB8472D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.ProfileService.Core", "ProfileService\src\LostAndFound.ProfileService.Core\LostAndFound.ProfileService.Core.csproj", "{AF9B3ADD-AC4A-4BC6-81D4-1575CADD354D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +179,26 @@ Global
 		{EA2A2CC7-346A-49FE-A76E-060937C90880}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA2A2CC7-346A-49FE-A76E-060937C90880}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA2A2CC7-346A-49FE-A76E-060937C90880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27A897F5-AC3E-477E-8E37-01B584945EE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27A897F5-AC3E-477E-8E37-01B584945EE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27A897F5-AC3E-477E-8E37-01B584945EE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27A897F5-AC3E-477E-8E37-01B584945EE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96946FEB-3DAF-4A0E-B6E6-1275C7142432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96946FEB-3DAF-4A0E-B6E6-1275C7142432}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96946FEB-3DAF-4A0E-B6E6-1275C7142432}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96946FEB-3DAF-4A0E-B6E6-1275C7142432}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B091ECF7-F377-4BD0-A442-298B0AB8472D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B091ECF7-F377-4BD0-A442-298B0AB8472D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B091ECF7-F377-4BD0-A442-298B0AB8472D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B091ECF7-F377-4BD0-A442-298B0AB8472D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E29E74F-A89A-4888-BA5E-119EB1145E1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E29E74F-A89A-4888-BA5E-119EB1145E1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E29E74F-A89A-4888-BA5E-119EB1145E1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E29E74F-A89A-4888-BA5E-119EB1145E1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF9B3ADD-AC4A-4BC6-81D4-1575CADD354D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF9B3ADD-AC4A-4BC6-81D4-1575CADD354D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF9B3ADD-AC4A-4BC6-81D4-1575CADD354D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF9B3ADD-AC4A-4BC6-81D4-1575CADD354D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -208,6 +236,11 @@ Global
 		{10338336-8A8A-45D2-815F-D7D2874292A6} = {F68E7085-174B-4F0D-B566-719B9FBE6095}
 		{9C3890B3-E07A-437D-88D2-2BA3121E3FAC} = {B2E91A50-16AC-4A84-AEAF-D2D0D8B44780}
 		{EA2A2CC7-346A-49FE-A76E-060937C90880} = {A380A34F-4769-4694-84C9-B9B4132278C9}
+		{27A897F5-AC3E-477E-8E37-01B584945EE3} = {552C6892-7F51-4FF7-A6DD-8893C379AFD6}
+		{96946FEB-3DAF-4A0E-B6E6-1275C7142432} = {B2E91A50-16AC-4A84-AEAF-D2D0D8B44780}
+		{B091ECF7-F377-4BD0-A442-298B0AB8472D} = {A380A34F-4769-4694-84C9-B9B4132278C9}
+		{2E29E74F-A89A-4888-BA5E-119EB1145E1B} = {F68E7085-174B-4F0D-B566-719B9FBE6095}
+		{AF9B3ADD-AC4A-4BC6-81D4-1575CADD354D} = {B2E91A50-16AC-4A84-AEAF-D2D0D8B44780}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5BDF6858-EE9C-4EA7-8CFE-454D939A4A80}

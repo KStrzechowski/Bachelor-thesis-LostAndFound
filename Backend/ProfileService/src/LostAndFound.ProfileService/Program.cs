@@ -1,5 +1,10 @@
+using LostAndFound.ProfileService.Core;
+using LostAndFound.ProfileService.Core.FluentValidators;
 using LostAndFound.ProfileService.CoreLibrary.Settings;
+using LostAndFound.ProfileService.DataAccess;
+using LostAndFound.ProfileService.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -12,8 +17,20 @@ builder.Configuration.Bind("LostAndFoundAuthentication", authenticationSettings)
 builder.Services.AddSingleton(authenticationSettings);
 
 builder.Services.AddHealthChecks();
-builder.Services.AddControllers();
+builder.Services.AddControllers(setupAction =>
+{
+    setupAction.Filters.Add(
+        new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest));
+    setupAction.Filters.Add(
+        new ProducesResponseTypeAttribute(StatusCodes.Status406NotAcceptable));
+    setupAction.Filters.Add(
+        new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
+});
 
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Services.AddFluentValidators();
+builder.Services.AddDataAccessServices(builder.Configuration);
+builder.Services.AddCoreServices();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(config =>
@@ -79,6 +96,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -100,4 +118,6 @@ app.UseEndpoints(endpoints =>
 app.Run();
 
 // Make the implicit Program class public so test projects can access it
+#pragma warning disable CA1050 // Declare types in namespaces
 public partial class Program { }
+#pragma warning restore CA1050 // Declare types in namespaces
