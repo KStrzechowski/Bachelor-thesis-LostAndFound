@@ -40,6 +40,14 @@ namespace LostAndFound.ProfileService.DataAccess.Repositories
             await UpdateAverageProfileRating(profileOwnerId);
         }
 
+        public async Task UpdateProfilePictureUrl(Guid profileOwnerId, string? pictureUrl)
+        {
+            var filter = Builders<Profile>.Filter.Eq(profile => profile.UserId, profileOwnerId);
+            var update = Builders<Profile>.Update.Set(profile => profile.PictureUrl, pictureUrl);
+
+            await _collection.UpdateOneAsync(filter, update);
+        }
+
         private async Task UpdateAverageProfileRating(Guid profileOwnerId)
         {
             var profileEntity = await base.GetSingleAsync(prof => prof.UserId == profileOwnerId);

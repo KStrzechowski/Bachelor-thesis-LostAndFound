@@ -3,6 +3,7 @@ using LostAndFound.ProfileService.Core.FluentValidators;
 using LostAndFound.ProfileService.CoreLibrary.Settings;
 using LostAndFound.ProfileService.DataAccess;
 using LostAndFound.ProfileService.Middleware;
+using LostAndFound.ProfileService.ThirdPartyServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -31,6 +32,7 @@ builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddFluentValidators();
 builder.Services.AddDataAccessServices(builder.Configuration);
 builder.Services.AddCoreServices();
+builder.Services.AddThirdPartyServices(builder.Configuration);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(config =>

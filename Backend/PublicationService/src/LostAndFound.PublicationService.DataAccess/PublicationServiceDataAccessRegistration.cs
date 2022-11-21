@@ -13,7 +13,7 @@ namespace LostAndFound.PublicationService.DataAccess
         public static IServiceCollection AddDataAccessServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<PublicationServiceDatabaseSettings>(
-                configuration.GetSection("LostAndFoundPublicationServiceDb"));
+                configuration.GetSection(PublicationServiceDatabaseSettings.SettingName));
 
             services.AddSingleton<IMongoPublicationServiceDbContext, MongoPublicationServiceDbContext>();
             services.AddScoped<IPublicationsRepository, PublicationsRepository>();

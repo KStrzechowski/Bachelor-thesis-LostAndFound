@@ -8,7 +8,7 @@ namespace LostAndFound.PublicationService.DataAccess.Entities
         public Guid CreatorId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string? SubjectPhotoId { get; set; }
+        public string? SubjectPhotoUrl { get; set; }
         public string IncidentAddress { get; set; } = string.Empty;
         public string SubjectCategory { get; set; } = string.Empty;
         public float Latitude { get; set; }

@@ -13,7 +13,7 @@ namespace LostAndFound.ChatService.DataAccess
         public static IServiceCollection AddDataAccessServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<ChatServiceDatabaseSettings>(
-                configuration.GetSection("LostAndFoundChatServiceDb"));
+                configuration.GetSection(ChatServiceDatabaseSettings.SettingName));
 
             services.AddSingleton<IMongoChatServiceDbContext, MongoChatServiceDbContext>();
             services.AddScoped<IChatsRepository, ChatsRepository>();
