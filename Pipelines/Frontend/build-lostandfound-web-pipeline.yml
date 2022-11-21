@@ -8,7 +8,7 @@ trigger:
     - Frontend/lostandfound.web/*
 
 stages:
-  - template: Templates/build-react-app-template.yml
+  - template: Templates/build-with-tests-react-app-template.yml
     parameters:
       frontendProjectDirectory: Frontend/lostandfound.web
       nodeVersion: 16.x

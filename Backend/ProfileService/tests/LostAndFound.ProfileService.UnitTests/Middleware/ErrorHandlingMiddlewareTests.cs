@@ -32,18 +32,5 @@ namespace LostAndFound.ProfileService.UnitTests.Middleware
             await _errorHandlingMiddleware.InvokeAsync(_contextMock.Object, _requestDelegateMock.Object);
             _contextMock.VerifyAll();
         }
-
-        [Fact]
-        public async Task InvokeAsync_WithRequestDelegateThatThrowsNotFoundException_SetsStatusCode404()
-        {
-            _contextMock.SetupSet(context => context.Response.StatusCode = 404)
-                .Verifiable();
-            _requestDelegateMock
-                .Setup(x => x.Invoke(_contextMock.Object))
-                .Throws(new NotFoundException());
-
-            await _errorHandlingMiddleware.InvokeAsync(_contextMock.Object, _requestDelegateMock.Object);
-            _contextMock.VerifyAll();
-        }
     }
 }

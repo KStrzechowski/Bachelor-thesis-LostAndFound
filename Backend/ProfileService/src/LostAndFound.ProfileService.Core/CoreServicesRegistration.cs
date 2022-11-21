@@ -12,6 +12,8 @@ namespace LostAndFound.ProfileService.Core
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IUserProfileService, UserProfileService>();
+            services.AddScoped<IProfileCommentService, ProfileCommentService>();
+
             services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 
             return services;

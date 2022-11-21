@@ -83,8 +83,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ProfileService
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.PublicationService.DataAccess", "PublicationService\src\LostAndFound.PublicationService.DataAccess\LostAndFound.PublicationService.DataAccess.csproj", "{B091ECF7-F377-4BD0-A442-298B0AB8472D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.Gateway.Services", "Gateway\src\LostAndFound.Gateway.Services\LostAndFound.Gateway.Services.csproj", "{2E29E74F-A89A-4888-BA5E-119EB1145E1B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.ProfileService.Core", "ProfileService\src\LostAndFound.ProfileService.Core\LostAndFound.ProfileService.Core.csproj", "{AF9B3ADD-AC4A-4BC6-81D4-1575CADD354D}"
 EndProject
 Global

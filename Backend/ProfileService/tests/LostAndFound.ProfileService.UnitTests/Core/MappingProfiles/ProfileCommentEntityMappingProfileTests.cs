@@ -2,17 +2,17 @@
 using LostAndFound.ProfileService.Core.MappingProfiles;
 using Xunit;
 
-namespace LostAndFound.ProfileService.UnitTests.MappingProfiles
+namespace LostAndFound.ProfileService.UnitTests.Core.MappingProfiles
 {
-    public class ProfileEntityMappingProfileTests
+    public class ProfileCommentEntityMappingProfileTests
     {
         [Fact]
-        public void ValidateProductsProfileMappingIsValid()
+        public void ValidateProfileCommentEntityMappingProfileIsValid()
         {
             MapperConfiguration mapperConfig = new(
                 cfg =>
                 {
-                    cfg.AddProfile(new ProfileEntityMappingProfile());
+                    cfg.AddProfile(new ProfileCommentEntityMappingProfile());
                 });
 
             IMapper mapper = new Mapper(mapperConfig);

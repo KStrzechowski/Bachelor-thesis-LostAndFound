@@ -17,13 +17,6 @@ namespace LostAndFound.PublicationService.DataAccess.Entities
         public string State { get; set; } = string.Empty;
         public int AggregateRating { get; set; }
         public DateTime LastModificationDate { get; set; }
-        public IEnumerable<Vote> Votes { get; set; } = Enumerable.Empty<Vote>();
-    }
-
-    public class Vote
-    {
-        public Guid VoterId { get; set; }
-        public int Rating { get; set; }
-        public DateTime CreationDate { get; set; }
+        public Vote[] Votes { get; set; } = Array.Empty<Vote>();
     }
 }
