@@ -5,6 +5,7 @@ using LostAndFound.ProfileService.Core.UserProfileServices.Interfaces;
 using LostAndFound.ProfileService.CoreLibrary.Settings;
 using LostAndFound.ProfileService.DataAccess.Context.Interfaces;
 using LostAndFound.ProfileService.DataAccess.Repositories.Interfaces;
+using LostAndFound.ProfileService.ThirdPartyServices.AzureServices.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
@@ -41,6 +42,8 @@ namespace LostAndFound.ProfileService.UnitTests.ServiceRegistrations
             _services.AddSingleton(mockedAccountssRepository.Object);
             var mockedMongoAuthServiceDbContext = new Mock<IMongoProfileServiceDbContext>();
             _services.AddSingleton(mockedMongoAuthServiceDbContext.Object);
+            var mockedFileStorageService = new Mock<IFileStorageService>();
+            _services.AddSingleton(mockedFileStorageService.Object);
             _services.AddCoreServices();
 
             var serviceProvider = _services.BuildServiceProvider();

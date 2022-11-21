@@ -41,6 +41,11 @@
         public string? City { get; set; }
 
         /// <summary>
+        /// User profile picture Url
+        /// </summary>
+        public string? PictureUrl { get; set; }
+
+        /// <summary>
         /// Average profile rating
         /// </summary>
         public float AverageProfileRating { get; set; }

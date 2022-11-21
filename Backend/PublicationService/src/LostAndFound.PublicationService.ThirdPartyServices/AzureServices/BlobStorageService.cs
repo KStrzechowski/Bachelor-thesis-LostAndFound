@@ -1,26 +1,44 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
+using LostAndFound.PublicationService.ThirdPartyServices.Models;
+using LostAndFound.PublicationService.ThirdPartyServices.Settings;
 
 namespace LostAndFound.PublicationService.ThirdPartyServices.AzureServices
 {
     public class BlobStorageService : IFileStorageService
     {
         private readonly BlobServiceClient _blobServiceClient;
+        private readonly BlobStorageSettings _blobStorageSettings;
 
-        public BlobStorageService(BlobServiceClient blobServiceClient)
+        public BlobStorageService(BlobServiceClient blobServiceClient, BlobStorageSettings blobStorageSettings)
         {
-            _blobServiceClient = blobServiceClient;
+            _blobServiceClient = blobServiceClient ?? throw new ArgumentNullException(nameof(blobServiceClient));
+            _blobStorageSettings = blobStorageSettings ?? throw new ArgumentNullException(nameof(blobStorageSettings));
         }
 
-        //public async Task UploadFileAsync()
-        //{
-        //    var containerClient = _blobServiceClient.GetBlobContainerClient("profile-pictures");
+        public async Task<string> UploadAsync(FileDto file)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(
+                _blobStorageSettings.PublicationPicturesContainerName);
 
-        //    var blobClient = containerClient.GetBlobClient("");
+            var blobClient = containerClient.GetBlobClient(file.GetPathWithFileName());
+            await blobClient.UploadAsync(file.Content, new BlobHttpHeaders
+            {
+                ContentType = file.ContentType,
+            });
 
-        //    //await blobClient.UploadAsync()
+            return blobClient.Uri.ToString();
+        }
 
-        //    throw new NotImplementedException();
-        //}
+        public async Task DeleteAsync(string blobName)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(
+                _blobStorageSettings.PublicationPicturesContainerName);
+
+            var blobClient = containerClient.GetBlobClient(blobName);
+
+            await blobClient.DeleteIfExistsAsync();
+        }
     }
 }

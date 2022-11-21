@@ -139,5 +139,57 @@ namespace LostAndFound.ProfileService.Controllers
 
             return Ok(profileDetailsDto);
         }
+
+        /// <summary>
+        /// Update user profile picture
+        /// </summary>
+        /// <param name="picture">User profile picture</param>
+        /// <returns>User profile details</returns>
+        /// <response code="200">Returns profile details</response>
+        /// <response code="401">Problem with authentication of user occurred</response>
+        /// <response code="404">Could not find profile corresponding to authenticated user</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     PATCH /profile/picture
+        ///
+        /// </remarks>
+        [Authorize]
+        [HttpPatch("picture")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ProfileDetailsResponseDto>> UpdateUserProfilePicture(IFormFile picture)
+        {
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var profileDetailsDto = await _userProfileService.UpdateUserProfilePicture(picture, rawUserId);
+
+            return Ok(profileDetailsDto);
+        }
+
+        /// <summary>
+        /// Update user profile picture
+        /// </summary>
+        /// <response code="204">Returns profile details</response>
+        /// <response code="401">Problem with authentication of user occurred</response>
+        /// <response code="404">Could not find profile corresponding to authenticated user</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     DELETE /profile/picture
+        ///
+        /// </remarks>
+        [Authorize]
+        [HttpDelete("picture")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult<ProfileDetailsResponseDto>> DeleteUserProfilePicture()
+        {
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _userProfileService.DeleteUserProfilePicture(rawUserId);
+
+            return NoContent();
+        }
     }
 }

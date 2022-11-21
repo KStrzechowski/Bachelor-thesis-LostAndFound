@@ -6,5 +6,6 @@
 
         public static string SettingName => settingName;
         public string ConnectionString { get; set; } = string.Empty;
+        public string ProfilePicturesContainerName { get; set; } = string.Empty;
     }
 }

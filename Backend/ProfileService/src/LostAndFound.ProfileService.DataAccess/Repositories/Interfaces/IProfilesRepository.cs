@@ -7,5 +7,6 @@ namespace LostAndFound.ProfileService.DataAccess.Repositories.Interfaces
         Task InsertNewProfileComment(Guid profileOwnerId, Comment commentEntity);
         Task UpdateProfileComment(Guid profileOwnerId, Comment commentEntity);
         Task DeleteProfileComment(Guid profileOwnerId, Comment commentEntity);
+        Task UpdateProfilePictureUrl(Guid userId, string? pictureUrl);
     }
 }

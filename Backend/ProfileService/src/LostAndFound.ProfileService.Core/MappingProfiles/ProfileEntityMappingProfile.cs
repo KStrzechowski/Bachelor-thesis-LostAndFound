@@ -31,6 +31,7 @@ namespace LostAndFound.ProfileService.Core.MappingProfiles
                 .ForMember(dto => dto.Surname, opt => opt.MapFrom(o => o.Surname))
                 .ForMember(dto => dto.Description, opt => opt.MapFrom(o => o.Description))
                 .ForMember(dto => dto.City, opt => opt.MapFrom(o => o.City))
+                .ForMember(dto => dto.PictureUrl, opt => opt.MapFrom(o => o.PictureUrl))
                 .ForMember(dto => dto.AverageProfileRating, opt => opt.MapFrom(o => o.AverageRating));
 
             CreateMap<UpdateProfileDetailsRequestDto, ProfileEntity>()

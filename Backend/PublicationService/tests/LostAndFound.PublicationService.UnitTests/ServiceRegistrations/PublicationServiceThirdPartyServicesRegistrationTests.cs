@@ -1,23 +1,23 @@
 ﻿using Azure.Storage.Blobs;
 using FluentAssertions;
-using LostAndFound.ProfileService.ThirdPartyServices;
-using LostAndFound.ProfileService.ThirdPartyServices.AzureServices.Interfaces;
-using LostAndFound.ProfileService.ThirdPartyServices.Settings;
+using LostAndFound.PublicationService.ThirdPartyServices;
+using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
+using LostAndFound.PublicationService.ThirdPartyServices.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace LostAndFound.ProfileService.UnitTests.ServiceRegistrations
+namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
 {
-    public class ProfileServiceThirdPartyServicesRegistrationTests
+    public class PublicationServiceThirdPartyServicesRegistrationTests
     {
         private readonly IConfiguration _configuration;
         private readonly ServiceCollection _services;
         private readonly Dictionary<string, string> _testCustomConfiguration;
 
-        public ProfileServiceThirdPartyServicesRegistrationTests()
+        public PublicationServiceThirdPartyServicesRegistrationTests()
         {
             _testCustomConfiguration = new Dictionary<string, string>
             {
@@ -26,8 +26,8 @@ namespace LostAndFound.ProfileService.UnitTests.ServiceRegistrations
                     "DefaultEndpointsProtocol=https;AccountName=lostandfoundstorageTest;AccountKey=i27BG+cowBxceqL7KVTktwCv656A0n6aIA6BjQeN03BEkvE5WrT5yL6T/Q5xkJzxGvzDNdYeIrdq+AStvgk5Nw==;EndpointSuffix=core.windows.net"
                 },
                 {
-                    "LostAndFoundBlobStorageSettings:ProfilePicturesContainerName",
-                    "profile-container"
+                    "LostAndFoundBlobStorageSettings:PublicationPicturesContainerName",
+                    "publication-container"
                 }
             };
             _configuration = new ConfigurationBuilder()
@@ -58,7 +58,7 @@ namespace LostAndFound.ProfileService.UnitTests.ServiceRegistrations
 
             configuration?.Should().NotBeNull();
             configuration!.ConnectionString.Should().Be(_testCustomConfiguration["LostAndFoundBlobStorageSettings:ConnectionString"]);
-            configuration!.ProfilePicturesContainerName.Should().Be(_testCustomConfiguration["LostAndFoundBlobStorageSettings:ProfilePicturesContainerName"]);
+            configuration!.PublicationPicturesContainerName.Should().Be(_testCustomConfiguration["LostAndFoundBlobStorageSettings:PublicationPicturesContainerName"]);
         }
     }
 }
