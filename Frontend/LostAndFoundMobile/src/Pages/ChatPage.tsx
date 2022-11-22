@@ -1,3 +1,1 @@
-export const ChatPage = () => {
-    
-}
+export const ChatPage = () => {};
