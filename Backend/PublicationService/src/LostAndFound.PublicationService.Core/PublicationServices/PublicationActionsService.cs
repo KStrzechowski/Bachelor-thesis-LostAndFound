@@ -27,12 +27,12 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             _geocodingService = geocodingService ?? throw new ArgumentNullException(nameof(geocodingService));
         }
 
-        public Task DeletePublicationPhoto(string rawUserId)
+        public Task DeletePublicationPhoto(string rawUserId, Guid publicationId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PublicationDetailsResponseDto> UpdatePublicationPhoto(IFormFile photo, string rawUserId)
+        public Task<PublicationDetailsResponseDto> UpdatePublicationPhoto(IFormFile photo, string rawUserId, Guid publicationId)
         {
             throw new NotImplementedException();
         }

@@ -1,7 +1,9 @@
 ﻿using Azure.Storage.Blobs;
 using FluentAssertions;
+using Geocoding.Google;
 using LostAndFound.PublicationService.ThirdPartyServices;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
+using LostAndFound.PublicationService.ThirdPartyServices.GeocodingServices.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +30,10 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
                 {
                     "LostAndFoundBlobStorageSettings:PublicationPicturesContainerName",
                     "publication-container"
+                },
+                {
+                    "LostAndFoundGoogleGeocoderSettings:ApiKey",
+                    "BCzaSyC3FfyxStTRB1L5SG6CQNGqlhJ1rE3gW4T"
                 }
             };
             _configuration = new ConfigurationBuilder()
@@ -40,6 +46,8 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
         [Theory]
         [InlineData(typeof(IFileStorageService))]
         [InlineData(typeof(BlobServiceClient))]
+        [InlineData(typeof(IGeocodingService))]
+        [InlineData(typeof(GoogleGeocoder))]
         public void AddThirdPartyServices_Execute_ResultsInExpectedServiceIsRegistered(Type type)
         {
             _services.AddThirdPartyServices(_configuration);
@@ -59,6 +67,18 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
             configuration?.Should().NotBeNull();
             configuration!.ConnectionString.Should().Be(_testCustomConfiguration["LostAndFoundBlobStorageSettings:ConnectionString"]);
             configuration!.PublicationPicturesContainerName.Should().Be(_testCustomConfiguration["LostAndFoundBlobStorageSettings:PublicationPicturesContainerName"]);
+        }
+
+        [Fact]
+        public void AddThirdPartyServices_Execute_GoogleGeocoderSettingsAreConfiguredCorrectly()
+        {
+            _services.AddThirdPartyServices(_configuration);
+            var serviceProvider = _services.BuildServiceProvider();
+
+            var configuration = serviceProvider.GetService(typeof(GoogleGeocoderSettings)) as GoogleGeocoderSettings;
+
+            configuration?.Should().NotBeNull();
+            configuration!.ApiKey.Should().Be(_testCustomConfiguration["LostAndFoundGoogleGeocoderSettings:ApiKey"]);
         }
     }
 }
