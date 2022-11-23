@@ -1,0 +1,17 @@
+@import "../node_modules/commons/styles/common.scss";
+
+// Create your own map
+$custom-colors: (
+	"acc": $accent,
+);
+
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import "bootstrap";
+
+.App {
+	text-align: center;
+	width: 100%;
+}

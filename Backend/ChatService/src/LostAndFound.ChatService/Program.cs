@@ -1,3 +1,4 @@
+using LostAndFound.ChatService.Core;
 using LostAndFound.ChatService.CoreLibrary.Settings;
 using LostAndFound.ChatService.DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +17,7 @@ builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 
 builder.Services.AddDataAccessServices(builder.Configuration);
+builder.Services.AddCoreServices();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(config =>

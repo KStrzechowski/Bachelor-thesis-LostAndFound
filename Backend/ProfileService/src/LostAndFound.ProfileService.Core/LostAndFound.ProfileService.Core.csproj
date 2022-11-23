@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LostAndFound.ProfileService.CoreLibrary\LostAndFound.ProfileService.CoreLibrary.csproj" />
     <ProjectReference Include="..\LostAndFound.ProfileService.DataAccess\LostAndFound.ProfileService.DataAccess.csproj" />
+    <ProjectReference Include="..\LostAndFound.ProfileService.ThirdPartyServices\LostAndFound.ProfileService.ThirdPartyServices.csproj" />
   </ItemGroup>
 
 </Project>

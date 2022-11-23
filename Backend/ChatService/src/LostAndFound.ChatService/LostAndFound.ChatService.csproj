@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LostAndFound.ChatService.CoreLibrary\LostAndFound.ChatService.CoreLibrary.csproj" />
+    <ProjectReference Include="..\LostAndFound.ChatService.Core\LostAndFound.ChatService.Core.csproj" />
     <ProjectReference Include="..\LostAndFound.ChatService.DataAccess\LostAndFound.ChatService.DataAccess.csproj" />
   </ItemGroup>
 

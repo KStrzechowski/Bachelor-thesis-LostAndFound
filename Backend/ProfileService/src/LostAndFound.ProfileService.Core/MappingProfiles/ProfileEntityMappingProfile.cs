@@ -16,7 +16,7 @@ namespace LostAndFound.ProfileService.Core.MappingProfiles
                 .ForMember(entity => entity.Name, opt => opt.Ignore())
                 .ForMember(entity => entity.Surname, opt => opt.Ignore())
                 .ForMember(entity => entity.City, opt => opt.Ignore())
-                .ForMember(entity => entity.PictureId, opt => opt.Ignore())
+                .ForMember(entity => entity.PictureUrl, opt => opt.Ignore())
                 .ForMember(entity => entity.AverageRating, opt => opt.Ignore())
                 .ForMember(entity => entity.Comments, opt => opt.Ignore())
                 .ForMember(entity => entity.Id, opt => opt.Ignore())
@@ -31,6 +31,7 @@ namespace LostAndFound.ProfileService.Core.MappingProfiles
                 .ForMember(dto => dto.Surname, opt => opt.MapFrom(o => o.Surname))
                 .ForMember(dto => dto.Description, opt => opt.MapFrom(o => o.Description))
                 .ForMember(dto => dto.City, opt => opt.MapFrom(o => o.City))
+                .ForMember(dto => dto.PictureUrl, opt => opt.MapFrom(o => o.PictureUrl))
                 .ForMember(dto => dto.AverageProfileRating, opt => opt.MapFrom(o => o.AverageRating));
 
             CreateMap<UpdateProfileDetailsRequestDto, ProfileEntity>()
@@ -41,7 +42,7 @@ namespace LostAndFound.ProfileService.Core.MappingProfiles
                 .ForMember(entity => entity.UserId, opt => opt.Ignore())
                 .ForMember(entity => entity.Email, opt => opt.Ignore())
                 .ForMember(entity => entity.Username, opt => opt.Ignore())
-                .ForMember(entity => entity.PictureId, opt => opt.Ignore())
+                .ForMember(entity => entity.PictureUrl, opt => opt.Ignore())
                 .ForMember(entity => entity.AverageRating, opt => opt.Ignore())
                 .ForMember(entity => entity.Comments, opt => opt.Ignore())
                 .ForMember(entity => entity.Id, opt => opt.Ignore())

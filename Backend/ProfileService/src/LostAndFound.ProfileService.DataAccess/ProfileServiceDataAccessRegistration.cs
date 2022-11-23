@@ -13,7 +13,7 @@ namespace LostAndFound.ProfileService.DataAccess
         public static IServiceCollection AddDataAccessServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<ProfileServiceDatabaseSettings>(
-                configuration.GetSection("LostAndFoundProfileServiceDb"));
+                configuration.GetSection(ProfileServiceDatabaseSettings.SettingName));
 
             services.AddSingleton<IMongoProfileServiceDbContext, MongoProfileServiceDbContext>();
             services.AddScoped<IProfilesRepository, ProfilesRepository>();

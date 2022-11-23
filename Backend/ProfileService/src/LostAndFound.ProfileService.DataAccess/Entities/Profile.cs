@@ -12,7 +12,7 @@ namespace LostAndFound.ProfileService.DataAccess.Entities
         public string? Surname { get; set; }
         public string? Description { get; set; }
         public string? City { get; set; }
-        public string? PictureId { get; set; }
+        public string? PictureUrl { get; set; }
         public float AverageRating { get; set; }
         public Comment[] Comments { get; set; } = Array.Empty<Comment>();
     }
