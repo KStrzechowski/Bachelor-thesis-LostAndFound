@@ -35,11 +35,15 @@ stages:
               testResultsFiles: '**/TEST-*.xml'
               tasks: 'assembleRelease'
 
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
+          - task: AndroidSigning@2
             inputs:
-              testResultsFiles: '**/test-*.xml'
-              testResultsFormat: 'JUnit'
+              apkFiles: '**/*.apk'
+              jarsign: true
+              jarsignerKeystoreFile: 'android.keystore'
+              jarsignerKeystorePassword: '$(AndroidKeyStorePassword)'
+              jarsignerKeystoreAlias: '$(AndroidKeyAlias)'
+              jarsignerKeyPassword: '$(AndroidKeyStorePassword)'
+              zipalign: true
 
           - script: mv ${{ parameters.mobileProjectDirectory }}/android/app/build/outputs/apk/release/app-release-unsigned.apk ReactNativePipeline$(Build.BuildNumber).apk
             displayName: 'Rename apk'

@@ -3,6 +3,9 @@ name: $(date:yyyyMMdd)$(rev:.r)_$(SourceBranchName)-$(BuildId)-FrontendMobileBui
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  - group: LostAndFound.Mobile
+
 trigger:
   paths:
     include:
