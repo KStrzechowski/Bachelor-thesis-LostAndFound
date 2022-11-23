@@ -1,6 +1,7 @@
 name: $(date:yyyyMMdd)$(rev:.r)_$(SourceBranchName)-$(BuildId)-FrontendMobileBuild
 
-pool: Default
+pool:
+  vmImage: ubuntu-latest
 
 trigger:
   paths:
