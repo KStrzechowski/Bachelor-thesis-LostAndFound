@@ -45,11 +45,8 @@ stages:
               jarsignerKeyPassword: '$(AndroidKeyStorePassword)'
               zipalign: true
 
-          - script: mv ${{ parameters.mobileProjectDirectory }}/android/app/build/outputs/apk/release/app-release-unsigned.apk ReactNativePipeline$(Build.BuildNumber).apk
-            displayName: 'Rename apk'
-
           - task: PublishBuildArtifacts@1
             inputs:
-              pathtoPublish: ReactNativePipeline$(Build.BuildNumber).apk
-              artifactName: drop
+              pathtoPublish: '${{ parameters.mobileProjectDirectory }}/android/app/build/outputs/apk/release'
+              artifactName: 'android'
               publishLocation: 'container'
