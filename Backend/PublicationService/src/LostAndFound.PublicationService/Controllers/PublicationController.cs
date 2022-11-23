@@ -19,6 +19,7 @@ namespace LostAndFound.PublicationService.Controllers
     [ApiController]
     public class PublicationController : ControllerBase
     {
+        private const int maxPublicationsPageSize = 50;
         private readonly IPublicationActionsService _publicationService;
 
         /// <summary>

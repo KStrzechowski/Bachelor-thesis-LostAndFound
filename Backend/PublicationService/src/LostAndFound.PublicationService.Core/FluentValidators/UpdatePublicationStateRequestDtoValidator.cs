@@ -7,7 +7,9 @@ namespace LostAndFound.PublicationService.Core.FluentValidators
     {
         public UpdatePublicationStateRequestDtoValidator()
         {
-
+            RuleFor(dto => dto.PublicationState)
+                .NotNull()
+                .IsInEnum();
         }
     }
 }

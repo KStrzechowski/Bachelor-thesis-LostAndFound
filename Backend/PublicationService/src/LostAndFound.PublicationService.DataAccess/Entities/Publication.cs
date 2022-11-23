@@ -8,7 +8,7 @@ namespace LostAndFound.PublicationService.DataAccess.Entities
     public class Publication : BaseDocument
     {
         public Guid PublicationId { get; set; }
-        public Guid CreatorId { get; set; }
+        public Author Author { get; set; } = null!;
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string? SubjectPhotoUrl { get; set; }
