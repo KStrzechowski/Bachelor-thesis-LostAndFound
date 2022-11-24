@@ -1,95 +1,22 @@
-using LostAndFound.Gateway.CoreLibrary.Settings;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Reflection;
-using System.Text;
-using System.Linq;
-using Microsoft.OpenApi.Models;
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var authenticationSettings = new AuthenticationSettings();
-builder.Configuration.Bind("LostAndFoundAuthentication", authenticationSettings);
-builder.Services.AddSingleton(authenticationSettings);
+builder.Configuration.AddJsonFile("ocelot.json");
 
 builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(config =>
-    {
-        config.TokenValidationParameters = new TokenValidationParameters()
-        {
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.AccessTokenSecret)),
-            ValidIssuer = authenticationSettings.Issuer,
-            ValidAudience = authenticationSettings.Audience,
-            ValidateIssuerSigningKey = true,
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-
-builder.Services.AddSwaggerGen(setupAction =>
-{
-    setupAction.SwaggerDoc(
-        "LostAndFound.Gateway",
-        new Microsoft.OpenApi.Models.OpenApiInfo()
-        {
-            Title = "LostAndFound Gateway",
-            Version = "v1",
-            Description = "Gateway api being part of LostAndFound system. Gateway manages communication from clients to microservices.",
-        });
-
-    var currentAssembly = Assembly.GetExecutingAssembly();
-    var xmlDocs = currentAssembly.GetReferencedAssemblies()
-        .Union(new AssemblyName[] { currentAssembly.GetName() })
-        .Select(a => Path.Combine(AppContext.BaseDirectory, $"{a.Name}.xml"))
-        .Where(f => File.Exists(f)).ToArray();
-    foreach(var xmlDoc in xmlDocs)
-    {
-        setupAction.IncludeXmlComments(xmlDoc);
-    }
-
-    var jwtSecurityScheme = new OpenApiSecurityScheme
-    {
-        BearerFormat = "JWT",
-        Name = "JWT Authentication",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = JwtBearerDefaults.AuthenticationScheme,
-        Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
-
-        Reference = new OpenApiReference
-        {
-            Id = JwtBearerDefaults.AuthenticationScheme,
-            Type = ReferenceType.SecurityScheme
-        }
-    };
-
-    setupAction.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-    setupAction.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        { jwtSecurityScheme, Array.Empty<string>() }
-    });
-});
+builder.Services.AddOcelot();
+builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+
+app.UseSwaggerForOcelotUI();
 app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseSwagger();
-app.UseSwaggerUI(setupAction =>
-{
-    setupAction.SwaggerEndpoint(
-        "/swagger/LostAndFound.Gateway/swagger.json",
-        "LostAndFound Gateway");
-    setupAction.RoutePrefix = string.Empty;
-});
 
 app.UseEndpoints(endpoints =>
 {
@@ -97,8 +24,11 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
+app.UseOcelot().Wait();
+
 app.Run();
 
 // Make the implicit Program class public so test projects can access it
+#pragma warning disable CA1050 // Declare types in namespaces
 public partial class Program { }
-
+#pragma warning restore CA1050 // Declare types in namespaces

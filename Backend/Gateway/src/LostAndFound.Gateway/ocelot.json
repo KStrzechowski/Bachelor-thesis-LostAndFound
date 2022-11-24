@@ -1,0 +1,80 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/account/register",
+      "DownstreamPathTemplate": "/account/register",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "accounts"
+    },
+    {
+      "UpstreamPathTemplate": "/account/login",
+      "DownstreamPathTemplate": "/account/login",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "accounts"
+    },
+    {
+      "UpstreamPathTemplate": "/account/refresh",
+      "DownstreamPathTemplate": "/account/refresh",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "accounts"
+    },
+    {
+      "UpstreamPathTemplate": "/account/logout",
+      "DownstreamPathTemplate": "/account/logout",
+      "UpstreamHttpMethod": [
+        "Delete"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "accounts"
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "accounts",
+      "Config": [
+        {
+          "Name": "LostAndFound.AuthService",
+          "Version": "v1",
+          "Url": "https://localhost:5100/swagger/LostAndFound.AuthService/swagger.json"
+        }
+      ]
+    }
+  ],
+
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost"
+  }
+}
