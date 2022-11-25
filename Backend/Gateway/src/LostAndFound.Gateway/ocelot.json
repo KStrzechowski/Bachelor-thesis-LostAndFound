@@ -134,7 +134,17 @@
         {
           "Name": "LostAndFound.AuthService",
           "Version": "v1",
-          "Url": "https://localhost:5100/swagger/LostAndFound.AuthService/swagger.json"
+          "Url": "https://localhost:5100/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "chats",
+      "Config": [
+        {
+          "Name": "LostAndFound.ChatService",
+          "Version": "v1",
+          "Url": "https://localhost:5200/swagger/v1/swagger.json"
         }
       ]
     },
@@ -144,7 +154,17 @@
         {
           "Name": "LostAndFound.ProfileService",
           "Version": "v1",
-          "Url": "https://localhost:5300/swagger/LostAndFound.ProfileService/swagger.json"
+          "Url": "https://localhost:5300/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "publications",
+      "Config": [
+        {
+          "Name": "LostAndFound.PublicationService",
+          "Version": "v1",
+          "Url": "https://localhost:5400/swagger/v1/swagger.json"
         }
       ]
     }
