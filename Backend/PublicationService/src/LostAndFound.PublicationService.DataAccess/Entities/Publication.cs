@@ -7,7 +7,7 @@ namespace LostAndFound.PublicationService.DataAccess.Entities
     [BsonCollection("publications")]
     public class Publication : BaseDocument
     {
-        public Guid PublicationId { get; set; }
+        public Guid ExposedId { get; set; }
         public Author Author { get; set; } = null!;
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
