@@ -65,14 +65,13 @@
       "DownstreamPathTemplate": "/profile",
       "UpstreamHttpMethod": [
         "Get",
-        "Post",
         "Put"
       ],
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5100
+          "Port": 5300
         }
       ],
       "SwaggerKey": "profiles"
@@ -87,7 +86,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5100
+          "Port": 5300
         }
       ],
       "SwaggerKey": "profiles"
@@ -103,7 +102,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5100
+          "Port": 5300
         }
       ],
       "SwaggerKey": "profiles"
@@ -121,7 +120,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5100
+          "Port": 5300
         }
       ],
       "SwaggerKey": "profiles"
