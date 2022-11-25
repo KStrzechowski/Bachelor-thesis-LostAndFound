@@ -7,4 +7,5 @@ export {
   MainButton,
   SecondaryButton,
   PressableText,
+  ScoreView,
 } from './MainComponents';

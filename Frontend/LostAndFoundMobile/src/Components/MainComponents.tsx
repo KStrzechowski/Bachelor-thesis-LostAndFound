@@ -9,6 +9,7 @@ import {
   TextProps,
   View,
 } from 'react-native';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export const MainContainer: React.FC<PropsWithChildren> = ({ children }) => {
@@ -93,10 +94,25 @@ export const PressableText: React.FC<
   );
 };
 
-const styles = StyleSheet.create({
+export const ScoreView = (props: { score: number }) => {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignContent: 'center',
+      }}>
+      <AntDesignIcon name="star" size={25} style={{ color: 'gold' }} />
+      <Text style={{ fontSize: 18 }}>{props.score}</Text>
+    </View>
+  );
+};
+
+export const styles = StyleSheet.create({
   pageContainer: {
     padding: 30,
     paddingTop: 30,
+    flex: 1,
   },
   mainTitle: {
     fontSize: 24,
@@ -137,7 +153,7 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     alignItems: 'center',
-    padding: 10,
+    padding: 8,
     backgroundColor: 'orange',
     borderRadius: 5,
   },
