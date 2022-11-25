@@ -50,7 +50,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddSwaggerGen(setupAction =>
 {
     setupAction.SwaggerDoc(
-        "LostAndFound.AuthService",
+        "v1",
         new Microsoft.OpenApi.Models.OpenApiInfo()
         {
             Title = "LostAndFound Authentication Service",
@@ -104,8 +104,8 @@ app.UseSwagger();
 app.UseSwaggerUI(setupAction =>
 {
     setupAction.SwaggerEndpoint(
-        "/swagger/LostAndFound.AuthService/swagger.json",
-        "LostAndFound Authentication Service");
+        "/swagger/v1/swagger.json",
+        "LostAndFound Auth Service");
     setupAction.RoutePrefix = string.Empty;
 });
 

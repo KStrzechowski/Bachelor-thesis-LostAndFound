@@ -2,9 +2,9 @@
   "profiles": {
     "LostAndFound.ProfileService": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "applicationUrl": "https://localhost:5004",
+      "dotnetRunMessages": false,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5300",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
