@@ -15,7 +15,11 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.UseSwaggerForOcelotUI();
+app.UseSwaggerForOcelotUI(opt => {}, uiOpt => {
+    uiOpt.DocumentTitle = "LostAndFound system - Api Gateway";
+    uiOpt.RoutePrefix = string.Empty;
+});
+
 app.UseRouting();
 
 app.UseEndpoints(endpoints =>

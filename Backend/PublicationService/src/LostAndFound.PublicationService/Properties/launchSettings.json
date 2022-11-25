@@ -3,7 +3,7 @@
     "LostAndFound.PublicationService": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "applicationUrl": "https://localhost:5400",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

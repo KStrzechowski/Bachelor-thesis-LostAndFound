@@ -59,6 +59,72 @@
         }
       ],
       "SwaggerKey": "accounts"
+    },
+    {
+      "UpstreamPathTemplate": "/profile",
+      "DownstreamPathTemplate": "/profile",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "profiles"
+    },
+    {
+      "UpstreamPathTemplate": "/profile/{userId}",
+      "DownstreamPathTemplate": "/profile/{userId}",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "profiles"
+    },
+    {
+      "UpstreamPathTemplate": "/profile/picture",
+      "DownstreamPathTemplate": "/profile/picture",
+      "UpstreamHttpMethod": [
+        "Patch",
+        "Delete"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "profiles"
+    },
+    {
+      "UpstreamPathTemplate": "/profile/{profileOwnerId}/comments",
+      "DownstreamPathTemplate": "/profile/{profileOwnerId}/comments",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "profiles"
     }
   ],
   "SwaggerEndPoints": [
@@ -69,6 +135,16 @@
           "Name": "LostAndFound.AuthService",
           "Version": "v1",
           "Url": "https://localhost:5100/swagger/LostAndFound.AuthService/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "profiles",
+      "Config": [
+        {
+          "Name": "LostAndFound.ProfileService",
+          "Version": "v1",
+          "Url": "https://localhost:5300/swagger/LostAndFound.ProfileService/swagger.json"
         }
       ]
     }
