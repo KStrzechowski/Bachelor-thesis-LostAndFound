@@ -1,17 +1,11 @@
-import React, { Children, PropsWithChildren } from 'react';
-import {
-  FlatList,
-  GestureResponderEvent,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React from 'react';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
 import { format } from 'date-fns';
 import { MainContainer, MainTitle } from '../Components';
 import { GetPosts, Post } from '../Data/Post';
+import { HomeScreenStack } from '../Navigation';
 
 const PostItem = (props: any) => {
   const item: Post = props.item;
@@ -25,30 +19,33 @@ const PostItem = (props: any) => {
       }}
       onPress={props.onPress}
       style={styles.postItem}>
-      <Text style={{ fontSize: 20, fontWeight: '600', color: 'black' }}>
-        {item.title}
-      </Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignContent: 'center',
-        }}>
-        <Text style={{ fontSize: 16 }}>{incidentDate}</Text>
-        <Text
-          style={
-            item.votesScore > 0 ? styles.positiveScore : styles.negativeScore
-          }>
-          {item.votesScore > 0 ? `+${item.votesScore}` : item.votesScore}
+      <View>
+        <Text style={{ fontSize: 20, fontWeight: '600', color: 'black' }}>
+          {item.title}
         </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text style={{ fontSize: 16 }}>{incidentDate}</Text>
+          <Text
+            style={
+              item.votesScore > 0 ? styles.positiveScore : styles.negativeScore
+            }>
+            {item.votesScore > 0 ? `+${item.votesScore}` : item.votesScore}
+          </Text>
+        </View>
+        <Text numberOfLines={3}>{item.description}</Text>
       </View>
-      <Text numberOfLines={3}>{item.description}</Text>
-      <MaterialIconsIcon name="add-a-photo" size={width - 20} />
+      <View style={{}}>
+        <MaterialIconsIcon name="add-a-photo" size={width - 20} />
+      </View>
     </Pressable>
   );
 };
 
-export const PostsPage = (props: { navigation: string[] }) => {
+export const PostsPage = (props: { navigation: any }) => {
   const postsData = GetPosts();
 
   return (
@@ -58,7 +55,9 @@ export const PostsPage = (props: { navigation: string[] }) => {
         <AntDesignIcon
           name="search1"
           size={30}
-          onPress={() => props.navigation.push('SearchPosts')}
+          onPress={() =>
+            props.navigation.navigate('Home', { screen: 'SearchPosts' })
+          }
         />
       </View>
       <FlatList
@@ -68,9 +67,15 @@ export const PostsPage = (props: { navigation: string[] }) => {
           justifyContent: 'space-between',
           marginBottom: 15,
         }}
+        contentContainerStyle={{ paddingBottom: 20 }}
         keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
-          <PostItem item={item} onPress={() => props.navigation.push('Post')} />
+          <PostItem
+            item={item}
+            onPress={() =>
+              props.navigation.navigate('Home', { screen: 'Post' })
+            }
+          />
         )}
       />
     </MainContainer>
@@ -81,7 +86,6 @@ const styles = StyleSheet.create({
   titleSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignContent: 'center',
     borderBottomWidth: 1,
     borderBottomColor: 'light-grey',
     padding: 10,
@@ -91,15 +95,18 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
   },
   postItem: {
     width: '49%',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     borderColor: 'light-grey',
     padding: 10,
     marginBottom: 10,
+    alignContent: 'space-between',
+    alignSelf: 'stretch',
+    justifyContent: 'space-between',
   },
   positiveScore: {
     fontSize: 16,

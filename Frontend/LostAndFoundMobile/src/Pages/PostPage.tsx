@@ -2,13 +2,21 @@ import { format } from 'date-fns';
 import React from 'react';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SecondaryButton, MainContainer, MainTitle } from '../Components';
+import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  SecondaryButton,
+  MainContainer,
+  MainTitle,
+  ScoreView,
+} from '../Components';
 import { GetPosts } from '../Data/Post';
+import { GetProfiles } from '../Data/Profile';
 
-export const PostPage = (props: { navigation: string[] }) => {
+export const PostPage = (props: any) => {
   const [width, setWidth] = React.useState<number>(10);
   const postData = GetPosts()[0];
+  const profileData = GetProfiles()[0];
   const incidentDate = format(postData.incidentDate, 'dd.MM.yyyy');
 
   return (
@@ -19,11 +27,12 @@ export const PostPage = (props: { navigation: string[] }) => {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            alignContent: 'center',
           }}>
           <SecondaryButton
             label={'Rozpocznij czat'}
-            onPress={() => props.navigation.push('Chat')}
+            onPress={() =>
+              props.navigation.push('Chat', { username: profileData.username })
+            }
           />
           <Text
             style={
@@ -39,7 +48,7 @@ export const PostPage = (props: { navigation: string[] }) => {
         <View
           onLayout={event => setWidth(event.nativeEvent.layout.width)}
           style={{ alignContent: 'center' }}>
-          <IoniconsIcon name="person" size={width - 20} />
+          <MaterialIconsIcon name="add-a-photo" size={width - 20} />
         </View>
         <Text style={styles.infoContainer}>{postData.location}</Text>
         <Text style={styles.infoContainer}>{incidentDate}</Text>
@@ -48,7 +57,6 @@ export const PostPage = (props: { navigation: string[] }) => {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            alignContent: 'center',
           }}>
           <Text style={{ fontSize: 20, fontWeight: '600', color: 'black' }}>
             Opis
@@ -70,6 +78,13 @@ export const PostPage = (props: { navigation: string[] }) => {
           </View>
         </View>
         <Text style={{ fontSize: 14 }}>{postData.description}</Text>
+        <Pressable
+          style={styles.userContainer}
+          onPress={() => props.navigation.push('Home', { screen: 'Profile' })}>
+          <IoniconsIcon name="person" size={25} />
+          <Text style={{ fontSize: 18 }}>{profileData.username}</Text>
+          <ScoreView score={profileData.averageScore} />
+        </Pressable>
       </ScrollView>
     </MainContainer>
   );
@@ -79,7 +94,6 @@ const styles = StyleSheet.create({
   upperContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignContent: 'center',
     borderBottomWidth: 1,
     borderBottomColor: 'light-grey',
     padding: 10,
@@ -98,5 +112,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'light-grey',
     marginBottom: 15,
+  },
+  userContainer: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: 'light-grey',
+    borderRadius: 10,
+    padding: 10,
+    paddingVertical: 15,
   },
 });

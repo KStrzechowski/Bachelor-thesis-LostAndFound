@@ -37,7 +37,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddSwaggerGen(setupAction =>
 {
     setupAction.SwaggerDoc(
-        "LostAndFound.ChatService",
+        "v1",
         new Microsoft.OpenApi.Models.OpenApiInfo()
         {
             Title = "LostAndFound Chat Service",
@@ -90,7 +90,7 @@ app.UseSwagger();
 app.UseSwaggerUI(setupAction =>
 {
     setupAction.SwaggerEndpoint(
-        "/swagger/LostAndFound.ChatService/swagger.json",
+        "/swagger/v1/swagger.json",
         "LostAndFound Chat Service");
     setupAction.RoutePrefix = string.Empty;
 });

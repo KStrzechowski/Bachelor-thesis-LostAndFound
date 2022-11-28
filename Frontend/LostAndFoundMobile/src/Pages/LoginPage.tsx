@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import {
   CustomTextInput,
   InputSection,
@@ -9,6 +9,7 @@ import {
   PressableText,
   Subtitle,
 } from '../Components/MainComponents';
+import { Logo } from '../Images';
 
 export const LoginPage = (props: { navigation: string[] }) => {
   const [email, setEmail] = React.useState<String | null>(null);
@@ -24,6 +25,10 @@ export const LoginPage = (props: { navigation: string[] }) => {
 
   return (
     <MainContainer>
+      <Image
+        source={Logo}
+        style={{ width: '100%', resizeMode: 'stretch', marginBottom: 20 }}
+      />
       <MainTitle>Zaloguj się</MainTitle>
       <Subtitle>Hej! Dobrze cię znowu widzieć</Subtitle>
       <InputSection title="E-mail">
@@ -43,7 +48,7 @@ export const LoginPage = (props: { navigation: string[] }) => {
       </InputSection>
       <MainButton
         label="Zaloguj się"
-        onPress={() => props.navigation.push('Posts')}
+        onPress={() => props.navigation.push('Home')}
       />
       <View style={{ alignItems: 'center' }}>
         <Text>Nie masz konta?</Text>

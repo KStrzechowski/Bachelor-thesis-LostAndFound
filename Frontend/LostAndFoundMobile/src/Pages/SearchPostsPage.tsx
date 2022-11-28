@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import React from 'react';
-import IoniconsIcon from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Picker } from '@react-native-picker/picker';
 import { StyleSheet, Text, View } from 'react-native';
 import {
   SecondaryButton,
@@ -9,12 +8,16 @@ import {
   MainTitle,
   InputSection,
   CustomTextInput,
+  MainButton,
 } from '../Components';
 import { GetPosts } from '../Data/Post';
 
-export const SearchPostsPage = (props: { navigation: string[] }) => {
+export const SearchPostsPage = (props: any) => {
   const [title, setTitle] = React.useState<string | null>(null);
   const [localization, setLocalization] = React.useState<string | null>(null);
+  const [distance, setDistance] = React.useState<string>();
+  const [category, setCategory] = React.useState<string>();
+  const [postState, setPostState] = React.useState<string>();
   const postData = GetPosts()[0];
   const incidentDate = format(postData.incidentDate, 'dd.MM.yyyy');
 
@@ -37,8 +40,38 @@ export const SearchPostsPage = (props: { navigation: string[] }) => {
           placeholder="Podaj adres"
         />
       </InputSection>
-
-      <Text style={{ fontSize: 14 }}>{postData.description}</Text>
+      <InputSection title="Promień">
+        <Picker
+          selectedValue={distance}
+          onValueChange={itemValue => setDistance(itemValue)}>
+          <Picker.Item label="500 m" value="500m" />
+          <Picker.Item label="1 km" value="1km" />
+          <Picker.Item label="2 km" value="2km" />
+          <Picker.Item label="5 km" value="5km" />
+        </Picker>
+      </InputSection>
+      <InputSection title="Kategoria">
+        <Picker
+          selectedValue={category}
+          onValueChange={itemValue => setCategory(itemValue)}>
+          <Picker.Item label="Ubrania" value="ubrania" />
+          <Picker.Item label="Elektronika" value="elektronika" />
+        </Picker>
+      </InputSection>
+      <InputSection title="Stan ogłoszenia">
+        <Picker
+          selectedValue={postState}
+          onValueChange={itemValue => setPostState(itemValue)}>
+          <Picker.Item label="Otwarte" value="otwarte" />
+          <Picker.Item label="Zakończone" value="zakończone" />
+        </Picker>
+      </InputSection>
+      <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
+        <SecondaryButton
+          label="Szukaj"
+          onPress={() => props.navigation.navigate('Home', { screen: 'Posts' })}
+        />
+      </View>
     </MainContainer>
   );
 };
