@@ -34,3 +34,19 @@ stages:
               publishJUnitResults: false
               testResultsFiles: '**/TEST-*.xml'
               tasks: 'assembleRelease'
+
+          - task: AndroidSigning@2
+            inputs:
+              apkFiles: '**/*.apk'
+              jarsign: true
+              jarsignerKeystoreFile: 'android.keystore'
+              jarsignerKeystorePassword: '$(AndroidKeyStorePassword)'
+              jarsignerKeystoreAlias: '$(AndroidKeyAlias)'
+              jarsignerKeyPassword: '$(AndroidKeyStorePassword)'
+              zipalign: true
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathtoPublish: '${{ parameters.mobileProjectDirectory }}/android/app/build/outputs/apk/release'
+              artifactName: 'android'
+              publishLocation: 'container'
