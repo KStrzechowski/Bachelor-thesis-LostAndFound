@@ -12,13 +12,13 @@ trigger:
     - Frontend/LostAndFoundMobile/*
 
 stages:
-  - ${{ if ne(variables['Build.SourceBranchName'], 'main') }}:
+  - ${{ if ne(variables['Build.SourceBranchName'], 'develop') }}:
     - template: Templates/build-react-native-app-template.yml
       parameters:
         mobileProjectDirectory: Frontend/LostAndFoundMobile
         nodeVersion: 16.x
         artifactName: lostandfound.mobile
-  - ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
     - template: Templates/build-and-publish-react-native-app-template.yml
       parameters:
         mobileProjectDirectory: Frontend/LostAndFoundMobile
