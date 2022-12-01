@@ -168,9 +168,9 @@ namespace LostAndFound.ProfileService.Controllers
         }
 
         /// <summary>
-        /// Update user profile picture
+        /// Delete user profile picture
         /// </summary>
-        /// <response code="204">Returns profile details</response>
+        /// <response code="204">Picture deleted</response>
         /// <response code="401">Problem with authentication of user occurred</response>
         /// <response code="404">Could not find profile corresponding to authenticated user</response>
         /// <remarks>
@@ -184,7 +184,7 @@ namespace LostAndFound.ProfileService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<ProfileDetailsResponseDto>> DeleteUserProfilePicture()
+        public async Task<ActionResult> DeleteUserProfilePicture()
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _userProfileService.DeleteUserProfilePicture(rawUserId);

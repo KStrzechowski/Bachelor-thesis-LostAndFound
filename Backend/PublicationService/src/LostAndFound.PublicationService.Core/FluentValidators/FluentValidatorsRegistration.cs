@@ -9,6 +9,7 @@ namespace LostAndFound.PublicationService.Core.FluentValidators
         public static IServiceCollection AddFluentValidators(this IServiceCollection services)
         {
             services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<CreatePublicationRequestDtoValidator>();
 
             return services;
         }

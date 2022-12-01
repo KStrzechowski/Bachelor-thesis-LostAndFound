@@ -28,12 +28,13 @@ builder.Services.AddControllers(setupAction =>
         new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
 });
 
-
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddFluentValidators();
 builder.Services.AddDataAccessServices(builder.Configuration);
 builder.Services.AddCoreServices();
 builder.Services.AddThirdPartyServices(builder.Configuration);
+
+builder.Services.AddResponseCaching();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(config =>
@@ -98,6 +99,8 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseResponseCaching();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseAuthentication();

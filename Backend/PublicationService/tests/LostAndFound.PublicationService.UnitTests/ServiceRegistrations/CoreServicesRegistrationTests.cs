@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using LostAndFound.PublicationService.Core;
+using LostAndFound.PublicationService.Core.CategoryServices.Interfaces;
 using LostAndFound.PublicationService.Core.DateTimeProviders;
+using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;

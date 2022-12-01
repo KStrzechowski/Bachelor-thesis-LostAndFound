@@ -40,6 +40,7 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
 
         [Theory]
         [InlineData(typeof(IPublicationsRepository))]
+        [InlineData(typeof(ICategoriesRepository))]
         public void AddApplicationDataAccessServices_Execute_RepositoriesAreRegistered(Type type)
         {
             _services.AddDataAccessServices(_configuration);
