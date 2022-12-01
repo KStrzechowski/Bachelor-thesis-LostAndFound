@@ -124,6 +124,86 @@
         }
       ],
       "SwaggerKey": "profiles"
+    },
+    {
+      "UpstreamPathTemplate": "/publication/categories",
+      "DownstreamPathTemplate": "/categories",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
+    },
+    {
+      "UpstreamPathTemplate": "/publication",
+      "DownstreamPathTemplate": "/publication",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
+    },
+    {
+      "UpstreamPathTemplate": "/publication/{publicationId}",
+      "DownstreamPathTemplate": "/publication/{publicationId}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Put",
+        "Patch",
+        "Delete"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
+    },
+    {
+      "UpstreamPathTemplate": "/publication/{publicationId}/rating",
+      "DownstreamPathTemplate": "/publication/{publicationId}/rating",
+      "UpstreamHttpMethod": [
+        "Patch"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
+    },
+    {
+      "UpstreamPathTemplate": "/publication/{publicationId}/photo",
+      "DownstreamPathTemplate": "/publication/{publicationId}/photo",
+      "UpstreamHttpMethod": [
+        "Patch",
+        "Delete"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
     }
   ],
   "SwaggerEndPoints": [

@@ -19,7 +19,7 @@ namespace LostAndFound.PublicationService.Core.MappingProfiles
                 .ForMember(entity => entity.Type, opt => opt.MapFrom(dto => dto.PublicationType))
                 .ForMember(entity => entity.State, opt => opt.MapFrom(dto => PublicationState.Open))
                 .ForMember(entity => entity.AggregateRating, opt => opt.MapFrom(dto => 0))
-                .ForMember(entity => entity.PublicationId, opt => opt.MapFrom(dto => Guid.NewGuid()))
+                .ForMember(entity => entity.ExposedId, opt => opt.MapFrom(dto => Guid.NewGuid()))
                 .ForMember(entity => entity.Author, opt => opt.Ignore())
                 .ForMember(entity => entity.SubjectPhotoUrl, opt => opt.Ignore())
                 .ForMember(entity => entity.Latitude, opt => opt.Ignore())
@@ -38,7 +38,7 @@ namespace LostAndFound.PublicationService.Core.MappingProfiles
                 .ForMember(entity => entity.Type, opt => opt.MapFrom(dto => dto.PublicationType))
                 .ForMember(entity => entity.State, opt => opt.MapFrom(dto => dto.PublicationState))
                 .ForMember(entity => entity.AggregateRating, opt => opt.Ignore())
-                .ForMember(entity => entity.PublicationId, opt => opt.Ignore())
+                .ForMember(entity => entity.ExposedId, opt => opt.Ignore())
                 .ForMember(entity => entity.Author, opt => opt.Ignore())
                 .ForMember(entity => entity.SubjectPhotoUrl, opt => opt.Ignore())
                 .ForMember(entity => entity.Latitude, opt => opt.Ignore())
@@ -49,7 +49,7 @@ namespace LostAndFound.PublicationService.Core.MappingProfiles
                 .ForMember(entity => entity.Id, opt => opt.Ignore());
 
             CreateMap<Publication, PublicationBaseDataResponseDto>()
-                .ForMember(dto => dto.PublicationId, opt => opt.MapFrom(entity => entity.PublicationId))
+                .ForMember(dto => dto.PublicationId, opt => opt.MapFrom(entity => entity.ExposedId))
                 .ForMember(dto => dto.Title, opt => opt.MapFrom(entity => entity.Title))
                 .ForMember(dto => dto.Description, opt => opt.MapFrom(entity => entity.Description))
                 .ForMember(dto => dto.SubjectPhotoUrl, opt => opt.MapFrom(entity => entity.SubjectPhotoUrl))
@@ -59,7 +59,7 @@ namespace LostAndFound.PublicationService.Core.MappingProfiles
                 .ForMember(dto => dto.UserVote, opt => opt.Ignore());
 
             CreateMap<Publication, PublicationDetailsResponseDto>()
-                .ForMember(dto => dto.PublicationId, opt => opt.MapFrom(entity => entity.PublicationId))
+                .ForMember(dto => dto.PublicationId, opt => opt.MapFrom(entity => entity.ExposedId))
                 .ForMember(dto => dto.Title, opt => opt.MapFrom(entity => entity.Title))
                 .ForMember(dto => dto.Description, opt => opt.MapFrom(entity => entity.Description))
                 .ForMember(dto => dto.SubjectPhotoUrl, opt => opt.MapFrom(entity => entity.SubjectPhotoUrl))

@@ -17,6 +17,7 @@ namespace LostAndFound.PublicationService.DataAccess
 
             services.AddSingleton<IMongoPublicationServiceDbContext, MongoPublicationServiceDbContext>();
             services.AddScoped<IPublicationsRepository, PublicationsRepository>();
+            services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 
             return services;
         }
