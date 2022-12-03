@@ -30,7 +30,7 @@ builder.Services.AddControllers(setupAction =>
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddFluentValidators();
 builder.Services.AddDataAccessServices(builder.Configuration);
-builder.Services.AddCoreServices();
+builder.Services.AddCoreServices(builder.Configuration);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(config =>

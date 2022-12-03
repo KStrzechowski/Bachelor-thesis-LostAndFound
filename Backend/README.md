@@ -32,30 +32,23 @@ That's why each microservice requires a connection to the MongoDB database manag
 
 3. If you don't want to set up your own MongoDB database management server, you can use the below connection string. It is a build and deployed MongoDB database management cluster, using MongoDB Atlas.
 It was created for solution testing and development, so feel free to use. (Be aware that it may contain already some data)
-> mongodb+srv://development:<password>@lostandfound-developmen.ygmxcvg.mongodb.net/?retryWrites=true&w=majority
+	> mongodb+srv://development:<password>@lostandfound-developmen.ygmxcvg.mongodb.net/?retryWrites=true&w=majority
 
 When you have the new connection string ready, you just need to update "appsettings.Development.json" files in all 4 microservices. So you need to make the following changes:
 * Replace value for **LostAndFoundAuthServiceDb:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
-> Backend\AuthService\src\LostAndFound.AuthService\appsettings.Development.json''
+> Backend\AuthService\src\LostAndFound.AuthService\appsettings.Development.json
 * Replace value for **LostAndFoundChatServiceDb:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
-> Backend\ChatService\src\LostAndFound.ChatService\appsettings.Development.json''
+> Backend\ChatService\src\LostAndFound.ChatService\appsettings.Development.json
 * Replace value for **LostAndFoundProfileServiceDb:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
-> Backend\ProfileService\src\LostAndFound.ProfileService\appsettings.Development.json''
+> Backend\ProfileService\src\LostAndFound.ProfileService\appsettings.Development.json
 * Replace value for **LostAndFoundPublicationServiceDb:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
-> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json''
+> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json
 
 
 ### File Storage
 
 
-### Geocoding API
 
-
-### RabbitMQ
-RabbitMQ is a message-queueing software also known as a message broker or queue manager. Simply said; it is software where queues are defined, to which applications connect in order to transfer a message or messages.
-
-In our system microservice communication is done using RabbitMQ with ASP.NET Core. 
-https://www.rabbitmq.com/download.html
 
 
 ## Build and run
