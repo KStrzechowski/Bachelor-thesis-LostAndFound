@@ -19,7 +19,7 @@ namespace LostAndFound.PublicationService.Core.FluentValidators
                 .NotEmpty()
                 .LessThan(dateTimeProvider.UtcNow);
 
-            RuleFor(dto => dto.SubjectCategory)
+            RuleFor(dto => dto.SubjectCategoryId)
                 .NotEmpty();
             RuleFor(dto => dto.PublicationType)
                 .NotNull()
