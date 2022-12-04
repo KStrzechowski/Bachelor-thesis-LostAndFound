@@ -86,7 +86,7 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         public void Validate_DtoWithEmptySubjectCategory_ReturnsFailure()
         {
             var dtoModel = GetValidCreatePublicationRequestDto();
-            dtoModel.SubjectCategory = String.Empty;
+            dtoModel.SubjectCategoryId = String.Empty;
 
             var result = _validator.TestValidate(dtoModel);
 
@@ -139,7 +139,7 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
                 Description = description,
                 IncidentAddress = address,
                 IncidentDate = date,
-                SubjectCategory = category,
+                SubjectCategoryId = category,
                 PublicationType = type,
             };
         }
@@ -152,7 +152,7 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
                 Description = "notEmpty",
                 IncidentAddress = "notEmpty",
                 IncidentDate = _utcDateNowForTests.AddDays(-1),
-                SubjectCategory = "notEmpty",
+                SubjectCategoryId = "notEmpty",
                 PublicationType = PublicationType.FoundSubject,
             };
         }

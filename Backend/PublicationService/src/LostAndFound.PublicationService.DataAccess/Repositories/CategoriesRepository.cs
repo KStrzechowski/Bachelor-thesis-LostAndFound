@@ -9,6 +9,14 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
     {
         public CategoriesRepository(IMongoPublicationServiceDbContext publicationServiceDbContext) : base(publicationServiceDbContext) { }
 
+
+        public bool DoesCategoryExist(string categoryId)
+        {
+            var filter = Builders<Category>.Filter.Eq(acc => acc.ExposedId, categoryId);
+
+            return _collection.FindSync(filter).Any();
+        }
+
         public async Task<IEnumerable<Category>> GetAllCategories()
         {
             var categories = await _collection.FindAsync(Builders<Category>.Filter.Empty);

@@ -48,9 +48,9 @@ namespace LostAndFound.PublicationService.CoreLibrary.Responses
         public SinglePublicationVote UserVote { get; set; }
 
         /// <summary>
-        /// The category of the object being the subject of the publication
+        /// Category id of the object being the subject of the publication
         /// </summary>
-        public string SubjectCategory { get; set; } = string.Empty;
+        public string SubjectCategoryId { get; set; } = string.Empty;
 
         /// <summary>
         /// Publication type, lost/found object

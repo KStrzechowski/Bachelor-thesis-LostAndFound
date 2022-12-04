@@ -28,9 +28,9 @@ namespace LostAndFound.PublicationService.CoreLibrary.Requests
         public DateTime IncidentDate { get; set; }
 
         /// <summary>
-        /// The category of the object being the subject of the publication
+        /// The category id of the object being the subject of the publication
         /// </summary>
-        public string SubjectCategory { get; set; } = string.Empty;
+        public string SubjectCategoryId { get; set; } = string.Empty;
 
         /// <summary>
         /// Publication type, lost/found object

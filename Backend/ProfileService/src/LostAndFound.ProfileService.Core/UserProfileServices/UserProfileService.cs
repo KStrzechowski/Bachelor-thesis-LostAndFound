@@ -64,7 +64,7 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
         public async Task<ProfileDetailsResponseDto> UpdateUserProfilePicture(IFormFile picture, string rawUserId)
         {
             var userId = ParseUserId(rawUserId);
-            _ = await GetUserProfile(userId);
+            var profileEntity = await GetUserProfile(userId);
 
             var fileDto = new FileDto()
             {
@@ -75,6 +75,11 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             if (fileDto == null || fileDto.Content.Length == 0)
             {
                 throw new BadRequestException("The profile picture is incorrect");
+            }
+
+            if (profileEntity.PictureUrl is not null)
+            {
+                await DeleteUserPictureFromBlob(profileEntity.PictureUrl);
             }
 
             var pictureUrl = await _fileStorageService.UploadAsync(fileDto);
@@ -88,14 +93,19 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             var userId = ParseUserId(rawUserId);
             var profileEntity = await GetUserProfile(userId);
 
-            var blobName = Path.GetFileName(profileEntity.PictureUrl);
+            await DeleteUserPictureFromBlob(profileEntity.PictureUrl);
+            await _profilesRepository.UpdateProfilePictureUrl(userId, null);
+        }
+
+        private async Task DeleteUserPictureFromBlob(string? pictureUrl)
+        {
+            var blobName = Path.GetFileName(pictureUrl);
             if (blobName == null)
             {
                 throw new NotFoundException("User profile picture not found.");
             }
 
             await _fileStorageService.DeleteAsync(blobName);
-            await _profilesRepository.UpdateProfilePictureUrl(userId, null);
         }
 
         private async Task<Profile> GetUserProfile(Guid profileOwnerId)

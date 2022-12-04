@@ -69,7 +69,7 @@ namespace LostAndFound.PublicationService.Controllers
         ///             "Description": "On May 11, 2022, I lost my blue Iphone 11 pro.",
         ///             "IncidentAddress": "Ludwika Warynskiego 12, 00-655 Warszawa",
         ///             "IncidentDate": "2022-12-01T13:30:22.52Z",
-        ///             "SubjectCategory": "Phone",
+        ///             "SubjectCategoryId": "Other",
         ///             "PublicationType": "LostSubject",
         ///         },
         ///         "SubjectPhoto": Photo       
@@ -78,13 +78,20 @@ namespace LostAndFound.PublicationService.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost]
-        public Task<ActionResult<PublicationDetailsResponseDto>> CreatePublication(
+        public async Task<ActionResult<PublicationDetailsResponseDto>> CreatePublication(
             [ModelBinder(BinderType = typeof(JsonModelBinder))] CreatePublicationRequestDto publicationData, IFormFile subjectPhoto)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             string username = HttpContext.User.FindFirstValue("username");
 
-            throw new NotImplementedException();
+            var publicationDetails = await _publicationService.CreatePublication(rawUserId, username, publicationData, subjectPhoto);
+
+            return CreatedAtRoute("GetPublication",
+                 new
+                 {
+                     productId = publicationDetails.PublicationId,
+                 },
+                 publicationDetails);
         }
 
         /// <summary>
@@ -103,10 +110,13 @@ namespace LostAndFound.PublicationService.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("{publicationId:Guid}")]
-        public Task<ActionResult<PublicationDetailsResponseDto>> GetPublicationDetails(Guid publicationId)
+        [HttpGet("{publicationId:Guid}", Name = "GetPublication")]
+        public async Task<ActionResult<PublicationDetailsResponseDto>> GetPublicationDetails(Guid publicationId)
         {
-            throw new NotImplementedException();
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var publicationDetails = await _publicationService.GetPublicationDetails(rawUserId, publicationId);
+
+            return Ok(publicationDetails);
         }
 
         /// <summary>
@@ -127,7 +137,7 @@ namespace LostAndFound.PublicationService.Controllers
         ///         "Description": "On May 11, 2022, I lost my blue Iphone 11 pro.",
         ///         "IncidentAddress": "Ludwika Warynskiego 12, 00-655 Warszawa",
         ///         "IncidentDate": "2022-12-01T13:30:22.52Z",
-        ///         "SubjectCategory": "Phone",
+        ///         "SubjectCategoryId": "Other",
         ///         "PublicationType": "LostSubject",
         ///         "PublicationState": "Open",
         ///     }
@@ -136,10 +146,14 @@ namespace LostAndFound.PublicationService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPut("{publicationId:Guid}")]
-        public Task<ActionResult<PublicationDetailsResponseDto>> UpdatePublicationDetails(Guid publicationId,
+        public async Task<ActionResult<PublicationDetailsResponseDto>> UpdatePublicationDetails(Guid publicationId,
             UpdatePublicationDetailsRequestDto publicationDetailsDto)
         {
-            throw new NotImplementedException();
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var publicationDetails = await _publicationService
+                .UpdatePublicationDetails(rawUserId, publicationId, publicationDetailsDto);
+
+            return Ok(publicationDetails);
         }
 
         /// <summary>
@@ -166,6 +180,7 @@ namespace LostAndFound.PublicationService.Controllers
         public Task<ActionResult> UpdatePublicationState(Guid publicationId,
             UpdatePublicationStateRequestDto publicationStateDto)
         {
+
             throw new NotImplementedException();
         }
 
@@ -185,9 +200,13 @@ namespace LostAndFound.PublicationService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("{publicationId:Guid}")]
-        public Task<ActionResult> DeletePublication(Guid publicationId)
+        public async Task<ActionResult> DeletePublication(Guid publicationId)
         {
-            throw new NotImplementedException();
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            await _publicationService.DeletePublication(rawUserId, publicationId);
+
+            return NoContent();
         }
 
         /// <summary>

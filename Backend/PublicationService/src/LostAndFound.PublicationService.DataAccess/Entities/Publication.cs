@@ -14,7 +14,8 @@ namespace LostAndFound.PublicationService.DataAccess.Entities
         public string? SubjectPhotoUrl { get; set; }
         public string IncidentAddress { get; set; } = string.Empty;
         public DateTime IncidentDate { get; set; }
-        public string SubjectCategory { get; set; } = string.Empty;
+        public string SubjectCategoryId { get; set; } = string.Empty;
+        public string SubjectCategoryName { get; set; } = string.Empty;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public PublicationType Type { get; set; }
