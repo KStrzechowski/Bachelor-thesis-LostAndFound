@@ -72,6 +72,7 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             if (userComment != null)
             {
                 commentsSectionDto.MyComment = _mapper.Map<CommentDataResponseDto>(userComment);
+                commentsSectionDto.MyComment.Author.PictureUrl = (await GetUserProfile(userId))?.PictureUrl;
             }
 
             var commentPage = commentsList.Where(com => com.AuthorId != userId)
@@ -79,9 +80,11 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
                 .Skip(pageSize * (pageNumber - 1))
                 .Take(pageSize)
                 .ToList();
+
             if (commentPage != null && commentPage.Any())
             {
                 commentsSectionDto.Comments = _mapper.Map<IEnumerable<CommentDataResponseDto>>(commentPage);
+                await SetCommentsAuthorPictureUrls(commentsSectionDto.Comments);
             }
 
             int totalItemCount = commentsList.Length - (userComment == null ? 0 : 1);
@@ -120,6 +123,19 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             }
 
             return profileEntity;
+        }
+
+        private async Task SetCommentsAuthorPictureUrls(IEnumerable<CommentDataResponseDto> commentsList)
+        {
+            var authorsIds = commentsList.Select(x => x.Author.Id);
+            var authorProfiles = await _profilesRepository
+                .FilterByAsync(x => authorsIds.Contains(x.UserId));
+
+            foreach (var comment in commentsList)
+            {
+                var authorPictureUrl = authorProfiles.FirstOrDefault(u => u.UserId == comment.Author.Id)?.PictureUrl;
+                comment.Author.PictureUrl = authorPictureUrl;
+            }
         }
 
         private static Guid ParseUserId(string rawUserId)

@@ -14,5 +14,10 @@
         /// Author username
         /// </summary>
         public string Username { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Author profile picture Url
+        /// </summary>
+        public string? PictureUrl { get; set; }
     }
 }
