@@ -8,7 +8,7 @@
         /// <summary>
         /// User identifier
         /// </summary>
-        public string UserIdentifier { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
 
         /// <summary>
         /// Email address of new user account

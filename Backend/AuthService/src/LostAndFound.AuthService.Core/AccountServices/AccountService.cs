@@ -1,4 +1,5 @@
-﻿using LostAndFound.AuthService.Core.TokenGenerators;
+﻿using LostAndFound.AuthService.Core.HttpClients.Interfaces;
+using LostAndFound.AuthService.Core.TokenGenerators;
 using LostAndFound.AuthService.Core.TokenValidators;
 using LostAndFound.AuthService.CoreLibrary.Exceptions;
 using LostAndFound.AuthService.CoreLibrary.Requests;
@@ -16,15 +17,17 @@ namespace LostAndFound.AuthService.Core.AccountServices
         private readonly IAccessTokenGenerator _accessTokenGenerator;
         private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IRefreshTokenValidator _refreshTokenValidator;
+        private readonly IProfileHttpClient _profileHttpClient;
 
         public AccountService(IPasswordHasher<Account> passwordHasher, IAccountsRepository accountsRepository, IAccessTokenGenerator accessTokenGenerator,
-            IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenValidator refreshTokenValidator)
+            IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenValidator refreshTokenValidator, IProfileHttpClient profileHttpClient)
         {
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
             _accountsRepository = accountsRepository ?? throw new ArgumentNullException(nameof(accountsRepository));
             _accessTokenGenerator = accessTokenGenerator ?? throw new ArgumentNullException(nameof(accessTokenGenerator));
             _refreshTokenGenerator = refreshTokenGenerator ?? throw new ArgumentNullException(nameof(refreshTokenGenerator));
             _refreshTokenValidator = refreshTokenValidator ?? throw new ArgumentNullException(nameof(refreshTokenValidator));
+            _profileHttpClient = profileHttpClient ?? throw new ArgumentNullException(nameof(profileHttpClient));
         }
 
         public async Task<AuthenticatedUserResponseDto> AuthenticateUser(LoginRequestDto dto)
@@ -85,12 +88,16 @@ namespace LostAndFound.AuthService.Core.AccountServices
             newUserAccount.PasswordHash = _passwordHasher.HashPassword(newUserAccount, dto.Password);
             await _accountsRepository.InsertOneAsync(newUserAccount);
 
-            return new RegisteredUserAccountResponseDto()
+            var registeredUserDto = new RegisteredUserAccountResponseDto()
             {
                 Email = newUserAccount.Email,
-                UserIdentifier = newUserAccount.UserId.ToString(),
+                UserId = newUserAccount.UserId.ToString(),
                 Username = newUserAccount.Username,
             };
+
+            await _profileHttpClient.CreateNewUserProfile(registeredUserDto);
+
+            return registeredUserDto;
         }
 
         private async Task<AuthenticatedUserResponseDto> CreateAuthenticatedUser(Account account)
