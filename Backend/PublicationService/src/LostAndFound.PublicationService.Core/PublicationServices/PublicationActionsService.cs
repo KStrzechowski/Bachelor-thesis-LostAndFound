@@ -2,7 +2,9 @@
 using LostAndFound.PublicationService.Core.DateTimeProviders;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Exceptions;
+using LostAndFound.PublicationService.CoreLibrary.Internal;
 using LostAndFound.PublicationService.CoreLibrary.Requests;
+using LostAndFound.PublicationService.CoreLibrary.ResourceParameters;
 using LostAndFound.PublicationService.CoreLibrary.Responses;
 using LostAndFound.PublicationService.DataAccess.Entities;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
@@ -96,6 +98,36 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             await _publicationsRepository.UpdatePublicationPhotoUrl(publicationId, photoUrl);
 
             return await GetPublicationDetails(publicationId);
+        }
+
+        public Task<PublicationDetailsResponseDto> GetPublicationDetails(string rawUserId, Guid publicationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PublicationDetailsResponseDto> UpdatePublicationDetails(string rawUserId, Guid publicationId, UpdatePublicationDetailsRequestDto publicationDetailsDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeletePublication(string rawUserId, Guid publicationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<(PublicationBaseDataResponseDto[], PaginationMetadata)> GetPublications(PublicationsResourceParameters publicationsResourceParameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdatePublicationState(string rawUserId, Guid publicationId, UpdatePublicationStateRequestDto publicationStateDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdatePublicationRating(string rawUserId, Guid publicationId, UpdatePublicationRatingRequestDto publicationRatingDto)
+        {
+            throw new NotImplementedException();
         }
 
         private static FileDto CreateFileDto(IFormFile photo)

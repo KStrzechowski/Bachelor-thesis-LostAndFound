@@ -1,11 +1,13 @@
 ﻿using BrunoZell.ModelBinding;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
+using LostAndFound.PublicationService.CoreLibrary.Internal;
 using LostAndFound.PublicationService.CoreLibrary.Requests;
 using LostAndFound.PublicationService.CoreLibrary.ResourceParameters;
 using LostAndFound.PublicationService.CoreLibrary.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace LostAndFound.PublicationService.Controllers
 {
@@ -45,10 +47,22 @@ namespace LostAndFound.PublicationService.Controllers
         ///
         /// </remarks>
         [HttpGet]
-        public Task<ActionResult<PublicationBaseDataResponseDto[]>> GetPublications(
+        public async Task<ActionResult<PublicationBaseDataResponseDto[]>> GetPublications(
             [FromQuery] PublicationsResourceParameters publicationsResourceParameters)
         {
-            throw new NotImplementedException();
+            publicationsResourceParameters.PageSize = publicationsResourceParameters.PageSize > maxPublicationsPageSize ? 
+                maxPublicationsPageSize : publicationsResourceParameters.PageSize;
+
+            var (publicationsDetailsDto, paginationMetadata) = await _publicationService
+                .GetPublications(publicationsResourceParameters);
+
+            paginationMetadata.NextPageLink = CreatePublicationsPageUri(paginationMetadata, ResourceUriType.NextPage);
+            paginationMetadata.PreviousPageLink = CreatePublicationsPageUri(paginationMetadata, ResourceUriType.PreviousPage);
+
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(paginationMetadata));
+
+            return Ok(publicationsDetailsDto);
         }
 
         /// <summary>
@@ -177,11 +191,13 @@ namespace LostAndFound.PublicationService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPatch("{publicationId:Guid}")]
-        public Task<ActionResult> UpdatePublicationState(Guid publicationId,
+        public async Task<ActionResult> UpdatePublicationState(Guid publicationId,
             UpdatePublicationStateRequestDto publicationStateDto)
         {
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _publicationService.UpdatePublicationState(rawUserId, publicationId, publicationStateDto);
 
-            throw new NotImplementedException();
+            return NoContent();
         }
 
         /// <summary>
@@ -203,7 +219,6 @@ namespace LostAndFound.PublicationService.Controllers
         public async Task<ActionResult> DeletePublication(Guid publicationId)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             await _publicationService.DeletePublication(rawUserId, publicationId);
 
             return NoContent();
@@ -229,12 +244,13 @@ namespace LostAndFound.PublicationService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPatch("{publicationId:Guid}/rating")]
-        public Task<ActionResult> UpdatePublicationRating(Guid publicationId,
+        public async Task<ActionResult> UpdatePublicationRating(Guid publicationId,
             UpdatePublicationRatingRequestDto publicationRatingDto)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _publicationService.UpdatePublicationRating(rawUserId, publicationId, publicationRatingDto);
 
-            throw new NotImplementedException();
+            return NoContent();
         }
 
         /// <summary>
@@ -286,6 +302,43 @@ namespace LostAndFound.PublicationService.Controllers
             await _publicationService.DeletePublicationPhoto(rawUserId, publicationId);
 
             return NoContent();
+        }
+
+        private string? CreatePublicationsPageUri(PaginationMetadata paginationMetadata, ResourceUriType type)
+        {
+            switch (type)
+            {
+                case ResourceUriType.PreviousPage:
+                    if (paginationMetadata.CurrentPage <= 1)
+                    {
+                        return null;
+                    }
+                    return Url.Link("GetProfileCommentSection",
+                        new
+                        {
+                            pageNumber = paginationMetadata.CurrentPage - 1,
+                            pageSize = paginationMetadata.PageSize
+                        });
+                case ResourceUriType.NextPage:
+                    if (paginationMetadata.CurrentPage >= paginationMetadata.TotalPageCount)
+                    {
+                        return null;
+                    }
+
+                    return Url.Link("GetProfileCommentSection",
+                        new
+                        {
+                            pageNumber = paginationMetadata.CurrentPage + 1,
+                            pageSize = paginationMetadata.PageSize
+                        });
+                default:
+                    return Url.Link("GetProfileCommentSection",
+                        new
+                        {
+                            pageNumber = paginationMetadata.CurrentPage,
+                            pageSize = paginationMetadata.PageSize
+                        });
+            }
         }
     }
 }
