@@ -14,7 +14,7 @@ namespace LostAndFound.Gateway.IntegrationTests
             _httpClient = factory.CreateDefaultClient();
         }
 
-        [Fact(Skip = "Fails for unknown reason")]
+        [Fact]
         public async Task HealthCheck_ReturnOk()
         {
             var response = await _httpClient.GetAsync("/healthcheck");
