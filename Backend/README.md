@@ -46,9 +46,30 @@ When you have the new connection string ready, you just need to update "appsetti
 
 
 ### File Storage
+Publication and Profile services integrated with Azure Blob Storage in order to store pictures. Before running system you need to provide correct blob storage connection string.
+Here you have 2 options:
+
+1. Use **Azure Storage Emulator**. All you need to do is run Azure Storage Emulator on your local machine. To run the Azure Storage emulator on Windows:
+	1.1. Select the Start button or press the Windows key.
+	1.2. Start typing Azure Storage Emulator
+	1.3. Select an emulator from the list of displayed applications.
+	1.4. After starting the warehouse emulator, the command line will be displayed. You can use this console window to start and stop the magazine emulator.
+	1.5. It should start automatically, you can make sure that emulator is working, using "AzureStorageEmulator.exe status" command. In case the emulator didn't start use "AzureStorageEmulator.exe start".
+
+More informations about Azure Storage Emulator:
+	> https://learn.microsoft.com/pl-pl/azure/storage/common/storage-use-emulator
+Note 1: You don't need to change any connection string while using Azure Storage Emulator.
+Note 2: The storage emulator currently operates only in Windows. For emulation in Linux, use [Azurite emulator](https://github.com/azure/azurite).
 
 
-
+2. **Create Azure Storage Account ** using Azure Portal and replace blob storage connection strings:
+Guide how to create Azure Storage Account:
+	> https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview
+When you have the new connection string ready, you just need to update "appsettings.Development.json" files in all 4 microservices. So you need to make the following changes:
+* Replace value for **LostAndFoundBlobStorageSettings:ConnectionString** with the new one. (It is by default set to UseDevelopmentStorage=true)
+> Backend\ProfileService\src\LostAndFound.ProfileService\appsettings.Development.json
+* Replace value for **LostAndFoundBlobStorageSettings:ConnectionString** with the new one. (It is by default set to UseDevelopmentStorage=true)
+> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json	
 
 
 ## Build and run
