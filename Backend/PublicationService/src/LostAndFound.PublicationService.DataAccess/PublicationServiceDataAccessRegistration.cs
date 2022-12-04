@@ -1,5 +1,7 @@
 ﻿using LostAndFound.PublicationService.DataAccess.Context;
 using LostAndFound.PublicationService.DataAccess.Context.Interfaces;
+using LostAndFound.PublicationService.DataAccess.DatabaseSeeder;
+using LostAndFound.PublicationService.DataAccess.DatabaseSeeder.Interfaces;
 using LostAndFound.PublicationService.DataAccess.Repositories;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using LostAndFound.PublicationService.DataAccess.Settings;
@@ -18,6 +20,8 @@ namespace LostAndFound.PublicationService.DataAccess
             services.AddSingleton<IMongoPublicationServiceDbContext, MongoPublicationServiceDbContext>();
             services.AddScoped<IPublicationsRepository, PublicationsRepository>();
             services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+
+            services.AddScoped<IDbSeeder, MongoDbSeeder>();
 
             return services;
         }
