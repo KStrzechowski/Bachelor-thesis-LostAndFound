@@ -22,17 +22,17 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMapper _mapper;
         private readonly IFileStorageService _fileStorageService;
-        private readonly IGeocodingService _geocodingService;
+        //private readonly IGeocodingService _geocodingService;
 
         public PublicationActionsService(IPublicationsRepository publicationsRepository, ICategoriesRepository categoriesRepository,
-            IDateTimeProvider dateTimeProvider, IMapper mapper, IFileStorageService fileStorageService, IGeocodingService geocodingService)
+            IDateTimeProvider dateTimeProvider, IMapper mapper, IFileStorageService fileStorageService/*, IGeocodingService geocodingService*/)
         {
             _publicationsRepository = publicationsRepository ?? throw new ArgumentNullException(nameof(publicationsRepository));
             _categoriesRepository = categoriesRepository ?? throw new ArgumentNullException(nameof(categoriesRepository));
             _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
-            _geocodingService = geocodingService ?? throw new ArgumentNullException(nameof(geocodingService));
+           // _geocodingService = geocodingService ?? throw new ArgumentNullException(nameof(geocodingService));
         }
 
         public async Task<PublicationDetailsResponseDto> CreatePublication(string rawUserId, string username,

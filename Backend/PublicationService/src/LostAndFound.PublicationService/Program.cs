@@ -11,6 +11,7 @@ using LostAndFound.PublicationService.Core.FluentValidators;
 using LostAndFound.PublicationService.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using LostAndFound.PublicationService.DataAccess.DatabaseSeeder.Interfaces;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,7 @@ builder.Services.AddControllers(setupAction =>
         new ProducesResponseTypeAttribute(StatusCodes.Status406NotAcceptable));
     setupAction.Filters.Add(
         new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
-});
+}).AddJsonOptions(opt => { opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); }); ;
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddFluentValidators();

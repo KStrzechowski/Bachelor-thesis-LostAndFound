@@ -14,7 +14,7 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
         {
             var filter = Builders<Category>.Filter.Eq(acc => acc.ExposedId, categoryId);
 
-            return _collection.FindSync(filter).Any();
+            return !_collection.FindSync(filter).Any();
         }
 
         public async Task<IEnumerable<Category>> GetAllCategories()

@@ -92,6 +92,7 @@ namespace LostAndFound.PublicationService.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost]
+        [Consumes("multipart/form-data")]
         public async Task<ActionResult<PublicationDetailsResponseDto>> CreatePublication(
             [ModelBinder(BinderType = typeof(JsonModelBinder))] CreatePublicationRequestDto publicationData, IFormFile subjectPhoto)
         {
@@ -100,10 +101,10 @@ namespace LostAndFound.PublicationService.Controllers
 
             var publicationDetails = await _publicationService.CreatePublication(rawUserId, username, publicationData, subjectPhoto);
 
-            return CreatedAtRoute("GetPublication",
+            return CreatedAtRoute("GetPublicationDetails",
                  new
                  {
-                     productId = publicationDetails.PublicationId,
+                     publicationId = publicationDetails.PublicationId,
                  },
                  publicationDetails);
         }
@@ -124,7 +125,7 @@ namespace LostAndFound.PublicationService.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("{publicationId:Guid}", Name = "GetPublication")]
+        [HttpGet("{publicationId:Guid}", Name = "GetPublicationDetails")]
         public async Task<ActionResult<PublicationDetailsResponseDto>> GetPublicationDetails(Guid publicationId)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
