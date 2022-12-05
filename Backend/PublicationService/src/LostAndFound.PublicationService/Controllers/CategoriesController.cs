@@ -35,7 +35,7 @@ namespace LostAndFound.PublicationService.Controllers
         ///     GET /categories
         ///
         /// </remarks>
-        //[ResponseCache(Duration = 86400)]
+        [ResponseCache(Duration = 86400)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetAllCategories()

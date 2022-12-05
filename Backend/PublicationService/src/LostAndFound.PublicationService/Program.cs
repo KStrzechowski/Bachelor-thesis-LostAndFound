@@ -10,6 +10,7 @@ using LostAndFound.PublicationService.Core;
 using LostAndFound.PublicationService.Core.FluentValidators;
 using LostAndFound.PublicationService.Middleware;
 using Microsoft.AspNetCore.Mvc;
+using LostAndFound.PublicationService.DataAccess.DatabaseSeeder.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,6 +98,8 @@ builder.Services.AddSwaggerGen(setupAction =>
 
 var app = builder.Build();
 
+SeedDbCollections();
+
 app.UseHttpsRedirection();
 app.UseRouting();
 
@@ -122,6 +125,17 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
+
+
+void SeedDbCollections()
+{
+    if(app.Environment.IsDevelopment())
+    {
+        using var scope = app.Services.CreateScope();
+        var dbSeeder = scope.ServiceProvider.GetRequiredService<IDbSeeder>();
+        dbSeeder?.SeedCategoriesCollection();
+    }
+}
 
 // Make the implicit Program class public so test projects can access it
 #pragma warning disable CA1050 // Declare types in namespaces
