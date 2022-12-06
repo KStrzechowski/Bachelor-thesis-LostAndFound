@@ -1,5 +1,6 @@
 ﻿using LostAndFound.PublicationService.DataAccess.Entities;
 using LostAndFound.PublicationService.DataAccess.Entities.PublicationEnums;
+using MongoDB.Driver;
 
 namespace LostAndFound.PublicationService.DataAccess.Repositories.Interfaces
 {
@@ -10,5 +11,6 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories.Interfaces
         Task DeletePublicationVote(Guid publicationId, Vote voteEntity);
         Task UpdatePublicationVote(Guid publicationId, Vote voteEntity);
         Task InsertNewPublicationVote(Guid publicationId, Vote voteEntity);
+        Task<IEnumerable<Publication>> UseFilterDefinition(FilterDefinition<Publication> filterExpression);
     }
 }

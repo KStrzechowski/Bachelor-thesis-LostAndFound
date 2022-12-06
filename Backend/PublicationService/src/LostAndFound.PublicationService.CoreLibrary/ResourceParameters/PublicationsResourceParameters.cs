@@ -23,9 +23,9 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         public bool OnlyUserPublications { get; set; } = false;
 
         /// <summary>
-        /// Filter by publication subject category 
+        /// Filter by publication subject category identifier
         /// </summary>
-        public string? SubjectCategory { get; set; }
+        public string? SubjectCategoryId { get; set; }
 
         /// <summary>
         /// State of publication to filter

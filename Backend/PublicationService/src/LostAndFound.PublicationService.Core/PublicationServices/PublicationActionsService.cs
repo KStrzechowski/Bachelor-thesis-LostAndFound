@@ -11,9 +11,9 @@ using LostAndFound.PublicationService.DataAccess.Entities;
 using LostAndFound.PublicationService.DataAccess.Entities.PublicationEnums;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
-using LostAndFound.PublicationService.ThirdPartyServices.GeocodingServices.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.Models;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Driver;
 
 namespace LostAndFound.PublicationService.Core.PublicationServices
 {
@@ -133,10 +133,68 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             await _publicationsRepository.DeleteOneAsync(pub => pub.ExposedId == publicationId);
         }
 
-        public Task<(PublicationBaseDataResponseDto[], PaginationMetadata)> GetPublications(
-            PublicationsResourceParameters publicationsResourceParameters)
+        public async Task<(IEnumerable<PublicationBaseDataResponseDto>?, PaginationMetadata)> GetPublications(string rawUserId,
+            PublicationsResourceParameters resourceParameters)
         {
-            throw new NotImplementedException();
+            var userId = ParseUserId(rawUserId);
+
+            var filterExpression = CreateFilterExpression(resourceParameters, userId);
+            var publications = await _publicationsRepository.UseFilterDefinition(filterExpression);
+
+            var publicationsPage = publications.OrderByDescending(pub => pub.IncidentDate)
+                .Skip(resourceParameters.PageSize * (resourceParameters.PageNumber - 1))
+                .Take(resourceParameters.PageSize)
+                .ToList();
+
+            var publicationDtos = Enumerable.Empty<PublicationBaseDataResponseDto>();
+            if (publicationsPage != null && publicationsPage.Any())
+            {
+                publicationDtos = _mapper.Map<IEnumerable<PublicationBaseDataResponseDto>>(publicationsPage);
+
+                if(publicationDtos != null && publicationDtos.Any())
+                {
+                    foreach (var it in publicationDtos.Zip(publicationsPage, Tuple.Create))
+                    {
+                        var userVote = it.Item2.Votes.FirstOrDefault(x => x.VoterId == userId);
+
+                        it.Item1.UserVote = userVote is null ?
+                            SinglePublicationVote.NoVote : _mapper.Map<SinglePublicationVote>(userVote.Rating);
+                    }
+                }
+            }
+
+            int totalItemCount = publications.Count();
+            var paginationMetadata = new PaginationMetadata(totalItemCount, resourceParameters.PageSize, resourceParameters.PageNumber);
+
+            return (publicationDtos, paginationMetadata);
+        }
+
+        private FilterDefinition<Publication> CreateFilterExpression(PublicationsResourceParameters resourceParameters, Guid userId)
+        {
+            var builder = Builders<Publication>.Filter;
+            var state = _mapper.Map<State>(resourceParameters.PublicationState);
+            var filter = builder.Eq(pub => pub.State, state);
+
+            var type = _mapper.Map<DataAccess.Entities.PublicationEnums.Type>(resourceParameters.PublicationType);
+            filter &= builder.Eq(pub => pub.Type, type);
+
+            if (resourceParameters.OnlyUserPublications)
+                filter &= builder.Eq(pub => pub.Author.Id, userId);
+
+            if(resourceParameters.SubjectCategoryId != null)
+                filter &= builder.Eq(pub => pub.SubjectCategoryId, resourceParameters.SubjectCategoryId);
+
+            if(resourceParameters.FromDate != null)
+                filter &= builder.Gte(pub => pub.IncidentDate, resourceParameters.FromDate);
+
+            if (resourceParameters.ToDate != null)
+                filter &= builder.Lte(pub => pub.IncidentDate, resourceParameters.ToDate);
+
+            if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
+                filter &= (builder.StringIn(pub => pub.Description, resourceParameters.SearchQuery) |
+                    builder.StringIn(pub => pub.Title, resourceParameters.SearchQuery));
+
+            return filter;
         }
 
         public async Task<PublicationDetailsResponseDto> UpdatePublicationState(string rawUserId,

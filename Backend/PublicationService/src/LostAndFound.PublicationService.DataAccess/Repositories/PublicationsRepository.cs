@@ -68,6 +68,14 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
             await UpdatePublicationAggregateRating(publicationId);
         }
 
+        public async Task<IEnumerable<Publication>> UseFilterDefinition(FilterDefinition<Publication> filterExpression)
+        {
+            var publications = (await _collection.FindAsync(filterExpression))
+                ?.ToEnumerable<Publication>();
+
+            return publications ?? Enumerable.Empty<Publication>();
+        }
+
         private async Task UpdatePublicationAggregateRating(Guid publicationId)
         {
             var publicationEntity = await base

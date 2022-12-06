@@ -4,6 +4,8 @@ using LostAndFound.PublicationService.Core.CategoryServices.Interfaces;
 using LostAndFound.PublicationService.Core.DateTimeProviders;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Settings;
+using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
+using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
@@ -31,6 +33,33 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
             var serviceProvider = _services.BuildServiceProvider();
 
             Assert.NotNull(serviceProvider.GetService(type));
+        }
+        
+        [Fact]
+        public void AddCoreServices_Execute_ResultsInPublicationActionsServiceIsRegistered()
+        {
+            var categoriesRepositoryMock = new Mock<ICategoriesRepository>();
+            _services.AddSingleton(categoriesRepositoryMock.Object);
+            var publicationsRepositoryMock = new Mock<IPublicationsRepository>();
+            _services.AddSingleton(publicationsRepositoryMock.Object);
+            var fileStorageServiceMock = new Mock<IFileStorageService>();
+            _services.AddSingleton(fileStorageServiceMock.Object);
+            _services.AddCoreServices();
+            var serviceProvider = _services.BuildServiceProvider();
+
+            Assert.NotNull(serviceProvider.GetService(typeof(IPublicationActionsService)));
+        }
+
+        [Fact]
+        public void AddCoreServices_Execute_ResultsInPCategoryServiceIsRegistered()
+        {
+            var categoriesRepositoryMock = new Mock<ICategoriesRepository>();
+            _services.AddSingleton(categoriesRepositoryMock.Object);
+            _services.AddCoreServices();
+
+            var serviceProvider = _services.BuildServiceProvider();
+
+            Assert.NotNull(serviceProvider.GetService(typeof(ICategoryService)));
         }
 
         [Fact]

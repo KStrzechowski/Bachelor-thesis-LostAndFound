@@ -16,7 +16,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices.Interfaces
         Task<PublicationDetailsResponseDto> UpdatePublicationDetails(string rawUserId, Guid publicationId, 
             UpdatePublicationDetailsRequestDto publicationDetailsDto);
         Task DeletePublication(string rawUserId, Guid publicationId);
-        Task<(PublicationBaseDataResponseDto[], PaginationMetadata)> GetPublications(
+        Task<(IEnumerable<PublicationBaseDataResponseDto>?, PaginationMetadata)> GetPublications(string rawUserId,
             PublicationsResourceParameters publicationsResourceParameters);
         Task<PublicationDetailsResponseDto> UpdatePublicationState(string rawUserId, Guid publicationId, 
             UpdatePublicationStateRequestDto publicationStateDto);

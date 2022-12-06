@@ -50,11 +50,12 @@ namespace LostAndFound.PublicationService.Controllers
         public async Task<ActionResult<PublicationBaseDataResponseDto[]>> GetPublications(
             [FromQuery] PublicationsResourceParameters publicationsResourceParameters)
         {
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             publicationsResourceParameters.PageSize = publicationsResourceParameters.PageSize > maxPublicationsPageSize ? 
                 maxPublicationsPageSize : publicationsResourceParameters.PageSize;
 
             var (publicationsDetailsDto, paginationMetadata) = await _publicationService
-                .GetPublications(publicationsResourceParameters);
+                .GetPublications(rawUserId, publicationsResourceParameters);
 
             paginationMetadata.NextPageLink = CreatePublicationsPageUri(paginationMetadata, ResourceUriType.NextPage);
             paginationMetadata.PreviousPageLink = CreatePublicationsPageUri(paginationMetadata, ResourceUriType.PreviousPage);
