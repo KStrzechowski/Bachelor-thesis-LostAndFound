@@ -21,15 +21,14 @@ namespace LostAndFound.PublicationService.ThirdPartyServices
             services.AddSingleton(x =>
                 new BlobServiceClient(blobStorageSettings.ConnectionString));
 
-            // TODO: Restore geocoding
-            //var googleGeocoderSettings = new GoogleGeocoderSettings();
-            //configuration.Bind(GoogleGeocoderSettings.SettingName, googleGeocoderSettings);
-            //services.AddSingleton(googleGeocoderSettings);
+            var googleGeocoderSettings = new GoogleGeocoderSettings();
+            configuration.Bind(GoogleGeocoderSettings.SettingName, googleGeocoderSettings);
+            services.AddSingleton(googleGeocoderSettings);
 
-            //services.AddSingleton(x =>
-            //    new GoogleGeocoder() { ApiKey = googleGeocoderSettings.ApiKey });
+            services.AddSingleton(x =>
+                new GoogleGeocoder() { ApiKey = googleGeocoderSettings.ApiKey });
 
-            //services.AddScoped<IGeocodingService, GoogleGeocoderService>();
+            services.AddScoped<IGeocodingService, GoogleGeocoderService>();
             services.AddScoped<IFileStorageService, BlobStorageService>();
 
             return services;
