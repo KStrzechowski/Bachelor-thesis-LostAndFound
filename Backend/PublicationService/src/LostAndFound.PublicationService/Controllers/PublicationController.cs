@@ -155,7 +155,7 @@ namespace LostAndFound.PublicationService.Controllers
         ///         "IncidentDate": "2022-12-01T13:30:22.52Z",
         ///         "SubjectCategoryId": "Other",
         ///         "PublicationType": "LostSubject",
-        ///         "PublicationState": "Open",
+        ///         "PublicationState": "Open"
         ///     }
         ///
         /// </remarks>

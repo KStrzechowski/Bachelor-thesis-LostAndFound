@@ -13,6 +13,7 @@ using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.Models;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace LostAndFound.PublicationService.Core.PublicationServices
@@ -81,8 +82,9 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             var publicationEntity = await GetUserPublication(userId, publicationId);
 
             await DeletePublicationPhotoFromBlob(publicationEntity.SubjectPhotoUrl);
+            publicationEntity.SubjectPhotoUrl = null;
 
-            await _publicationsRepository.UpdatePublicationPhotoUrl(userId, null);
+            await _publicationsRepository.UpdatePublicationPhotoUrl(publicationEntity);
         }
 
         public async Task<PublicationDetailsResponseDto> UpdatePublicationPhoto(IFormFile photo, string rawUserId, Guid publicationId)
@@ -96,8 +98,8 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
                 await DeletePublicationPhotoFromBlob(publicationEntity.SubjectPhotoUrl);
             }
 
-            var photoUrl = await _fileStorageService.UploadAsync(fileDto);
-            await _publicationsRepository.UpdatePublicationPhotoUrl(publicationId, photoUrl);
+            publicationEntity.SubjectPhotoUrl = await _fileStorageService.UploadAsync(fileDto);
+            await _publicationsRepository.UpdatePublicationPhotoUrl(publicationEntity);
 
             return await GetPublicationDetails(publicationId, userId);
         }
@@ -118,6 +120,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             var publicationEntity = await GetUserPublication(userId, publicationId);
             _mapper.Map(publicationDetailsDto, publicationEntity);
             publicationEntity.SubjectCategoryName = category.DisplayName;
+            publicationEntity.LastModificationDate = _dateTimeProvider.UtcNow;
 
             // TODO: Add latitude calclulation
             await _publicationsRepository.ReplaceOneAsync(publicationEntity);
@@ -139,9 +142,9 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             var userId = ParseUserId(rawUserId);
 
             var filterExpression = CreateFilterExpression(resourceParameters, userId);
-            var publications = await _publicationsRepository.UseFilterDefinition(filterExpression);
+            var publications = (await _publicationsRepository.UseFilterDefinition(filterExpression)).ToList();
 
-            var publicationsPage = publications.OrderByDescending(pub => pub.IncidentDate)
+            var publicationsPage = publications.OrderByDescending(pub => pub.AggregateRating)
                 .Skip(resourceParameters.PageSize * (resourceParameters.PageNumber - 1))
                 .Take(resourceParameters.PageSize)
                 .ToList();
@@ -151,7 +154,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             {
                 publicationDtos = _mapper.Map<IEnumerable<PublicationBaseDataResponseDto>>(publicationsPage);
 
-                if(publicationDtos != null && publicationDtos.Any())
+                if (publicationDtos != null && publicationDtos.Any())
                 {
                     foreach (var it in publicationDtos.Zip(publicationsPage, Tuple.Create))
                     {
@@ -163,7 +166,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
                 }
             }
 
-            int totalItemCount = publications.Count();
+            int totalItemCount = publications.Count;
             var paginationMetadata = new PaginationMetadata(totalItemCount, resourceParameters.PageSize, resourceParameters.PageNumber);
 
             return (publicationDtos, paginationMetadata);
@@ -181,18 +184,17 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             if (resourceParameters.OnlyUserPublications)
                 filter &= builder.Eq(pub => pub.Author.Id, userId);
 
-            if(resourceParameters.SubjectCategoryId != null)
+            if (resourceParameters.SubjectCategoryId != null)
                 filter &= builder.Eq(pub => pub.SubjectCategoryId, resourceParameters.SubjectCategoryId);
 
-            if(resourceParameters.FromDate != null)
+            if (resourceParameters.FromDate != null)
                 filter &= builder.Gte(pub => pub.IncidentDate, resourceParameters.FromDate);
 
             if (resourceParameters.ToDate != null)
                 filter &= builder.Lte(pub => pub.IncidentDate, resourceParameters.ToDate);
 
             if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
-                filter &= (builder.StringIn(pub => pub.Description, resourceParameters.SearchQuery) |
-                    builder.StringIn(pub => pub.Title, resourceParameters.SearchQuery));
+                filter &= builder.Regex(pub => pub.Description, new BsonRegularExpression($".{resourceParameters.SearchQuery}."));
 
             return filter;
         }
@@ -201,10 +203,11 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             Guid publicationId, UpdatePublicationStateRequestDto publicationStateDto)
         {
             var userId = ParseUserId(rawUserId);
-            _ = await GetUserPublication(userId, publicationId);
+            var publicationEntity = await GetUserPublication(userId, publicationId);
 
-            var state = _mapper.Map<State>(publicationStateDto.PublicationState);
-            await _publicationsRepository.UpdatePublicationState(publicationId, state);
+            publicationEntity.State = _mapper.Map<State>(publicationStateDto.PublicationState);
+            publicationEntity.LastModificationDate = _dateTimeProvider.UtcNow;
+            await _publicationsRepository.UpdatePublicationState(publicationEntity!);
 
             return await GetPublicationDetails(publicationId, userId);
         }
@@ -224,13 +227,13 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
                 }
                 else
                 {
-                    _mapper.Map(publicationRatingDto, userVote);
+                    _mapper.Map(publicationRatingDto.NewPublicationVote, userVote);
                     await _publicationsRepository.UpdatePublicationVote(publicationId, userVote);
                 }
             }
             else
             {
-                var voteEntity = _mapper.Map<Vote>(publicationRatingDto);
+                var voteEntity = _mapper.Map<Vote>(publicationRatingDto.NewPublicationVote);
                 if (voteEntity is null)
                 {
                     throw new BadRequestException("The vote data is incorrect.");

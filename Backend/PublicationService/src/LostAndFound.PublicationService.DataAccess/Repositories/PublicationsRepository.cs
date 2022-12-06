@@ -1,6 +1,5 @@
 ﻿using LostAndFound.PublicationService.DataAccess.Context.Interfaces;
 using LostAndFound.PublicationService.DataAccess.Entities;
-using LostAndFound.PublicationService.DataAccess.Entities.PublicationEnums;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using MongoDB.Driver;
 
@@ -35,22 +34,24 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
             await UpdatePublicationAggregateRating(publicationId);
         }
 
-        public async Task UpdatePublicationPhotoUrl(Guid publicationId, string? photoUrl)
+        public async Task UpdatePublicationPhotoUrl(Publication publicationEntity)
         {
             var filter = Builders<Publication>.Filter
-                .Eq(publication => publication.ExposedId, publicationId);
+                .Eq(publication => publication.ExposedId, publicationEntity.ExposedId);
             var update = Builders<Publication>.Update
-                .Set(publication => publication.SubjectPhotoUrl, photoUrl);
+                .Set(publication => publication.SubjectPhotoUrl, publicationEntity.SubjectPhotoUrl)
+                .Set(publication => publication.LastModificationDate, publicationEntity.LastModificationDate);
 
             await _collection.UpdateOneAsync(filter, update);
         }
 
-        public async Task UpdatePublicationState(Guid publicationId, State state)
+        public async Task UpdatePublicationState(Publication publicationEntity)
         {
             var filter = Builders<Publication>.Filter
-                .Eq(publication => publication.ExposedId, publicationId);
+                .Eq(publication => publication.ExposedId, publicationEntity.ExposedId);
             var update = Builders<Publication>.Update
-                .Set(publication => publication.State, state);
+                .Set(publication => publication.State, publicationEntity.State)
+                .Set(publication => publication.LastModificationDate, publicationEntity.LastModificationDate);
 
             await _collection.UpdateOneAsync(filter, update);
         }
