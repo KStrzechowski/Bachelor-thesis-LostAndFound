@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using LostAndFound.PublicationService.Core.DateTimeProviders;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
+using LostAndFound.PublicationService.CoreLibrary.Enums;
 using LostAndFound.PublicationService.CoreLibrary.Exceptions;
 using LostAndFound.PublicationService.CoreLibrary.Internal;
 using LostAndFound.PublicationService.CoreLibrary.Requests;
 using LostAndFound.PublicationService.CoreLibrary.ResourceParameters;
 using LostAndFound.PublicationService.CoreLibrary.Responses;
 using LostAndFound.PublicationService.DataAccess.Entities;
+using LostAndFound.PublicationService.DataAccess.Entities.PublicationEnums;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.GeocodingServices.Interfaces;
@@ -32,7 +34,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
-           // _geocodingService = geocodingService ?? throw new ArgumentNullException(nameof(geocodingService));
+            // _geocodingService = geocodingService ?? throw new ArgumentNullException(nameof(geocodingService));
         }
 
         public async Task<PublicationDetailsResponseDto> CreatePublication(string rawUserId, string username,
@@ -70,7 +72,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
 
             await _publicationsRepository.InsertOneAsync(publicationEntity);
 
-            return await GetPublicationDetails(publicationEntity.ExposedId);
+            return await GetPublicationDetails(publicationEntity.ExposedId, userId);
         }
 
         public async Task DeletePublicationPhoto(string rawUserId, Guid publicationId)
@@ -97,37 +99,114 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             var photoUrl = await _fileStorageService.UploadAsync(fileDto);
             await _publicationsRepository.UpdatePublicationPhotoUrl(publicationId, photoUrl);
 
-            return await GetPublicationDetails(publicationId);
+            return await GetPublicationDetails(publicationId, userId);
         }
 
-        public Task<PublicationDetailsResponseDto> GetPublicationDetails(string rawUserId, Guid publicationId)
+        public async Task<PublicationDetailsResponseDto> UpdatePublicationDetails(string rawUserId, Guid publicationId,
+            UpdatePublicationDetailsRequestDto publicationDetailsDto)
+        {
+            var userId = ParseUserId(rawUserId);
+
+            var category = (await _categoriesRepository
+                .FilterByAsync(cat => cat.ExposedId == publicationDetailsDto.SubjectCategoryId))
+                .FirstOrDefault();
+            if (category is null)
+            {
+                throw new BadRequestException("Category with this id does not exist");
+            }
+
+            var publicationEntity = await GetUserPublication(userId, publicationId);
+            _mapper.Map(publicationDetailsDto, publicationEntity);
+            publicationEntity.SubjectCategoryName = category.DisplayName;
+
+            // TODO: Add latitude calclulation
+            await _publicationsRepository.ReplaceOneAsync(publicationEntity);
+
+            return await GetPublicationDetails(publicationId, userId);
+        }
+
+        public async Task DeletePublication(string rawUserId, Guid publicationId)
+        {
+            var userId = ParseUserId(rawUserId);
+            var publicationEntity = await GetUserPublication(userId, publicationId);
+
+            await _publicationsRepository.DeleteOneAsync(pub => pub.ExposedId == publicationId);
+        }
+
+        public Task<(PublicationBaseDataResponseDto[], PaginationMetadata)> GetPublications(
+            PublicationsResourceParameters publicationsResourceParameters)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PublicationDetailsResponseDto> UpdatePublicationDetails(string rawUserId, Guid publicationId, UpdatePublicationDetailsRequestDto publicationDetailsDto)
+        public async Task<PublicationDetailsResponseDto> UpdatePublicationState(string rawUserId,
+            Guid publicationId, UpdatePublicationStateRequestDto publicationStateDto)
         {
-            throw new NotImplementedException();
+            var userId = ParseUserId(rawUserId);
+            _ = await GetUserPublication(userId, publicationId);
+
+            var state = _mapper.Map<State>(publicationStateDto.PublicationState);
+            await _publicationsRepository.UpdatePublicationState(publicationId, state);
+
+            return await GetPublicationDetails(publicationId, userId);
         }
 
-        public Task DeletePublication(string rawUserId, Guid publicationId)
+        public async Task<PublicationDetailsResponseDto> UpdatePublicationRating(string rawUserId, Guid publicationId,
+            UpdatePublicationRatingRequestDto publicationRatingDto)
         {
-            throw new NotImplementedException();
+            var userId = ParseUserId(rawUserId);
+            var publicationEntity = await GetUserPublication(userId, publicationId);
+
+            var userVote = publicationEntity.Votes.FirstOrDefault(x => x.VoterId == userId);
+            if (userVote != null)
+            {
+                if (publicationRatingDto.NewPublicationVote == SinglePublicationVote.NoVote)
+                {
+                    await _publicationsRepository.DeletePublicationVote(publicationId, userVote);
+                }
+                else
+                {
+                    _mapper.Map(publicationRatingDto, userVote);
+                    await _publicationsRepository.UpdatePublicationVote(publicationId, userVote);
+                }
+            }
+            else
+            {
+                var voteEntity = _mapper.Map<Vote>(publicationRatingDto);
+                if (voteEntity is null)
+                {
+                    throw new BadRequestException("The vote data is incorrect.");
+                }
+                voteEntity.CreationDate = _dateTimeProvider.UtcNow;
+                voteEntity.VoterId = userId;
+
+                await _publicationsRepository.InsertNewPublicationVote(publicationId, voteEntity);
+            }
+
+            return await GetPublicationDetails(publicationId, userId);
         }
 
-        public Task<(PublicationBaseDataResponseDto[], PaginationMetadata)> GetPublications(PublicationsResourceParameters publicationsResourceParameters)
+        public async Task<PublicationDetailsResponseDto> GetPublicationDetails(string rawUserId, Guid publicationId)
         {
-            throw new NotImplementedException();
+            var userId = ParseUserId(rawUserId);
+
+            return await GetPublicationDetails(publicationId, userId);
         }
 
-        public Task UpdatePublicationState(string rawUserId, Guid publicationId, UpdatePublicationStateRequestDto publicationStateDto)
+        private async Task<PublicationDetailsResponseDto> GetPublicationDetails(Guid publicationId, Guid userId)
         {
-            throw new NotImplementedException();
-        }
+            var publicationEntity = await _publicationsRepository.GetSingleAsync(x => x.ExposedId == publicationId);
+            if (publicationEntity == null)
+            {
+                throw new NotFoundException("Publication not found.");
+            }
+            var userVote = publicationEntity.Votes.FirstOrDefault(x => x.VoterId == userId);
 
-        public Task UpdatePublicationRating(string rawUserId, Guid publicationId, UpdatePublicationRatingRequestDto publicationRatingDto)
-        {
-            throw new NotImplementedException();
+            var publicationDetailsDto = _mapper.Map<PublicationDetailsResponseDto>(publicationEntity);
+            publicationDetailsDto.UserVote = userVote is null ?
+                SinglePublicationVote.NoVote : _mapper.Map<SinglePublicationVote>(userVote.Rating);
+
+            return publicationDetailsDto;
         }
 
         private static FileDto CreateFileDto(IFormFile photo)
@@ -171,17 +250,6 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             }
 
             return publicationEntity;
-        }
-
-        private async Task<PublicationDetailsResponseDto> GetPublicationDetails(Guid publicationId)
-        {
-            var publicationEntity = await _publicationsRepository.GetSingleAsync(x => x.ExposedId == publicationId);
-            if (publicationEntity == null)
-            {
-                throw new NotFoundException("Publication not found.");
-            }
-
-            return _mapper.Map<PublicationDetailsResponseDto>(publicationEntity);
         }
 
         private static Guid ParseUserId(string rawUserId)

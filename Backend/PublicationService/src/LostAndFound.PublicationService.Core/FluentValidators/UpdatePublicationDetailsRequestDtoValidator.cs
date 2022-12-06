@@ -1,12 +1,14 @@
 ﻿using FluentValidation;
 using LostAndFound.PublicationService.Core.DateTimeProviders;
 using LostAndFound.PublicationService.CoreLibrary.Requests;
+using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 
 namespace LostAndFound.PublicationService.Core.FluentValidators
 {
     public class UpdatePublicationDetailsRequestDtoValidator : AbstractValidator<UpdatePublicationDetailsRequestDto>
     {
-        public UpdatePublicationDetailsRequestDtoValidator(IDateTimeProvider dateTimeProvider)
+        public UpdatePublicationDetailsRequestDtoValidator(IDateTimeProvider dateTimeProvider,
+            ICategoriesRepository categoriesRepository)
         {
             RuleFor(dto => dto.Title)
                 .NotEmpty();
@@ -20,7 +22,15 @@ namespace LostAndFound.PublicationService.Core.FluentValidators
                 .LessThan(dateTimeProvider.UtcNow);
 
             RuleFor(dto => dto.SubjectCategoryId)
-                .NotEmpty();
+                .NotEmpty()
+                .Custom((value, context) =>
+                {
+                    if (categoriesRepository.DoesCategoryExist(value))
+                    {
+                        context.AddFailure("SubjectCategoryId", "Category with this id does not exist");
+                    }
+                });
+
             RuleFor(dto => dto.PublicationType)
                 .NotNull()
                 .IsInEnum();

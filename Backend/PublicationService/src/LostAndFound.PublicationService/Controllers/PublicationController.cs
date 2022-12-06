@@ -176,7 +176,7 @@ namespace LostAndFound.PublicationService.Controllers
         /// </summary>
         /// <param name="publicationId">Publication identifier</param>
         /// <param name="publicationStateDto">Data to update publication state</param>
-        /// <response code="204">Publication state updated</response>
+        /// <response code="200">Publication state updated</response>
         /// <response code="401">Unauthorized access to publication</response>
         /// <response code="404">Publication <paramref name="publicationId"/> could not be found</response>
         /// <returns></returns>
@@ -190,15 +190,16 @@ namespace LostAndFound.PublicationService.Controllers
         ///     
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPatch("{publicationId:Guid}")]
-        public async Task<ActionResult> UpdatePublicationState(Guid publicationId,
+        public async Task<ActionResult<PublicationDetailsResponseDto>> UpdatePublicationState(Guid publicationId,
             UpdatePublicationStateRequestDto publicationStateDto)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _publicationService.UpdatePublicationState(rawUserId, publicationId, publicationStateDto);
+            var publicationDetails = await _publicationService
+                .UpdatePublicationState(rawUserId, publicationId, publicationStateDto);
 
-            return NoContent();
+            return Ok(publicationDetails);
         }
 
         /// <summary>
@@ -230,7 +231,7 @@ namespace LostAndFound.PublicationService.Controllers
         /// </summary>
         /// <param name="publicationId">Publication identifier</param>
         /// <param name="publicationRatingDto">Data to update user vote</param>
-        /// <response code="204">Publication rating updated</response>
+        /// <response code="200">Publication rating updated</response>
         /// <response code="401">Unauthorized access</response>
         /// <response code="404">Publication <paramref name="publicationId"/> could not be found</response>
         /// <remarks>
@@ -238,20 +239,21 @@ namespace LostAndFound.PublicationService.Controllers
         ///
         ///     PATCH /publication/2b1bafcd-b2fd-492b-b050-9b7027653716/rating
         ///     {
-        ///         "NewPublicationVote": 1
+        ///         "NewPublicationVote": Up
         ///     }
         ///
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPatch("{publicationId:Guid}/rating")]
-        public async Task<ActionResult> UpdatePublicationRating(Guid publicationId,
+        public async Task<ActionResult<PublicationDetailsResponseDto>> UpdatePublicationRating(Guid publicationId,
             UpdatePublicationRatingRequestDto publicationRatingDto)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _publicationService.UpdatePublicationRating(rawUserId, publicationId, publicationRatingDto);
+            var publicationDetails = await _publicationService
+                .UpdatePublicationRating(rawUserId, publicationId, publicationRatingDto);
 
-            return NoContent();
+            return Ok(publicationDetails);
         }
 
         /// <summary>
