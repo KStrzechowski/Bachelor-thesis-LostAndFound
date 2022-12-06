@@ -6,6 +6,7 @@ using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Settings;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
+using LostAndFound.PublicationService.ThirdPartyServices.GeocodingServices.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
@@ -44,7 +45,10 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
             _services.AddSingleton(publicationsRepositoryMock.Object);
             var fileStorageServiceMock = new Mock<IFileStorageService>();
             _services.AddSingleton(fileStorageServiceMock.Object);
+            var googleGeocodingServiceMock = new Mock<IGeocodingService>();
+            _services.AddSingleton(googleGeocodingServiceMock.Object);
             _services.AddCoreServices();
+
             var serviceProvider = _services.BuildServiceProvider();
 
             Assert.NotNull(serviceProvider.GetService(typeof(IPublicationActionsService)));
