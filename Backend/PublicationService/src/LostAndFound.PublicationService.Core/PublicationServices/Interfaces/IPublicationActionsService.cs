@@ -11,7 +11,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices.Interfaces
         Task DeletePublicationPhoto(string rawUserId, Guid publicationId);
         Task<PublicationDetailsResponseDto> UpdatePublicationPhoto(IFormFile photo, string rawUserId, Guid publicationId);
         Task<PublicationDetailsResponseDto> CreatePublication(string rawUserId, string username, 
-            CreatePublicationRequestDto publicationData, IFormFile subjectPhoto);
+            CreatePublicationRequestDto publicationData);
         Task<PublicationDetailsResponseDto> GetPublicationDetails(string rawUserId, Guid publicationId);
         Task<PublicationDetailsResponseDto> UpdatePublicationDetails(string rawUserId, Guid publicationId, 
             UpdatePublicationDetailsRequestDto publicationDetailsDto);

@@ -1,5 +1,4 @@
-﻿using BrunoZell.ModelBinding;
-using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
+﻿using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Internal;
 using LostAndFound.PublicationService.CoreLibrary.Requests;
 using LostAndFound.PublicationService.CoreLibrary.ResourceParameters;
@@ -51,7 +50,7 @@ namespace LostAndFound.PublicationService.Controllers
             [FromQuery] PublicationsResourceParameters publicationsResourceParameters)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            publicationsResourceParameters.PageSize = publicationsResourceParameters.PageSize > maxPublicationsPageSize ? 
+            publicationsResourceParameters.PageSize = publicationsResourceParameters.PageSize > maxPublicationsPageSize ?
                 maxPublicationsPageSize : publicationsResourceParameters.PageSize;
 
             var (publicationsDetailsDto, paginationMetadata) = await _publicationService
@@ -94,13 +93,12 @@ namespace LostAndFound.PublicationService.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<PublicationDetailsResponseDto>> CreatePublication(
-            [ModelBinder(BinderType = typeof(JsonModelBinder))] CreatePublicationRequestDto publicationData, IFormFile subjectPhoto)
+        public async Task<ActionResult<PublicationDetailsResponseDto>> CreatePublication([FromForm] CreatePublicationRequestDto publicationData)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             string username = HttpContext.User.FindFirstValue("username");
 
-            var publicationDetails = await _publicationService.CreatePublication(rawUserId, username, publicationData, subjectPhoto);
+            var publicationDetails = await _publicationService.CreatePublication(rawUserId, username, publicationData);
 
             return CreatedAtRoute("GetPublicationDetails",
                  new

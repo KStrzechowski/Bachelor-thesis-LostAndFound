@@ -40,7 +40,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
         }
 
         public async Task<PublicationDetailsResponseDto> CreatePublication(string rawUserId, string username,
-            CreatePublicationRequestDto publicationDto, IFormFile subjectPhoto)
+            CreatePublicationRequestDto publicationDto)
         {
             var userId = ParseUserId(rawUserId);
 
@@ -66,9 +66,9 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             publicationEntity.SubjectCategoryName = category.DisplayName;
             // TODO: Add latitude calclulation
 
-            if (subjectPhoto is not null && subjectPhoto.Length > 0)
+            if (publicationDto.SubjectPhoto is not null && publicationDto.SubjectPhoto.Length > 0)
             {
-                FileDto fileDto = CreateFileDto(subjectPhoto);
+                FileDto fileDto = CreateFileDto(publicationDto.SubjectPhoto);
                 publicationEntity.SubjectPhotoUrl = await _fileStorageService.UploadAsync(fileDto);
             }
 

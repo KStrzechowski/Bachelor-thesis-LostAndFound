@@ -1,4 +1,5 @@
 ﻿using LostAndFound.PublicationService.CoreLibrary.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace LostAndFound.PublicationService.CoreLibrary.Requests
 {
@@ -36,5 +37,10 @@ namespace LostAndFound.PublicationService.CoreLibrary.Requests
         /// Publication type, lost/found object
         /// </summary>
         public PublicationType PublicationType { get; set; }
+
+        /// <summary>
+        /// Photo of the object being the subject of the publication
+        /// </summary>
+        public IFormFile? SubjectPhoto { get; set; }
     }
 }
