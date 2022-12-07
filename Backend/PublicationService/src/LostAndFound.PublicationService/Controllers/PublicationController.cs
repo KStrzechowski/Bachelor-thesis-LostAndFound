@@ -45,7 +45,7 @@ namespace LostAndFound.PublicationService.Controllers
         ///     GET /publication?pageNumber=3
         ///
         /// </remarks>
-        [HttpGet]
+        [HttpGet(Name = "GetPublications")]
         public async Task<ActionResult<PublicationBaseDataResponseDto[]>> GetPublications(
             [FromQuery] PublicationsResourceParameters publicationsResourceParameters)
         {
@@ -69,7 +69,6 @@ namespace LostAndFound.PublicationService.Controllers
         /// Create Publication endpoint
         /// </summary>
         /// <param name="publicationData">Data of new publication</param>
-        /// <param name="subjectPhoto">Subject photo</param>
         /// <response code="201">Publication created</response>
         /// <response code="401">Unauthorized access</response>
         /// <returns>New publication details</returns>
@@ -78,14 +77,12 @@ namespace LostAndFound.PublicationService.Controllers
         ///
         ///     POST /publication
         ///     {
-        ///         "PublicationData": {
-        ///             "Title": "I lost my phone",
-        ///             "Description": "On May 11, 2022, I lost my blue Iphone 11 pro.",
-        ///             "IncidentAddress": "Ludwika Warynskiego 12, 00-655 Warszawa",
-        ///             "IncidentDate": "2022-12-01T13:30:22.52Z",
-        ///             "SubjectCategoryId": "Other",
-        ///             "PublicationType": "LostSubject",
-        ///         },
+        ///         "Title": "I lost my phone",
+        ///         "Description": "On May 11, 2022, I lost my blue Iphone 11 pro.",
+        ///         "IncidentAddress": "Ludwika Warynskiego 12, 00-655 Warszawa",
+        ///         "IncidentDate": "2022-12-01T13:30:22.52Z",
+        ///         "SubjectCategoryId": "Other",
+        ///         "PublicationType": "LostSubject",
         ///         "SubjectPhoto": Photo       
         ///     }
         ///
@@ -315,7 +312,7 @@ namespace LostAndFound.PublicationService.Controllers
                     {
                         return null;
                     }
-                    return Url.Link("GetProfileCommentSection",
+                    return Url.Link("GetPublications",
                         new
                         {
                             pageNumber = paginationMetadata.CurrentPage - 1,
@@ -327,14 +324,14 @@ namespace LostAndFound.PublicationService.Controllers
                         return null;
                     }
 
-                    return Url.Link("GetProfileCommentSection",
+                    return Url.Link("GetPublications",
                         new
                         {
                             pageNumber = paginationMetadata.CurrentPage + 1,
                             pageSize = paginationMetadata.PageSize
                         });
                 default:
-                    return Url.Link("GetProfileCommentSection",
+                    return Url.Link("GetPublications",
                         new
                         {
                             pageNumber = paginationMetadata.CurrentPage,

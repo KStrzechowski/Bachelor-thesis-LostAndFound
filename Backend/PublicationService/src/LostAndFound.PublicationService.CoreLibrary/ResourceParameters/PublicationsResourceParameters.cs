@@ -30,7 +30,7 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// <summary>
         /// State of publication to filter
         /// </summary>
-        public PublicationState PublicationState { get; set; } = PublicationState.Open;
+        public PublicationState? PublicationState { get; set; }
 
         /// <summary>
         /// Search for publications containing the given searchQuery in the title or description
@@ -60,11 +60,6 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// <summary>
         /// Type of publication to filter
         /// </summary>
-        public PublicationType PublicationType { get; set; } = PublicationType.FoundSubject;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string OrderBy { get; set; } = "AggregateRating";
+        public PublicationType? PublicationType { get; set; }
     }
 }

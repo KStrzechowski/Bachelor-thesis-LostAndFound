@@ -176,26 +176,35 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
         private FilterDefinition<Publication> CreateFilterExpression(PublicationsResourceParameters resourceParameters, Guid userId)
         {
             var builder = Builders<Publication>.Filter;
-            var state = _mapper.Map<State>(resourceParameters.PublicationState);
-            var filter = builder.Eq(pub => pub.State, state);
+            var filter = builder.Empty;
 
-            var type = _mapper.Map<DataAccess.Entities.PublicationEnums.Type>(resourceParameters.PublicationType);
-            filter &= builder.Eq(pub => pub.Type, type);
+            if (resourceParameters.PublicationState is not null)
+            {
+                var state = _mapper.Map<State>(resourceParameters.PublicationState);
+                filter = builder.Eq(pub => pub.State, state);
+            }
+
+            if (resourceParameters.PublicationType is not null)
+            {
+                var type = _mapper.Map<DataAccess.Entities.PublicationEnums.Type>(resourceParameters.PublicationType);
+                filter &= builder.Eq(pub => pub.Type, type);
+            }
 
             if (resourceParameters.OnlyUserPublications)
                 filter &= builder.Eq(pub => pub.Author.Id, userId);
 
-            if (resourceParameters.SubjectCategoryId != null)
+            if (resourceParameters.SubjectCategoryId is not null)
                 filter &= builder.Eq(pub => pub.SubjectCategoryId, resourceParameters.SubjectCategoryId);
 
-            if (resourceParameters.FromDate != null)
+            if (resourceParameters.FromDate is not null)
                 filter &= builder.Gte(pub => pub.IncidentDate, resourceParameters.FromDate);
 
-            if (resourceParameters.ToDate != null)
+            if (resourceParameters.ToDate is not null)
                 filter &= builder.Lte(pub => pub.IncidentDate, resourceParameters.ToDate);
 
             if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
-                filter &= builder.Regex(pub => pub.Description, new BsonRegularExpression($".{resourceParameters.SearchQuery}."));
+                filter &= (builder.Regex(pub => pub.Description, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")) |
+                    builder.Regex(pub => pub.Title, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")));
 
             return filter;
         }
