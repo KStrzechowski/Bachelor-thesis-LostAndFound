@@ -24,7 +24,6 @@ namespace LostAndFound.ProfileService.ThirdPartyServices.AzureServices
             containerClient.CreateIfNotExists(PublicAccessType.Blob);
             
             var blobClient = containerClient.GetBlobClient(file.GetPathWithFileName());
-
             await blobClient.UploadAsync(file.Content, new BlobHttpHeaders
             {
                 ContentType = file.ContentType,

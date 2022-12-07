@@ -1,11 +1,12 @@
-﻿using BrunoZell.ModelBinding;
-using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
+﻿using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
+using LostAndFound.PublicationService.CoreLibrary.Internal;
 using LostAndFound.PublicationService.CoreLibrary.Requests;
 using LostAndFound.PublicationService.CoreLibrary.ResourceParameters;
 using LostAndFound.PublicationService.CoreLibrary.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace LostAndFound.PublicationService.Controllers
 {
@@ -44,18 +45,30 @@ namespace LostAndFound.PublicationService.Controllers
         ///     GET /publication?pageNumber=3
         ///
         /// </remarks>
-        [HttpGet]
-        public Task<ActionResult<PublicationBaseDataResponseDto[]>> GetPublications(
+        [HttpGet(Name = "GetPublications")]
+        public async Task<ActionResult<PublicationBaseDataResponseDto[]>> GetPublications(
             [FromQuery] PublicationsResourceParameters publicationsResourceParameters)
         {
-            throw new NotImplementedException();
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            publicationsResourceParameters.PageSize = publicationsResourceParameters.PageSize > maxPublicationsPageSize ?
+                maxPublicationsPageSize : publicationsResourceParameters.PageSize;
+
+            var (publicationsDetailsDto, paginationMetadata) = await _publicationService
+                .GetPublications(rawUserId, publicationsResourceParameters);
+
+            paginationMetadata.NextPageLink = CreatePublicationsPageUri(paginationMetadata, ResourceUriType.NextPage);
+            paginationMetadata.PreviousPageLink = CreatePublicationsPageUri(paginationMetadata, ResourceUriType.PreviousPage);
+
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(paginationMetadata));
+
+            return Ok(publicationsDetailsDto);
         }
 
         /// <summary>
         /// Create Publication endpoint
         /// </summary>
         /// <param name="publicationData">Data of new publication</param>
-        /// <param name="subjectPhoto">Subject photo</param>
         /// <response code="201">Publication created</response>
         /// <response code="401">Unauthorized access</response>
         /// <returns>New publication details</returns>
@@ -64,27 +77,32 @@ namespace LostAndFound.PublicationService.Controllers
         ///
         ///     POST /publication
         ///     {
-        ///         "PublicationData": {
-        ///             "Title": "I lost my phone",
-        ///             "Description": "On May 11, 2022, I lost my blue Iphone 11 pro.",
-        ///             "IncidentAddress": "Ludwika Warynskiego 12, 00-655 Warszawa",
-        ///             "IncidentDate": "2022-12-01T13:30:22.52Z",
-        ///             "SubjectCategory": "Phone",
-        ///             "PublicationType": "LostSubject",
-        ///         },
+        ///         "Title": "I lost my phone",
+        ///         "Description": "On May 11, 2022, I lost my blue Iphone 11 pro.",
+        ///         "IncidentAddress": "Ludwika Warynskiego 12, 00-655 Warszawa",
+        ///         "IncidentDate": "2022-12-01T13:30:22.52Z",
+        ///         "SubjectCategoryId": "Other",
+        ///         "PublicationType": "LostSubject",
         ///         "SubjectPhoto": Photo       
         ///     }
         ///
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost]
-        public Task<ActionResult<PublicationDetailsResponseDto>> CreatePublication(
-            [ModelBinder(BinderType = typeof(JsonModelBinder))] CreatePublicationRequestDto publicationData, IFormFile subjectPhoto)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<PublicationDetailsResponseDto>> CreatePublication([FromForm] CreatePublicationRequestDto publicationData)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             string username = HttpContext.User.FindFirstValue("username");
 
-            throw new NotImplementedException();
+            var publicationDetails = await _publicationService.CreatePublication(rawUserId, username, publicationData);
+
+            return CreatedAtRoute("GetPublicationDetails",
+                 new
+                 {
+                     publicationId = publicationDetails.PublicationId,
+                 },
+                 publicationDetails);
         }
 
         /// <summary>
@@ -103,10 +121,13 @@ namespace LostAndFound.PublicationService.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("{publicationId:Guid}")]
-        public Task<ActionResult<PublicationDetailsResponseDto>> GetPublicationDetails(Guid publicationId)
+        [HttpGet("{publicationId:Guid}", Name = "GetPublicationDetails")]
+        public async Task<ActionResult<PublicationDetailsResponseDto>> GetPublicationDetails(Guid publicationId)
         {
-            throw new NotImplementedException();
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var publicationDetails = await _publicationService.GetPublicationDetails(rawUserId, publicationId);
+
+            return Ok(publicationDetails);
         }
 
         /// <summary>
@@ -127,19 +148,23 @@ namespace LostAndFound.PublicationService.Controllers
         ///         "Description": "On May 11, 2022, I lost my blue Iphone 11 pro.",
         ///         "IncidentAddress": "Ludwika Warynskiego 12, 00-655 Warszawa",
         ///         "IncidentDate": "2022-12-01T13:30:22.52Z",
-        ///         "SubjectCategory": "Phone",
+        ///         "SubjectCategoryId": "Other",
         ///         "PublicationType": "LostSubject",
-        ///         "PublicationState": "Open",
+        ///         "PublicationState": "Open"
         ///     }
         ///
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPut("{publicationId:Guid}")]
-        public Task<ActionResult<PublicationDetailsResponseDto>> UpdatePublicationDetails(Guid publicationId,
+        public async Task<ActionResult<PublicationDetailsResponseDto>> UpdatePublicationDetails(Guid publicationId,
             UpdatePublicationDetailsRequestDto publicationDetailsDto)
         {
-            throw new NotImplementedException();
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var publicationDetails = await _publicationService
+                .UpdatePublicationDetails(rawUserId, publicationId, publicationDetailsDto);
+
+            return Ok(publicationDetails);
         }
 
         /// <summary>
@@ -147,7 +172,7 @@ namespace LostAndFound.PublicationService.Controllers
         /// </summary>
         /// <param name="publicationId">Publication identifier</param>
         /// <param name="publicationStateDto">Data to update publication state</param>
-        /// <response code="204">Publication state updated</response>
+        /// <response code="200">Publication state updated</response>
         /// <response code="401">Unauthorized access to publication</response>
         /// <response code="404">Publication <paramref name="publicationId"/> could not be found</response>
         /// <returns></returns>
@@ -161,12 +186,16 @@ namespace LostAndFound.PublicationService.Controllers
         ///     
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPatch("{publicationId:Guid}")]
-        public Task<ActionResult> UpdatePublicationState(Guid publicationId,
+        public async Task<ActionResult<PublicationDetailsResponseDto>> UpdatePublicationState(Guid publicationId,
             UpdatePublicationStateRequestDto publicationStateDto)
         {
-            throw new NotImplementedException();
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var publicationDetails = await _publicationService
+                .UpdatePublicationState(rawUserId, publicationId, publicationStateDto);
+
+            return Ok(publicationDetails);
         }
 
         /// <summary>
@@ -185,9 +214,12 @@ namespace LostAndFound.PublicationService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("{publicationId:Guid}")]
-        public Task<ActionResult> DeletePublication(Guid publicationId)
+        public async Task<ActionResult> DeletePublication(Guid publicationId)
         {
-            throw new NotImplementedException();
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _publicationService.DeletePublication(rawUserId, publicationId);
+
+            return NoContent();
         }
 
         /// <summary>
@@ -195,7 +227,7 @@ namespace LostAndFound.PublicationService.Controllers
         /// </summary>
         /// <param name="publicationId">Publication identifier</param>
         /// <param name="publicationRatingDto">Data to update user vote</param>
-        /// <response code="204">Publication rating updated</response>
+        /// <response code="200">Publication rating updated</response>
         /// <response code="401">Unauthorized access</response>
         /// <response code="404">Publication <paramref name="publicationId"/> could not be found</response>
         /// <remarks>
@@ -203,19 +235,21 @@ namespace LostAndFound.PublicationService.Controllers
         ///
         ///     PATCH /publication/2b1bafcd-b2fd-492b-b050-9b7027653716/rating
         ///     {
-        ///         "NewPublicationVote": 1
+        ///         "NewPublicationVote": Up
         ///     }
         ///
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPatch("{publicationId:Guid}/rating")]
-        public Task<ActionResult> UpdatePublicationRating(Guid publicationId,
+        public async Task<ActionResult<PublicationDetailsResponseDto>> UpdatePublicationRating(Guid publicationId,
             UpdatePublicationRatingRequestDto publicationRatingDto)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var publicationDetails = await _publicationService
+                .UpdatePublicationRating(rawUserId, publicationId, publicationRatingDto);
 
-            throw new NotImplementedException();
+            return Ok(publicationDetails);
         }
 
         /// <summary>
@@ -267,6 +301,43 @@ namespace LostAndFound.PublicationService.Controllers
             await _publicationService.DeletePublicationPhoto(rawUserId, publicationId);
 
             return NoContent();
+        }
+
+        private string? CreatePublicationsPageUri(PaginationMetadata paginationMetadata, ResourceUriType type)
+        {
+            switch (type)
+            {
+                case ResourceUriType.PreviousPage:
+                    if (paginationMetadata.CurrentPage <= 1)
+                    {
+                        return null;
+                    }
+                    return Url.Link("GetPublications",
+                        new
+                        {
+                            pageNumber = paginationMetadata.CurrentPage - 1,
+                            pageSize = paginationMetadata.PageSize
+                        });
+                case ResourceUriType.NextPage:
+                    if (paginationMetadata.CurrentPage >= paginationMetadata.TotalPageCount)
+                    {
+                        return null;
+                    }
+
+                    return Url.Link("GetPublications",
+                        new
+                        {
+                            pageNumber = paginationMetadata.CurrentPage + 1,
+                            pageSize = paginationMetadata.PageSize
+                        });
+                default:
+                    return Url.Link("GetPublications",
+                        new
+                        {
+                            pageNumber = paginationMetadata.CurrentPage,
+                            pageSize = paginationMetadata.PageSize
+                        });
+            }
         }
     }
 }

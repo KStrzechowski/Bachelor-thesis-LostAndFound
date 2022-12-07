@@ -3,6 +3,7 @@ using LostAndFound.PublicationService.Core.DateTimeProviders;
 using LostAndFound.PublicationService.Core.FluentValidators;
 using LostAndFound.PublicationService.CoreLibrary.Enums;
 using LostAndFound.PublicationService.CoreLibrary.Requests;
+using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,13 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
             _dateTimeProvideMock.Setup(x => x.UtcNow)
                 .Returns(_utcDateNowForTests).Verifiable();
 
-            _validator = new CreatePublicationRequestDtoValidator(_dateTimeProvideMock.Object);
+            var categoriesRepositoryMock = new Mock<ICategoriesRepository>();
+            categoriesRepositoryMock
+                .Setup(repo => repo.DoesCategoryExist(It.IsAny<string>()))
+                .Returns<string>(_ => false);
+
+            _validator = new CreatePublicationRequestDtoValidator(
+                _dateTimeProvideMock.Object, categoriesRepositoryMock.Object);
         }
 
         [Fact]
@@ -42,7 +49,7 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         public void Validate_DtoWithEmptyIncidentDate_ReturnsFailure()
         {
             var dtoModel = GetValidCreatePublicationRequestDto();
-            dtoModel.IncidentDate = default(DateTime);
+            dtoModel.IncidentDate = default;
 
             var result = _validator.TestValidate(dtoModel);
 
@@ -86,7 +93,7 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         public void Validate_DtoWithEmptySubjectCategory_ReturnsFailure()
         {
             var dtoModel = GetValidCreatePublicationRequestDto();
-            dtoModel.SubjectCategory = String.Empty;
+            dtoModel.SubjectCategoryId = String.Empty;
 
             var result = _validator.TestValidate(dtoModel);
 
@@ -139,7 +146,7 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
                 Description = description,
                 IncidentAddress = address,
                 IncidentDate = date,
-                SubjectCategory = category,
+                SubjectCategoryId = category,
                 PublicationType = type,
             };
         }
@@ -152,7 +159,7 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
                 Description = "notEmpty",
                 IncidentAddress = "notEmpty",
                 IncidentDate = _utcDateNowForTests.AddDays(-1),
-                SubjectCategory = "notEmpty",
+                SubjectCategoryId = "notEmpty",
                 PublicationType = PublicationType.FoundSubject,
             };
         }

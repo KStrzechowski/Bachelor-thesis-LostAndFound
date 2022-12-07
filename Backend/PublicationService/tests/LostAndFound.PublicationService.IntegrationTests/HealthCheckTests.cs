@@ -14,7 +14,7 @@ namespace LostAndFound.PublicationService.IntegrationTests
             _httpClient = factory.CreateDefaultClient();
         }
 
-        [Fact(Skip = "Fails for unknown reason")]
+        [Fact(Skip = "Need to setup database")]
         public async Task HealthCheck_ReturnOk()
         {
             var response = await _httpClient.GetAsync("/healthcheck");

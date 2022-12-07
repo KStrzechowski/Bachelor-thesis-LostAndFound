@@ -23,14 +23,14 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         public bool OnlyUserPublications { get; set; } = false;
 
         /// <summary>
-        /// Filter by publication subject category 
+        /// Filter by publication subject category identifier
         /// </summary>
-        public string? SubjectCategory { get; set; }
+        public string? SubjectCategoryId { get; set; }
 
         /// <summary>
         /// State of publication to filter
         /// </summary>
-        public PublicationState PublicationState { get; set; } = PublicationState.Open;
+        public PublicationState? PublicationState { get; set; }
 
         /// <summary>
         /// Search for publications containing the given searchQuery in the title or description
@@ -60,6 +60,6 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// <summary>
         /// Type of publication to filter
         /// </summary>
-        public PublicationType PublicationType { get; set; } = PublicationType.FoundSubject;
+        public PublicationType? PublicationType { get; set; }
     }
 }

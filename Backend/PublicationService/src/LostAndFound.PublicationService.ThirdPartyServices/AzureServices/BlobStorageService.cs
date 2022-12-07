@@ -21,6 +21,7 @@ namespace LostAndFound.PublicationService.ThirdPartyServices.AzureServices
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(
                 _blobStorageSettings.PublicationPicturesContainerName);
+            containerClient.CreateIfNotExists(PublicAccessType.Blob);
 
             var blobClient = containerClient.GetBlobClient(file.GetPathWithFileName());
             await blobClient.UploadAsync(file.Content, new BlobHttpHeaders

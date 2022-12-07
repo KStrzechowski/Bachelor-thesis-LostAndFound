@@ -1,16 +1,17 @@
-using LostAndFound.PublicationService.ThirdPartyServices;
+using LostAndFound.PublicationService.Core;
+using LostAndFound.PublicationService.Core.FluentValidators;
 using LostAndFound.PublicationService.CoreLibrary.Settings;
 using LostAndFound.PublicationService.DataAccess;
+using LostAndFound.PublicationService.DataAccess.DatabaseSeeder.Interfaces;
+using LostAndFound.PublicationService.Middleware;
+using LostAndFound.PublicationService.ThirdPartyServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
-using LostAndFound.PublicationService.Core;
-using LostAndFound.PublicationService.Core.FluentValidators;
-using LostAndFound.PublicationService.Middleware;
-using Microsoft.AspNetCore.Mvc;
-using LostAndFound.PublicationService.DataAccess.DatabaseSeeder.Interfaces;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,7 @@ builder.Services.AddControllers(setupAction =>
         new ProducesResponseTypeAttribute(StatusCodes.Status406NotAcceptable));
     setupAction.Filters.Add(
         new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
-});
+}).AddJsonOptions(opt => { opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); }); ;
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddFluentValidators();
@@ -129,7 +130,7 @@ app.Run();
 
 void SeedDbCollections()
 {
-    if(app.Environment.IsDevelopment())
+    if (app.Environment.IsDevelopment())
     {
         using var scope = app.Services.CreateScope();
         var dbSeeder = scope.ServiceProvider.GetRequiredService<IDbSeeder>();

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using LostAndFound.PublicationService.Core.DateTimeProviders;
 using LostAndFound.PublicationService.Core.FluentValidators;
+using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
@@ -16,8 +17,10 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
         {
             _services = new ServiceCollection();
 
+            var mockedCategoriesRepository = new Mock<ICategoriesRepository>();
             var mockedDateTimeProvider = new Mock<IDateTimeProvider>();
             _services.AddSingleton(mockedDateTimeProvider.Object);
+            _services.AddSingleton(mockedCategoriesRepository.Object);
         }
 
         [Theory]

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using LostAndFound.PublicationService.DataAccess;
 using LostAndFound.PublicationService.DataAccess.Context.Interfaces;
+using LostAndFound.PublicationService.DataAccess.DatabaseSeeder.Interfaces;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using LostAndFound.PublicationService.DataAccess.Settings;
 using Microsoft.Extensions.Configuration;
@@ -41,7 +42,8 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
         [Theory]
         [InlineData(typeof(IPublicationsRepository))]
         [InlineData(typeof(ICategoriesRepository))]
-        public void AddApplicationDataAccessServices_Execute_RepositoriesAreRegistered(Type type)
+        [InlineData(typeof(IDbSeeder))]
+        public void AddApplicationDataAccessServices_Execute_ExpectedServiceIsRegistered(Type type)
         {
             _services.AddDataAccessServices(_configuration);
             var serviceProvider = _services.BuildServiceProvider();
