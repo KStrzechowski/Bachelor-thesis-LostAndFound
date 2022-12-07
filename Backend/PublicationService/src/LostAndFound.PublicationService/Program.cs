@@ -99,7 +99,7 @@ builder.Services.AddSwaggerGen(setupAction =>
 
 var app = builder.Build();
 
-//SeedDbCollections();
+SeedDbCollections();
 
 app.UseHttpsRedirection();
 app.UseRouting();
