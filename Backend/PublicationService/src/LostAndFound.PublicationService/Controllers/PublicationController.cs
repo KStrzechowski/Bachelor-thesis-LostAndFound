@@ -38,6 +38,8 @@ namespace LostAndFound.PublicationService.Controllers
         /// Get list of publication
         /// </summary>
         /// <param name="publicationsResourceParameters">Filter, search and pagination parameters to get publications</param>
+        /// <response code="200">List of publication returned</response>
+        /// <response code="401">Unauthorized access</response>
         /// <returns>List of publications</returns>
         /// <remarks>
         /// Sample request:
@@ -45,6 +47,7 @@ namespace LostAndFound.PublicationService.Controllers
         ///     GET /publication?pageNumber=3
         ///
         /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet(Name = "GetPublications")]
         public async Task<ActionResult<IEnumerable<PublicationBaseDataResponseDto>>> GetPublications(
             [FromQuery] PublicationsResourceParameters publicationsResourceParameters)

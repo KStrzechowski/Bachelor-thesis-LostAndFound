@@ -61,6 +61,21 @@
       "SwaggerKey": "accounts"
     },
     {
+      "UpstreamPathTemplate": "/chat",
+      "DownstreamPathTemplate": "/chat",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "SwaggerKey": "chats"
+    },
+    {
       "UpstreamPathTemplate": "/profile",
       "DownstreamPathTemplate": "/profile",
       "UpstreamHttpMethod": [

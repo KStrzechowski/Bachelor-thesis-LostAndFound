@@ -15,8 +15,4 @@
     <ProjectReference Include="..\LostAndFound.ChatService.DataAccess\LostAndFound.ChatService.DataAccess.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="MappingProfiles\" />
-  </ItemGroup>
-
 </Project>

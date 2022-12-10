@@ -7,7 +7,8 @@ namespace LostAndFound.ChatService.Core.FluentValidators
     {
         public CreateMessageRequestDtoValidator()
         {
-
+            RuleFor(dto => dto.Content)
+                .NotEmpty();
         }
     }
 }
