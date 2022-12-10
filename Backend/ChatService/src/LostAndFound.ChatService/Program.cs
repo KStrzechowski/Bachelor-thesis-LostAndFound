@@ -1,7 +1,10 @@
 using LostAndFound.ChatService.Core;
+using LostAndFound.ChatService.Core.FluentValidators;
 using LostAndFound.ChatService.CoreLibrary.Settings;
 using LostAndFound.ChatService.DataAccess;
+using LostAndFound.ChatService.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -13,9 +16,21 @@ var authenticationSettings = new AuthenticationSettings();
 builder.Configuration.Bind("LostAndFoundAuthentication", authenticationSettings);
 builder.Services.AddSingleton(authenticationSettings);
 
-builder.Services.AddHealthChecks();
-builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
+builder.Services.AddHealthChecks();
+builder.Services.AddControllers(setupAction =>
+{
+    setupAction.Filters.Add(
+        new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest));
+    setupAction.Filters.Add(
+        new ProducesResponseTypeAttribute(StatusCodes.Status406NotAcceptable));
+    setupAction.Filters.Add(
+        new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
+});
+
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Services.AddFluentValidators();
 builder.Services.AddDataAccessServices(builder.Configuration);
 builder.Services.AddCoreServices();
 
@@ -83,6 +98,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

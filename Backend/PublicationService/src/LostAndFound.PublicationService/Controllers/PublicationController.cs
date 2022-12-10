@@ -46,7 +46,7 @@ namespace LostAndFound.PublicationService.Controllers
         ///
         /// </remarks>
         [HttpGet(Name = "GetPublications")]
-        public async Task<ActionResult<PublicationBaseDataResponseDto[]>> GetPublications(
+        public async Task<ActionResult<IEnumerable<PublicationBaseDataResponseDto>>> GetPublications(
             [FromQuery] PublicationsResourceParameters publicationsResourceParameters)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);

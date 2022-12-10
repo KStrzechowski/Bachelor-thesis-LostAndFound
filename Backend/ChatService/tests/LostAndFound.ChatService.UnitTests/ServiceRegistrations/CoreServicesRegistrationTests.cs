@@ -1,5 +1,7 @@
 ﻿using LostAndFound.ChatService.Core;
+using LostAndFound.ChatService.Core.ChatServices.Interfaces;
 using LostAndFound.ChatService.Core.DateTimeProviders;
+using LostAndFound.ChatService.Core.MessageServices.Interfaces;
 using LostAndFound.ChatService.CoreLibrary.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -28,6 +30,24 @@ namespace LostAndFound.ChatService.UnitTests.ServiceRegistrations
             var serviceProvider = _services.BuildServiceProvider();
 
             Assert.NotNull(serviceProvider.GetService(type));
+        }
+
+        [Fact]
+        public void AddCoreServices_Execute_ResultsInChatActionsServiceIsRegistered()
+        {
+            _services.AddCoreServices();
+            var serviceProvider = _services.BuildServiceProvider();
+
+            Assert.NotNull(serviceProvider.GetService(typeof(IChatActionService)));
+        }
+
+        [Fact]
+        public void AddCoreServices_Execute_ResultsInMessageServiceIsRegistered()
+        {
+            _services.AddCoreServices();
+            var serviceProvider = _services.BuildServiceProvider();
+
+            Assert.NotNull(serviceProvider.GetService(typeof(IMessageService)));
         }
     }
 }
