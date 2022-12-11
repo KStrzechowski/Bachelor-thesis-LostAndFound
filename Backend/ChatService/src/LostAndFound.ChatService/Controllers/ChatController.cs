@@ -32,6 +32,7 @@ namespace LostAndFound.ChatService.Controllers
             _chatActionService = chatActionService ?? throw new ArgumentNullException(nameof(chatActionService));
         }
 
+
         /// <summary>
         /// Get list of user chats
         /// </summary>
@@ -51,7 +52,6 @@ namespace LostAndFound.ChatService.Controllers
             [FromQuery] ChatsResourceParameters chatsResource)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             var (chatDtos, paginationMetadata) = await _chatActionService
                 .GetChats(rawUserId, chatsResource);
 
@@ -69,7 +69,7 @@ namespace LostAndFound.ChatService.Controllers
         /// </summary>
         /// <param name="chatMemberId">Chat member identifier</param>
         /// <response code="204">Chat message read</response>
-        /// <response code="204">Chat not found</response>
+        /// <response code="404">Chat not found</response>
         /// <response code="401">Unauthorized access</response>
         /// <remarks>
         /// Sample request:
@@ -83,11 +83,33 @@ namespace LostAndFound.ChatService.Controllers
         public async Task<ActionResult> ReadChatMessages(Guid chatMemberId)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             await _chatActionService.ReadChatMessages(rawUserId, chatMemberId);
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Get unread chats counter
+        /// </summary>
+        /// <returns>Unread chats notification counter</returns>
+        /// <remarks>
+        /// <response code="200">Notification data returned</response>
+        /// <response code="401">Unauthorized access</response>
+        /// Sample request:
+        ///
+        ///     GET /chat/notification
+        ///
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet("notification")]
+        public async Task<ActionResult<ChatNotificationResponseDto>> GetUnreadChatNotificationCounter()
+        {
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var response = await _chatActionService.GetUnreadChatNotification(rawUserId);
+
+            return Ok(response);
+        }
+
 
         private string? CreateChatsPageUri(PaginationMetadata paginationMetadata, ResourceUriType type)
         {

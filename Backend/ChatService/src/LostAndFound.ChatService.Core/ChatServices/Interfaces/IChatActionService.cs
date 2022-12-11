@@ -9,5 +9,6 @@ namespace LostAndFound.ChatService.Core.ChatServices.Interfaces
         Task<(IEnumerable<ChatBaseDataResponseDto>?, PaginationMetadata)> GetChats(
             string rawUserId, ChatsResourceParameters chatsResource);
         Task ReadChatMessages(string rawUserId, Guid chatMemberId);
+        Task<ChatNotificationResponseDto> GetUnreadChatNotification(string rawUserId);
     }
 }

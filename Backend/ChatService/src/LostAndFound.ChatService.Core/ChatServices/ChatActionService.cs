@@ -54,7 +54,10 @@ namespace LostAndFound.ChatService.Core.ChatServices
             }
 
             int totalItemCount = chats.Count();
-            var paginationMetadata = new PaginationMetadata(totalItemCount, resourceParameters.PageSize, resourceParameters.PageNumber);
+            var paginationMetadata = new PaginationMetadata(
+                totalItemCount, 
+                resourceParameters.PageSize, 
+                resourceParameters.PageNumber);
 
             return (chatDtos, paginationMetadata);
         }
@@ -77,6 +80,25 @@ namespace LostAndFound.ChatService.Core.ChatServices
                 await _chatsRepository.ReadChatMessages(chatEntity);
             }
         }
+
+        public async Task<ChatNotificationResponseDto> GetUnreadChatNotification(string rawUserId)
+        {
+            var userId = ParseUserId(rawUserId);
+            var chats = await _chatsRepository.GetUserChatWithUnreadMessage(userId);
+
+            var chatNotificationDto = new ChatNotificationResponseDto()
+            {
+                UnreadChatsCount = chats.Count(),
+                UnreadMessageSenders = chats.Select(c =>
+                    new ChatMemberBaseDataResponseDto()
+                    {
+                        Id = c.Members.Single(m => m.Id != userId).Id,
+                    }),
+            };
+
+            return chatNotificationDto;
+        }
+
 
         private static Guid ParseUserId(string rawUserId)
         {

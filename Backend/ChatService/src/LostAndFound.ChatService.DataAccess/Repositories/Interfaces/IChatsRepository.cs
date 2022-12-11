@@ -6,5 +6,6 @@ namespace LostAndFound.ChatService.DataAccess.Repositories.Interfaces
     {
         Task InsertNewChatMessage(Guid chatId, Message messageEntity);
         Task ReadChatMessages(Chat chatEntity);
+        Task<IEnumerable<Chat>> GetUserChatWithUnreadMessage(Guid userId);
     }
 }
