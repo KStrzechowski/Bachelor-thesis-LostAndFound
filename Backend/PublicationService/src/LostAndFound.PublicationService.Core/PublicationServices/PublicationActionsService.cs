@@ -64,7 +64,13 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
                 Username = username,
             };
             publicationEntity.SubjectCategoryName = category.DisplayName;
-            // TODO: Add latitude calclulation
+
+            var decodedAddress = await _geocodingService.GeocodeAddress(publicationDto.IncidentAddress);
+            if(decodedAddress is not null)
+            {
+                publicationEntity.Latitude = decodedAddress.Latitude;
+                publicationEntity.Longitude = decodedAddress.Longitude;
+            }
 
             if (publicationDto.SubjectPhoto is not null && publicationDto.SubjectPhoto.Length > 0)
             {
@@ -119,11 +125,18 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             }
 
             var publicationEntity = await GetUserPublication(userId, publicationId);
+            var isNewAddress = !publicationEntity.IncidentAddress.Equals(publicationDetailsDto.IncidentAddress);
+            if (isNewAddress)
+            {
+                var decodedAddress = await _geocodingService.GeocodeAddress(publicationDetailsDto.IncidentAddress);
+                publicationEntity.Latitude = decodedAddress?.Latitude ?? 0d;
+                publicationEntity.Longitude = decodedAddress?.Longitude ?? 0d;
+            }
+
             _mapper.Map(publicationDetailsDto, publicationEntity);
             publicationEntity.SubjectCategoryName = category.DisplayName;
             publicationEntity.LastModificationDate = _dateTimeProvider.UtcNow;
 
-            // TODO: Add latitude calclulation
             await _publicationsRepository.ReplaceOneAsync(publicationEntity);
 
             return await GetPublicationDetails(publicationId, userId);
