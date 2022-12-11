@@ -1,12 +1,9 @@
-﻿namespace LostAndFound.ChatService.CoreLibrary.ResourceParameters
+﻿namespace LostAndFound.ProfileService.CoreLibrary.ResourceParameters
 {
-    /// <summary>
-    /// Chats resource parameters
-    /// </summary>
-    public class ChatsResourceParameters
+    public class ProfileCommentsResourceParameters
     {
         private const int maxPageSize = 100;
-        private int _pageSize = 50;
+        private int _pageSize = 20;
 
         /// <summary>
         /// Page number

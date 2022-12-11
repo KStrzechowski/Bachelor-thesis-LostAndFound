@@ -20,7 +20,6 @@ namespace LostAndFound.PublicationService.Controllers
     [ApiController]
     public class PublicationController : ControllerBase
     {
-        private const int maxPublicationsPageSize = 50;
         private readonly IPublicationActionsService _publicationService;
 
         /// <summary>
@@ -53,9 +52,6 @@ namespace LostAndFound.PublicationService.Controllers
             [FromQuery] PublicationsResourceParameters publicationsResourceParameters)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            publicationsResourceParameters.PageSize = publicationsResourceParameters.PageSize > maxPublicationsPageSize ?
-                maxPublicationsPageSize : publicationsResourceParameters.PageSize;
-
             var (publicationsDetailsDto, paginationMetadata) = await _publicationService
                 .GetPublications(rawUserId, publicationsResourceParameters);
 

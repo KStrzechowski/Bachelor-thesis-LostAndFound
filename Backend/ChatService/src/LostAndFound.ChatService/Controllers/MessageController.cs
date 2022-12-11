@@ -20,7 +20,6 @@ namespace LostAndFound.ChatService.Controllers
     [ApiController]
     public class MessageController : ControllerBase
     {
-        private const int maxMessagesPageSize = 100;
         private readonly IMessageService _messageService;
 
         /// <summary>
@@ -59,10 +58,9 @@ namespace LostAndFound.ChatService.Controllers
             CreateMessageRequestDto messageRequestDto)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            string username = HttpContext.User.FindFirstValue("username");
 
             var messageResponseDto = await _messageService
-                .SendMessage(rawUserId, username, messageRequestDto, recipentId);
+                .SendMessage(rawUserId, messageRequestDto, recipentId);
 
             return Ok(messageResponseDto);
         }
@@ -89,9 +87,6 @@ namespace LostAndFound.ChatService.Controllers
             [FromQuery] MessagesResourceParameters messagesResourceParameters)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            messagesResourceParameters.PageSize = messagesResourceParameters.PageSize > maxMessagesPageSize ?
-                maxMessagesPageSize : messagesResourceParameters.PageSize;
-
             var (messagesDtos, paginationMetadata) = await _messageService
                 .GetChatMessages(rawUserId, messagesResourceParameters, recipentId);
 

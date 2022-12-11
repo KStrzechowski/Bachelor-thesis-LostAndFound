@@ -4,6 +4,7 @@ using LostAndFound.ProfileService.Core.UserProfileServices.Interfaces;
 using LostAndFound.ProfileService.CoreLibrary.Exceptions;
 using LostAndFound.ProfileService.CoreLibrary.Internal;
 using LostAndFound.ProfileService.CoreLibrary.Requests;
+using LostAndFound.ProfileService.CoreLibrary.ResourceParameters;
 using LostAndFound.ProfileService.CoreLibrary.Responses;
 using LostAndFound.ProfileService.DataAccess.Entities;
 using LostAndFound.ProfileService.DataAccess.Repositories.Interfaces;
@@ -23,7 +24,8 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<CommentDataResponseDto> CreateProfileComment(string rawUserId, string username, CreateProfileCommentRequestDto commentRequestDto, Guid profileOwnerId)
+        public async Task<CommentDataResponseDto> CreateProfileComment(string rawUserId, string username,
+            CreateProfileCommentRequestDto commentRequestDto, Guid profileOwnerId)
         {
             var userId = ParseUserId(rawUserId);
             if (userId == profileOwnerId)
@@ -62,7 +64,8 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             await _profilesRepository.DeleteProfileComment(profileOwnerId, commentEntity);
         }
 
-        public async Task<(ProfileCommentsSectionResponseDto, PaginationMetadata)> GetProfileCommentsSection(string rawUserId, Guid profileOwnerId, int pageNumber, int pageSize)
+        public async Task<(ProfileCommentsSectionResponseDto, PaginationMetadata)> GetProfileCommentsSection(string rawUserId,
+            Guid profileOwnerId, ProfileCommentsResourceParameters resourceParameters)
         {
             var userId = ParseUserId(rawUserId);
             var commentsList = (await GetUserProfile(profileOwnerId)).Comments;
@@ -77,8 +80,8 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
 
             var commentPage = commentsList.Where(com => com.AuthorId != userId)
                 .OrderByDescending(com => com.CreationTime)
-                .Skip(pageSize * (pageNumber - 1))
-                .Take(pageSize)
+                .Skip(resourceParameters.PageSize * (resourceParameters.PageNumber - 1))
+                .Take(resourceParameters.PageSize)
                 .ToList();
 
             if (commentPage != null && commentPage.Any())
@@ -88,12 +91,13 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             }
 
             int totalItemCount = commentsList.Length - (userComment == null ? 0 : 1);
-            var paginationMetadata = new PaginationMetadata(totalItemCount, pageSize, pageNumber);
+            var paginationMetadata = new PaginationMetadata(totalItemCount, resourceParameters.PageSize, resourceParameters.PageNumber);
 
             return (commentsSectionDto, paginationMetadata);
         }
 
-        public async Task<CommentDataResponseDto> UpdateProfileComment(string rawUserId, UpdateProfileCommentRequestDto commentRequestDto, Guid profileOwnerId)
+        public async Task<CommentDataResponseDto> UpdateProfileComment(string rawUserId,
+            UpdateProfileCommentRequestDto commentRequestDto, Guid profileOwnerId)
         {
             var userId = ParseUserId(rawUserId);
             var profileEntity = await GetUserProfile(profileOwnerId);

@@ -57,7 +57,7 @@ namespace LostAndFound.ChatService.Core.MessageServices
             return (messagesDtos, paginationMetadata);
         }
 
-        public async Task<MessageResponseDto> SendMessage(string rawUserId, string username, 
+        public async Task<MessageResponseDto> SendMessage(string rawUserId, 
             CreateMessageRequestDto messageRequestDto, Guid recipentId)
         {
             var userId = ParseUserId(rawUserId);
@@ -70,7 +70,7 @@ namespace LostAndFound.ChatService.Core.MessageServices
 
             if(chatEntity is null)
             {
-                Chat newChat = CreateChatEntity(username, recipentId, userId, chatId, messageEntity);
+                Chat newChat = CreateChatEntity(recipentId, userId, chatId, messageEntity);
                 await _chatsRepository.InsertOneAsync(newChat);
             }
             else
@@ -81,7 +81,7 @@ namespace LostAndFound.ChatService.Core.MessageServices
             return _mapper.Map<MessageResponseDto>(messageEntity);
         }
 
-        private Chat CreateChatEntity(string username, Guid recipentId, Guid userId, Guid chatId, Message messageEntity)
+        private Chat CreateChatEntity(Guid recipentId, Guid userId, Guid chatId, Message messageEntity)
         {
             return new Chat()
             {
@@ -90,16 +90,8 @@ namespace LostAndFound.ChatService.Core.MessageServices
                 CreationTime = _dateTimeProvider.UtcNow,
                 Members = new Member[2]
                 {
-                        new Member()
-                        {
-                            Id = userId,
-                            Username = username,
-                        },
-                        new Member()
-                        {
-                            Id = recipentId,
-                            Username = "",
-                        }
+                        new Member() { Id = userId },
+                        new Member() { Id = recipentId }
                 },
                 Messages = new Message[1] { messageEntity }
             };

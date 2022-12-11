@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using LostAndFound.ChatService.Core.ChatServices.Interfaces;
-using LostAndFound.ChatService.Core.DateTimeProviders;
 using LostAndFound.ChatService.Core.Extensions;
 using LostAndFound.ChatService.CoreLibrary.Exceptions;
 using LostAndFound.ChatService.CoreLibrary.Internal;
@@ -13,13 +12,11 @@ namespace LostAndFound.ChatService.Core.ChatServices
     public class ChatActionService : IChatActionService
     {
         private readonly IChatsRepository _chatsRepository;
-        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMapper _mapper;
 
-        public ChatActionService(IChatsRepository chatsRepository, IDateTimeProvider dateTimeProvider, IMapper mapper)
+        public ChatActionService(IChatsRepository chatsRepository, IMapper mapper)
         {
             _chatsRepository = chatsRepository ?? throw new NotImplementedException(nameof(chatsRepository));
-            _dateTimeProvider = dateTimeProvider ?? throw new NotImplementedException(nameof(dateTimeProvider));
             _mapper = mapper ?? throw new NotImplementedException(nameof(mapper));
         }
 
@@ -36,13 +33,13 @@ namespace LostAndFound.ChatService.Core.ChatServices
                 .ToList();
 
             var chatDtos = Enumerable.Empty<ChatBaseDataResponseDto>();
-            if(chatsPage is not null && chatsPage.Any())
+            if (chatsPage is not null && chatsPage.Any())
             {
                 chatDtos = _mapper.Map<IEnumerable<ChatBaseDataResponseDto>>(chatsPage);
 
                 foreach (var it in chatDtos.Zip(chatsPage, Tuple.Create))
                 {
-                    if(it.Item1 is not null)
+                    if (it.Item1 is not null)
                     {
                         it.Item1.ContainsUnreadMessage = it.Item1.LastMessage?.AuthorId != userId
                             && it.Item2.ContainUnreadMessage;
@@ -51,7 +48,6 @@ namespace LostAndFound.ChatService.Core.ChatServices
                         it.Item1.ChatMember = new ChatMemberBaseDataResponseDto()
                         {
                             Id = chatMember.Id,
-                            Username = chatMember.Username,
                         };
                     }
                 }
@@ -74,7 +70,7 @@ namespace LostAndFound.ChatService.Core.ChatServices
                 throw new NotFoundException("Chat not found");
             }
 
-            if(chatEntity.Messages.Any() && chatEntity.Messages.Last().AuthorId == chatMemberId 
+            if (chatEntity.Messages.Any() && chatEntity.Messages.Last().AuthorId == chatMemberId
                 && chatEntity.ContainUnreadMessage)
             {
                 chatEntity.ContainUnreadMessage = false;

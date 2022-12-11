@@ -19,7 +19,6 @@ namespace LostAndFound.ChatService.Controllers
     [ApiController]
     public class ChatController : ControllerBase
     {
-        private const int maxChatsPageSize = 100;
         private readonly IChatActionService _chatActionService;
 
 
@@ -52,7 +51,6 @@ namespace LostAndFound.ChatService.Controllers
             [FromQuery] ChatsResourceParameters chatsResource)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            chatsResource.PageSize = chatsResource.PageSize > maxChatsPageSize ? maxChatsPageSize : chatsResource.PageSize;
 
             var (chatDtos, paginationMetadata) = await _chatActionService
                 .GetChats(rawUserId, chatsResource);
