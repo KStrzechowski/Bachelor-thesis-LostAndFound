@@ -1,6 +1,5 @@
 ﻿using Azure.Storage.Blobs;
 using FluentAssertions;
-using Geocoding.Google;
 using LostAndFound.PublicationService.ThirdPartyServices;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.GeocodingServices.Interfaces;
@@ -32,7 +31,11 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
                     "publication-container"
                 },
                 {
-                    "LostAndFoundGoogleGeocoderSettings:ApiKey",
+                    $"{PositionStackServiceSettings.SettingName}:Uri",
+                    "http://api.positionstack.com/v1/"
+                },
+                {
+                    $"{PositionStackServiceSettings.SettingName}:AccessKey",
                     "BCzaSyC3FfyxStTRB1L5SG6CQNGqlhJ1rE3gW4T"
                 }
             };
@@ -47,7 +50,6 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
         [InlineData(typeof(IFileStorageService))]
         [InlineData(typeof(BlobServiceClient))]
         [InlineData(typeof(IGeocodingService))]
-        [InlineData(typeof(GoogleGeocoder))]
         public void AddThirdPartyServices_Execute_ResultsInExpectedServiceIsRegistered(Type type)
         {
             _services.AddThirdPartyServices(_configuration);
@@ -70,15 +72,16 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
         }
 
         [Fact]
-        public void AddThirdPartyServices_Execute_GoogleGeocoderSettingsAreConfiguredCorrectly()
+        public void AddThirdPartyServices_Execute_PositionStackServiceSettingsAreConfiguredCorrectly()
         {
             _services.AddThirdPartyServices(_configuration);
             var serviceProvider = _services.BuildServiceProvider();
 
-            var configuration = serviceProvider.GetService(typeof(GoogleGeocoderSettings)) as GoogleGeocoderSettings;
+            var configuration = serviceProvider.GetService(typeof(PositionStackServiceSettings)) as PositionStackServiceSettings;
 
             configuration?.Should().NotBeNull();
-            configuration!.ApiKey.Should().Be(_testCustomConfiguration["LostAndFoundGoogleGeocoderSettings:ApiKey"]);
+            configuration!.Uri.Should().Be(_testCustomConfiguration[$"{PositionStackServiceSettings.SettingName}:Uri"]);
+            configuration!.AccessKey.Should().Be(_testCustomConfiguration[$"{PositionStackServiceSettings.SettingName}:AccessKey"]);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Geolocation;
 using LostAndFound.PublicationService.Core.DateTimeProviders;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Enums;
@@ -64,7 +65,13 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
                 Username = username,
             };
             publicationEntity.SubjectCategoryName = category.DisplayName;
-            // TODO: Add latitude calclulation
+
+            var decodedAddress = await _geocodingService.GeocodeAddress(publicationDto.IncidentAddress);
+            if(decodedAddress is not null)
+            {
+                publicationEntity.Latitude = decodedAddress.Latitude;
+                publicationEntity.Longitude = decodedAddress.Longitude;
+            }
 
             if (publicationDto.SubjectPhoto is not null && publicationDto.SubjectPhoto.Length > 0)
             {
@@ -119,11 +126,18 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             }
 
             var publicationEntity = await GetUserPublication(userId, publicationId);
+            var isNewAddress = !publicationEntity.IncidentAddress.Equals(publicationDetailsDto.IncidentAddress);
+            if (isNewAddress)
+            {
+                var decodedAddress = await _geocodingService.GeocodeAddress(publicationDetailsDto.IncidentAddress);
+                publicationEntity.Latitude = decodedAddress?.Latitude ?? 0d;
+                publicationEntity.Longitude = decodedAddress?.Longitude ?? 0d;
+            }
+
             _mapper.Map(publicationDetailsDto, publicationEntity);
             publicationEntity.SubjectCategoryName = category.DisplayName;
             publicationEntity.LastModificationDate = _dateTimeProvider.UtcNow;
 
-            // TODO: Add latitude calclulation
             await _publicationsRepository.ReplaceOneAsync(publicationEntity);
 
             return await GetPublicationDetails(publicationId, userId);
@@ -142,7 +156,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
         {
             var userId = ParseUserId(rawUserId);
 
-            var filterExpression = CreateFilterExpression(resourceParameters, userId);
+            var filterExpression = await CreateFilterExpression(resourceParameters, userId);
             var publications = (await _publicationsRepository.UseFilterDefinition(filterExpression)).ToList();
 
             var publicationsPage = publications.OrderByDescending(pub => pub.AggregateRating)
@@ -171,6 +185,60 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             var paginationMetadata = new PaginationMetadata(totalItemCount, resourceParameters.PageSize, resourceParameters.PageNumber);
 
             return (publicationDtos, paginationMetadata);
+        }
+
+        private async Task<FilterDefinition<Publication>> CreateFilterExpression(PublicationsResourceParameters resourceParameters, Guid userId)
+        {
+            var builder = Builders<Publication>.Filter;
+            var filter = builder.Empty;
+
+            if (resourceParameters.PublicationState is not null)
+            {
+                var state = _mapper.Map<State>(resourceParameters.PublicationState);
+                filter = builder.Eq(pub => pub.State, state);
+            }
+
+            if (resourceParameters.PublicationType is not null)
+            {
+                var type = _mapper.Map<DataAccess.Entities.PublicationEnums.Type>(resourceParameters.PublicationType);
+                filter &= builder.Eq(pub => pub.Type, type);
+            }
+
+            if (resourceParameters.OnlyUserPublications)
+                filter &= builder.Eq(pub => pub.Author.Id, userId);
+
+            if (!String.IsNullOrEmpty(resourceParameters.SubjectCategoryId))
+                filter &= builder.Eq(pub => pub.SubjectCategoryId, resourceParameters.SubjectCategoryId);
+
+            if (resourceParameters.FromDate is not null)
+                filter &= builder.Gte(pub => pub.IncidentDate, resourceParameters.FromDate);
+
+            if (resourceParameters.ToDate is not null)
+                filter &= builder.Lte(pub => pub.IncidentDate, resourceParameters.ToDate);
+
+            if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
+                filter &= (builder.Regex(pub => pub.Description, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")) |
+                    builder.Regex(pub => pub.Title, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")));
+
+            if (!String.IsNullOrEmpty(resourceParameters.IncidentAddress))
+            {
+                var decodedAddress = await _geocodingService.GeocodeAddress(resourceParameters.IncidentAddress);
+                if (decodedAddress is not null && decodedAddress.Latitude != 0d && decodedAddress.Longitude != 0d)
+                {
+                    var boundaries = new CoordinateBoundaries(
+                        decodedAddress.Latitude, 
+                        decodedAddress.Longitude, 
+                        resourceParameters.SearchRadius,
+                        DistanceUnit.Kilometers);
+
+                    filter &= (builder.Gte(p => p.Latitude, boundaries.MinLatitude)
+                        & builder.Gte(p => p.Longitude, boundaries.MinLongitude)
+                        & builder.Lte(p => p.Latitude, boundaries.MaxLatitude)
+                        & builder.Lte(p => p.Longitude, boundaries.MaxLatitude));
+                }
+            }
+
+            return filter;
         }
 
         public async Task<PublicationDetailsResponseDto> UpdatePublicationState(string rawUserId,
@@ -295,42 +363,6 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             }
 
             return userId;
-        }
-
-        private FilterDefinition<Publication> CreateFilterExpression(PublicationsResourceParameters resourceParameters, Guid userId)
-        {
-            var builder = Builders<Publication>.Filter;
-            var filter = builder.Empty;
-
-            if (resourceParameters.PublicationState is not null)
-            {
-                var state = _mapper.Map<State>(resourceParameters.PublicationState);
-                filter = builder.Eq(pub => pub.State, state);
-            }
-
-            if (resourceParameters.PublicationType is not null)
-            {
-                var type = _mapper.Map<DataAccess.Entities.PublicationEnums.Type>(resourceParameters.PublicationType);
-                filter &= builder.Eq(pub => pub.Type, type);
-            }
-
-            if (resourceParameters.OnlyUserPublications)
-                filter &= builder.Eq(pub => pub.Author.Id, userId);
-
-            if (resourceParameters.SubjectCategoryId is not null)
-                filter &= builder.Eq(pub => pub.SubjectCategoryId, resourceParameters.SubjectCategoryId);
-
-            if (resourceParameters.FromDate is not null)
-                filter &= builder.Gte(pub => pub.IncidentDate, resourceParameters.FromDate);
-
-            if (resourceParameters.ToDate is not null)
-                filter &= builder.Lte(pub => pub.IncidentDate, resourceParameters.ToDate);
-
-            if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
-                filter &= (builder.Regex(pub => pub.Description, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")) |
-                    builder.Regex(pub => pub.Title, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")));
-
-            return filter;
         }
     }
 }
