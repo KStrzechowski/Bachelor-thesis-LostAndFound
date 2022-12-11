@@ -67,7 +67,6 @@ More informations about Azure Storage Emulator:
 Note 1: You don't need to change any connection string while using Azure Storage Emulator.
 Note 2: The storage emulator currently operates only in Windows. For emulation in Linux, use [Azurite emulator](https://github.com/azure/azurite).
 
-
 <br />
 
 #### 2. Create Azure Storage Account using Azure Portal and replace blob storage connection strings:
@@ -81,7 +80,17 @@ When you have the new connection string ready, you just need to update "appsetti
 
 
 <br />
-<br />
+
+### **Position Stack Api**
+Publication service communicate with external **Position Stack Api** in order to decode static addresses into geographical coordinates. PositionStack offers a straightforward and reliable solution for forward and reverse geocoding. Before running system you need to provide an api key for position stack api.  
+
+
+You can get a FREE Api Key here:  https://positionstack.com/documentation
+
+When you have the Api Key ready, you just need to update "appsettings.Development.json" files in all publication microservices. So you need to make the following changes:
+* Replace value for **PositionStackService:AccessKey** with the new Api Key. (It is by default set to paste-access-key)
+	> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json
+
 
 ## Build and run
 You can build and run backend solution by following these steps:
