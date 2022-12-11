@@ -14,25 +14,25 @@ export enum PublicationState {
   Closed,
 }
 
-export interface CategoryType {
+export type CategoryType = {
   id?: string;
   displayName?: string;
-}
+};
 
-export interface UserType {
+export type UserType = {
   id: string;
   username?: string;
-}
+};
 
-export interface PublicationRatingRequestType {
+export type PublicationRatingRequestType = {
   newPublicationVote: SinglePublicationVote;
-}
+};
 
-export interface PublicationStateRequestType {
+export type PublicationStateRequestType = {
   publicationState: PublicationState;
-}
+};
 
-export interface PublicationRequestType {
+export type PublicationRequestType = {
   title?: string;
   description?: string;
   incidentAddress?: string;
@@ -40,9 +40,9 @@ export interface PublicationRequestType {
   subjectCategoryId?: string;
   publicationType: PublicationType;
   publicationState: PublicationState;
-}
+};
 
-export interface PublicationResponseType {
+export type PublicationResponseType = {
   publicationId: string;
   title?: string;
   description?: string;
@@ -57,4 +57,30 @@ export interface PublicationResponseType {
   lastModificationDate: Date;
   creationDate: Date;
   author: UserType;
-}
+};
+
+export type PublicationFromServerType = {
+  publicationId: string;
+  title?: string;
+  description?: string;
+  subjectPhotoUrl?: string;
+  incidentAddress?: string;
+  incidentDate: string;
+  aggregateRaing: number;
+  userVote: SinglePublicationVote;
+  subjectCategoryId?: string;
+  publicationType: PublicationType;
+  publicationState: PublicationState;
+  lastModificationDate: string;
+  creationDate: string;
+  author: UserType;
+};
+
+export const mapPublicationFromServer = (
+  publication: PublicationFromServerType
+): PublicationResponseType => ({
+  ...publication,
+  incidentDate: new Date(publication.incidentDate),
+  lastModificationDate: new Date(publication.lastModificationDate),
+  creationDate: new Date(publication.creationDate),
+});

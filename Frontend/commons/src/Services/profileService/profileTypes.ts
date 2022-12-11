@@ -1,16 +1,16 @@
-export interface ProfileRequestType {
+export type ProfileRequestType = {
   userId: string;
   email?: string;
   username?: string;
-}
+};
 
-export interface AuthorResponseType {
+export type AuthorResponseType = {
   userId: string;
   username?: string;
   pictureUrl?: string;
-}
+};
 
-export interface ProfileResponseType {
+export type ProfileResponseType = {
   userId: string;
   email?: string;
   username?: string;
@@ -20,4 +20,4 @@ export interface ProfileResponseType {
   city?: string;
   pictureUrl?: string;
   averageProfileRating: number;
-}
+};
