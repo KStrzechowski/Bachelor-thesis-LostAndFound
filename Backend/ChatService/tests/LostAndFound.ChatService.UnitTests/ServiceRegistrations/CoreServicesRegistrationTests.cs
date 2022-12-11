@@ -3,6 +3,7 @@ using LostAndFound.ChatService.Core.ChatServices.Interfaces;
 using LostAndFound.ChatService.Core.DateTimeProviders;
 using LostAndFound.ChatService.Core.MessageServices.Interfaces;
 using LostAndFound.ChatService.CoreLibrary.Settings;
+using LostAndFound.ChatService.DataAccess.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
@@ -35,6 +36,8 @@ namespace LostAndFound.ChatService.UnitTests.ServiceRegistrations
         [Fact]
         public void AddCoreServices_Execute_ResultsInChatActionsServiceIsRegistered()
         {
+            var chatsRepositoryMock = new Mock<IChatsRepository>();
+            _services.AddSingleton(chatsRepositoryMock.Object);
             _services.AddCoreServices();
             var serviceProvider = _services.BuildServiceProvider();
 
@@ -44,7 +47,12 @@ namespace LostAndFound.ChatService.UnitTests.ServiceRegistrations
         [Fact]
         public void AddCoreServices_Execute_ResultsInMessageServiceIsRegistered()
         {
+            var dateTimeMock = new Mock<IDateTimeProvider>();
+            _services.AddSingleton(dateTimeMock.Object);
+            var chatsRepositoryMock = new Mock<IChatsRepository>();
+            _services.AddSingleton(chatsRepositoryMock.Object);
             _services.AddCoreServices();
+
             var serviceProvider = _services.BuildServiceProvider();
 
             Assert.NotNull(serviceProvider.GetService(typeof(IMessageService)));
