@@ -45,7 +45,7 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// <summary>
         /// Search radius from the given address
         /// </summary>
-        public int SearchRadius { get; set; } = 10;
+        public double SearchRadius { get; set; } = 10d;
 
         /// <summary>
         /// Filter publications from accident date
