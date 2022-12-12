@@ -4,6 +4,9 @@
  *
  * @format
  */
+const localPackagePaths = [
+  '../commons',
+]
 
 module.exports = {
   transformer: {
@@ -14,4 +17,8 @@ module.exports = {
       },
     }),
   },
+  resolver: {
+    nodeModulesPaths: [...localPackagePaths], // update to resolver
+  },
+  watchFolders: [...localPackagePaths], // update to watch
 };
