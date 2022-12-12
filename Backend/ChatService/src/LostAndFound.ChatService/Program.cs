@@ -1,5 +1,6 @@
 using LostAndFound.ChatService.Core;
 using LostAndFound.ChatService.Core.FluentValidators;
+using LostAndFound.ChatService.Core.Hubs;
 using LostAndFound.ChatService.CoreLibrary.Settings;
 using LostAndFound.ChatService.DataAccess;
 using LostAndFound.ChatService.Middleware;
@@ -46,6 +47,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = true,
             ValidateAudience = true,
             ClockSkew = TimeSpan.Zero
+        };
+
+        config.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                if (!string.IsNullOrEmpty(accessToken))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -115,6 +129,7 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapHealthChecks("/healthcheck");
     endpoints.MapControllers();
+    endpoints.MapHub<ChatHub>("/hubs/chat");
 });
 
 app.Run();
