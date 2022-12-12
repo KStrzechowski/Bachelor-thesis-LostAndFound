@@ -8,7 +8,8 @@ import {
 
 export const addProfileComment = async (
   userId: string,
-  comment: ProfileCommentRequestType
+  comment: ProfileCommentRequestType,
+  accessToken: string
 ): Promise<ProfileCommentResponseType | undefined> => {
   const result = await http<
     ProfileCommentFromServerType,
@@ -16,6 +17,8 @@ export const addProfileComment = async (
   >({
     path: `/profile/${userId}/comments`,
     method: "post",
+    body: comment,
+    accessToken,
   });
 
   if (result.ok && result.body) {

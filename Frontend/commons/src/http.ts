@@ -23,7 +23,7 @@ export const http = async <RESB = undefined, REQB = undefined>(
     body: config.body ? JSON.stringify(config.body) : undefined,
   });
   if (config.accessToken) {
-    request.headers.set("authorization", `bearer ${config.accessToken}`);
+    request.headers.set("Authorization", `Bearer ${config.accessToken}`);
   }
 
   const response = await fetch(request);

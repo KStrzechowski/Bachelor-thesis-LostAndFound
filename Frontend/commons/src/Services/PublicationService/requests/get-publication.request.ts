@@ -7,11 +7,13 @@ import {
 } from "../publicationTypes";
 
 export const getPublication = async (
-  publicationId: string
+  publicationId: string,
+  accessToken: string
 ): Promise<PublicationResponseType | undefined> => {
   const result = await http<PublicationFromServerType>({
     path: `/publication/${publicationId}`,
     method: "get",
+    accessToken,
   });
 
   if (result.ok && result.body) {

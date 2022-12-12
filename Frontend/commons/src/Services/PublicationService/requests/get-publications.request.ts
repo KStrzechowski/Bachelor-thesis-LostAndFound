@@ -6,11 +6,13 @@ import {
 } from "../publicationTypes";
 
 export const getPublications = async (
-  pageNumber: number
+  pageNumber: number,
+  accessToken: string
 ): Promise<PublicationResponseType[]> => {
   const result = await http<PublicationFromServerType[]>({
     path: `/publication?pageNumber=${pageNumber}`,
     method: "get",
+    accessToken,
   });
 
   if (result.ok && result.body) {

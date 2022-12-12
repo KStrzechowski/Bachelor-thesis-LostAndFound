@@ -8,7 +8,7 @@ import {
 
 export const deleteProfileComment = async (
   userId: string,
-  comment: ProfileCommentRequestType
+  accessToken: string
 ): Promise<ProfileCommentResponseType | undefined> => {
   const result = await http<
     ProfileCommentFromServerType,
@@ -16,6 +16,7 @@ export const deleteProfileComment = async (
   >({
     path: `/profile/${userId}/comments`,
     method: "delete",
+    accessToken,
   });
 
   if (result.ok && result.body) {

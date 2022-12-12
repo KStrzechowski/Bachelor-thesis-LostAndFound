@@ -8,7 +8,8 @@ import {
 
 export const editPublicationRating = async (
   publicationId: string,
-  rating: SinglePublicationVote
+  rating: SinglePublicationVote,
+  accessToken: string
 ): Promise<PublicationResponseType | undefined> => {
   const result = await http<
     PublicationFromServerType,
@@ -17,6 +18,7 @@ export const editPublicationRating = async (
     path: `/pulication/${publicationId}/rating`,
     method: "patch",
     body: { newPublicationVote: rating },
+    accessToken,
   });
 
   if (result.ok && result.body) {

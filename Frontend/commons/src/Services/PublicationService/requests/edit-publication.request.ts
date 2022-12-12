@@ -8,12 +8,14 @@ import {
 
 export const editPublication = async (
   publicationId: string,
-  publication: PublicationRequestType
+  publication: PublicationRequestType,
+  accessToken: string
 ): Promise<PublicationResponseType | undefined> => {
   const result = await http<PublicationFromServerType, PublicationRequestType>({
     path: `/publication/${publicationId}`,
     method: "put",
     body: publication,
+    accessToken,
   });
 
   if (result.ok && result.body) {

@@ -2,12 +2,14 @@ import { http } from "../../../http";
 import { ProfileResponseType } from "../profileTypes";
 
 export const editProfilePhoto = async (
-  photo: string
+  photo: string,
+  accessToken: string
 ): Promise<ProfileResponseType | undefined> => {
   const result = await http<ProfileResponseType, string>({
-    path: '/profile/picture',
+    path: "/profile/picture",
     method: "patch",
     body: photo,
+    accessToken,
   });
 
   if (result.ok && result.body) {
