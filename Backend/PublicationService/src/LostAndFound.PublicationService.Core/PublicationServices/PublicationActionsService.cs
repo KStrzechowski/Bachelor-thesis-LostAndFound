@@ -67,7 +67,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             publicationEntity.SubjectCategoryName = category.DisplayName;
 
             var decodedAddress = await _geocodingService.GeocodeAddress(publicationDto.IncidentAddress);
-            if(decodedAddress is not null)
+            if (decodedAddress is not null)
             {
                 publicationEntity.Latitude = decodedAddress.Latitude;
                 publicationEntity.Longitude = decodedAddress.Longitude;
@@ -185,60 +185,6 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             var paginationMetadata = new PaginationMetadata(totalItemCount, resourceParameters.PageSize, resourceParameters.PageNumber);
 
             return (publicationDtos, paginationMetadata);
-        }
-
-        private async Task<FilterDefinition<Publication>> CreateFilterExpression(PublicationsResourceParameters resourceParameters, Guid userId)
-        {
-            var builder = Builders<Publication>.Filter;
-            var filter = builder.Empty;
-
-            if (resourceParameters.PublicationState is not null)
-            {
-                var state = _mapper.Map<State>(resourceParameters.PublicationState);
-                filter = builder.Eq(pub => pub.State, state);
-            }
-
-            if (resourceParameters.PublicationType is not null)
-            {
-                var type = _mapper.Map<DataAccess.Entities.PublicationEnums.Type>(resourceParameters.PublicationType);
-                filter &= builder.Eq(pub => pub.Type, type);
-            }
-
-            if (resourceParameters.OnlyUserPublications)
-                filter &= builder.Eq(pub => pub.Author.Id, userId);
-
-            if (!String.IsNullOrEmpty(resourceParameters.SubjectCategoryId))
-                filter &= builder.Eq(pub => pub.SubjectCategoryId, resourceParameters.SubjectCategoryId);
-
-            if (resourceParameters.FromDate is not null)
-                filter &= builder.Gte(pub => pub.IncidentDate, resourceParameters.FromDate);
-
-            if (resourceParameters.ToDate is not null)
-                filter &= builder.Lte(pub => pub.IncidentDate, resourceParameters.ToDate);
-
-            if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
-                filter &= (builder.Regex(pub => pub.Description, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")) |
-                    builder.Regex(pub => pub.Title, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")));
-
-            if (!String.IsNullOrEmpty(resourceParameters.IncidentAddress))
-            {
-                var decodedAddress = await _geocodingService.GeocodeAddress(resourceParameters.IncidentAddress);
-                if (decodedAddress is not null && decodedAddress.Latitude != 0d && decodedAddress.Longitude != 0d)
-                {
-                    var boundaries = new CoordinateBoundaries(
-                        decodedAddress.Latitude, 
-                        decodedAddress.Longitude, 
-                        resourceParameters.SearchRadius,
-                        DistanceUnit.Kilometers);
-
-                    filter &= (builder.Gte(p => p.Latitude, boundaries.MinLatitude)
-                        & builder.Gte(p => p.Longitude, boundaries.MinLongitude)
-                        & builder.Lte(p => p.Latitude, boundaries.MaxLatitude)
-                        & builder.Lte(p => p.Longitude, boundaries.MaxLatitude));
-                }
-            }
-
-            return filter;
         }
 
         public async Task<PublicationDetailsResponseDto> UpdatePublicationState(string rawUserId,
@@ -363,6 +309,60 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             }
 
             return userId;
+        }
+
+        private async Task<FilterDefinition<Publication>> CreateFilterExpression(PublicationsResourceParameters resourceParameters, Guid userId)
+        {
+            var builder = Builders<Publication>.Filter;
+            var filter = builder.Empty;
+
+            if (resourceParameters.PublicationState is not null)
+            {
+                var state = _mapper.Map<State>(resourceParameters.PublicationState);
+                filter = builder.Eq(pub => pub.State, state);
+            }
+
+            if (resourceParameters.PublicationType is not null)
+            {
+                var type = _mapper.Map<DataAccess.Entities.PublicationEnums.Type>(resourceParameters.PublicationType);
+                filter &= builder.Eq(pub => pub.Type, type);
+            }
+
+            if (resourceParameters.OnlyUserPublications)
+                filter &= builder.Eq(pub => pub.Author.Id, userId);
+
+            if (!String.IsNullOrEmpty(resourceParameters.SubjectCategoryId))
+                filter &= builder.Eq(pub => pub.SubjectCategoryId, resourceParameters.SubjectCategoryId);
+
+            if (resourceParameters.FromDate is not null)
+                filter &= builder.Gte(pub => pub.IncidentDate, resourceParameters.FromDate);
+
+            if (resourceParameters.ToDate is not null)
+                filter &= builder.Lte(pub => pub.IncidentDate, resourceParameters.ToDate);
+
+            if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
+                filter &= (builder.Regex(pub => pub.Description, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")) |
+                    builder.Regex(pub => pub.Title, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")));
+
+            if (!String.IsNullOrEmpty(resourceParameters.IncidentAddress))
+            {
+                var decodedAddress = await _geocodingService.GeocodeAddress(resourceParameters.IncidentAddress);
+                if (decodedAddress is not null && decodedAddress.Latitude != 0d && decodedAddress.Longitude != 0d)
+                {
+                    var boundaries = new CoordinateBoundaries(
+                        decodedAddress.Latitude,
+                        decodedAddress.Longitude,
+                        resourceParameters.SearchRadius,
+                        DistanceUnit.Kilometers);
+
+                    filter &= (builder.Gte(p => p.Latitude, boundaries.MinLatitude)
+                        & builder.Gte(p => p.Longitude, boundaries.MinLongitude)
+                        & builder.Lte(p => p.Latitude, boundaries.MaxLatitude)
+                        & builder.Lte(p => p.Longitude, boundaries.MaxLatitude));
+                }
+            }
+
+            return filter;
         }
     }
 }

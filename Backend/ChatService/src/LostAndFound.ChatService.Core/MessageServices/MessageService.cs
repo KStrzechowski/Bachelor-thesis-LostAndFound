@@ -26,14 +26,14 @@ namespace LostAndFound.ChatService.Core.MessageServices
             _mapper = mapper ?? throw new NotImplementedException(nameof(mapper));
         }
 
-        public async Task<(IEnumerable<MessageResponseDto>?, PaginationMetadata)> GetChatMessages(string rawUserId, 
+        public async Task<(IEnumerable<MessageResponseDto>?, PaginationMetadata)> GetChatMessages(string rawUserId,
             MessagesResourceParameters messagesResourceParameters, Guid recipentId)
         {
             var userId = ParseUserId(rawUserId);
             var chatId = userId.MungeTwoGuids(recipentId);
             var chatEntity = await _chatsRepository.GetSingleAsync(c => c.ExposedId == chatId);
 
-            if(chatEntity?.Messages is null)
+            if (chatEntity?.Messages is null)
             {
                 throw new NotFoundException("Chat not found");
             }
@@ -51,16 +51,21 @@ namespace LostAndFound.ChatService.Core.MessageServices
             }
 
             int totalItemCount = chatEntity.Messages.Length;
-            var paginationMetadata = new PaginationMetadata(totalItemCount, 
+            var paginationMetadata = new PaginationMetadata(totalItemCount,
                 messagesResourceParameters.PageSize, messagesResourceParameters.PageNumber);
 
             return (messagesDtos, paginationMetadata);
         }
 
-        public async Task<MessageResponseDto> SendMessage(string rawUserId, 
+        public async Task<MessageResponseDto> SendMessage(string rawUserId,
             CreateMessageRequestDto messageRequestDto, Guid recipentId)
         {
             var userId = ParseUserId(rawUserId);
+            if (userId == recipentId)
+            {
+                throw new BadRequestException("You cannot send messages to yourself");
+            }
+
             var chatId = userId.MungeTwoGuids(recipentId);
             var chatEntity = await _chatsRepository.GetSingleAsync(c => c.ExposedId == chatId);
 
@@ -68,7 +73,7 @@ namespace LostAndFound.ChatService.Core.MessageServices
             messageEntity.AuthorId = userId;
             messageEntity.CreationTime = _dateTimeProvider.UtcNow;
 
-            if(chatEntity is null)
+            if (chatEntity is null)
             {
                 Chat newChat = CreateChatEntity(recipentId, userId, chatId, messageEntity);
                 await _chatsRepository.InsertOneAsync(newChat);

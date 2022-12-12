@@ -15,7 +15,7 @@ namespace LostAndFound.ChatService.Controllers
     /// </summary>
     [Authorize]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [Route("[controller]")]
+    [Route("chat/message")]
     [Produces("application/json")]
     [ApiController]
     public class MessageController : ControllerBase

@@ -2,7 +2,6 @@
 using LostAndFound.ChatService.DataAccess.Entities;
 using LostAndFound.ChatService.DataAccess.Repositories.Interfaces;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 
 namespace LostAndFound.ChatService.DataAccess.Repositories
 {
@@ -11,14 +10,12 @@ namespace LostAndFound.ChatService.DataAccess.Repositories
         public ChatsRepository(IMongoChatServiceDbContext chatServiceDbContext) : base(chatServiceDbContext) { }
 
 
-        public async Task<IEnumerable<Chat>> GetUserChatWithUnreadMessage(Guid userId)
+        public async Task<IEnumerable<Chat>> GetUserChatsWithUnreadMessage(Guid userId)
         {
-            var query = _collection.AsQueryable().Where(c =>
-                c.Members.Any(m => m.Id == userId)
-                && c.ContainUnreadMessage
-                && c.Messages.Last().AuthorId != userId);
+            var filter = Builders<Chat>.Filter.Where(c => c.Members.Any(m => m.Id == userId))
+                & Builders<Chat>.Filter.Eq(c => c.ContainUnreadMessage, true);
 
-            return await query.ToListAsync();
+            return (await _collection.FindAsync(filter)).ToEnumerable();
         }
 
         public async Task InsertNewChatMessage(Guid chatId, Message messageEntity)

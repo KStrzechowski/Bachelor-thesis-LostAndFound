@@ -25,38 +25,41 @@ namespace LostAndFound.ChatService.Core.ChatServices
             string rawUserId, ChatsResourceParameters resourceParameters)
         {
             var userId = ParseUserId(rawUserId);
-            var chats = await _chatsRepository.FilterByAsync(c => c.Members.Any(m => m.Id == userId));
+            var chats = (await _chatsRepository.FilterByAsync(c => c.Members.Any(m => m.Id == userId))).ToList();
+            var chatDtos = Enumerable.Empty<ChatBaseDataResponseDto>();
 
-            var chatsPage = chats.OrderByDescending(c => c.Messages.Last().CreationTime)
+            if (chats is not null && chats.Any())
+            {
+                var chatsPage = chats.OrderByDescending(c => c.Messages.Last().CreationTime)
                 .Skip(resourceParameters.PageSize * (resourceParameters.PageNumber - 1))
                 .Take(resourceParameters.PageSize)
                 .ToList();
 
-            var chatDtos = Enumerable.Empty<ChatBaseDataResponseDto>();
-            if (chatsPage is not null && chatsPage.Any())
-            {
-                chatDtos = _mapper.Map<IEnumerable<ChatBaseDataResponseDto>>(chatsPage);
-
-                foreach (var it in chatDtos.Zip(chatsPage, Tuple.Create))
+                if (chatsPage is not null && chatsPage.Any())
                 {
-                    if (it.Item1 is not null)
-                    {
-                        it.Item1.ContainsUnreadMessage = it.Item1.LastMessage?.AuthorId != userId
-                            && it.Item2.ContainUnreadMessage;
+                    chatDtos = _mapper.Map<IEnumerable<ChatBaseDataResponseDto>>(chatsPage);
 
-                        var chatMember = it.Item2.Members.Single(m => m.Id != userId);
-                        it.Item1.ChatMember = new ChatMemberBaseDataResponseDto()
+                    foreach (var it in chatDtos.Zip(chatsPage, Tuple.Create))
+                    {
+                        if (it.Item1 is not null)
                         {
-                            Id = chatMember.Id,
-                        };
+                            it.Item1.ContainsUnreadMessage = it.Item1.LastMessage?.AuthorId != userId
+                                && it.Item2.ContainUnreadMessage;
+
+                            var chatMember = it.Item2.Members.Single(m => m.Id != userId);
+                            it.Item1.ChatMember = new ChatMemberBaseDataResponseDto()
+                            {
+                                Id = chatMember.Id,
+                            };
+                        }
                     }
                 }
             }
 
-            int totalItemCount = chats.Count();
+            int totalItemCount = chats?.Count ?? 0;
             var paginationMetadata = new PaginationMetadata(
-                totalItemCount, 
-                resourceParameters.PageSize, 
+                totalItemCount,
+                resourceParameters.PageSize,
                 resourceParameters.PageNumber);
 
             return (chatDtos, paginationMetadata);
@@ -84,17 +87,23 @@ namespace LostAndFound.ChatService.Core.ChatServices
         public async Task<ChatNotificationResponseDto> GetUnreadChatNotification(string rawUserId)
         {
             var userId = ParseUserId(rawUserId);
-            var chats = await _chatsRepository.GetUserChatWithUnreadMessage(userId);
+            var chats = (await _chatsRepository.GetUserChatsWithUnreadMessage(userId))?.ToList();
 
-            var chatNotificationDto = new ChatNotificationResponseDto()
+            var chatNotificationDto = new ChatNotificationResponseDto();
+
+            if (chats is not null && chats.Any())
             {
-                UnreadChatsCount = chats.Count(),
-                UnreadMessageSenders = chats.Select(c =>
+                var filteredChats = chats.Where(c =>
+                    c.Messages.Any()
+                    && c.Messages.Last().AuthorId != userId);
+
+                chatNotificationDto.UnreadChatsCount = filteredChats.Count();
+                chatNotificationDto.UnreadMessageSenders = filteredChats.Select(c =>
                     new ChatMemberBaseDataResponseDto()
                     {
                         Id = c.Members.Single(m => m.Id != userId).Id,
-                    }),
-            };
+                    });
+            }
 
             return chatNotificationDto;
         }
