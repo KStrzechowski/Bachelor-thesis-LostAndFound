@@ -7,6 +7,9 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
     /// </summary>
     public class PublicationsResourceParameters
     {
+        private const int maxPageSize = 100;
+        private int _pageSize = 20;
+
         /// <summary>
         /// Page number
         /// </summary>
@@ -15,7 +18,11 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// <summary>
         /// Page size
         /// </summary>
-        public int PageSize { get; set; } = 20;
+        public int PageSize
+        {
+            get => _pageSize;
+            set => _pageSize = (value > maxPageSize) ? maxPageSize : value;
+        }
 
         /// <summary>
         /// Include only user publications
