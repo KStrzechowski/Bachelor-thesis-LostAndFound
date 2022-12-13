@@ -76,6 +76,28 @@
       "SwaggerKey": "chats"
     },
     {
+      "UpstreamPathTemplate": "/hubs/chat",
+      "DownstreamPathTemplate": "/hubs/chat",
+      "DownstreamScheme": "wss",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/hubs/chat/{path}",
+      "DownstreamScheme": "wss",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "UpstreamPathTemplate": "/hubs/chat/{path}",
+    },
+    {
       "UpstreamPathTemplate": "/chat/{chatMemberId}",
       "DownstreamPathTemplate": "/chat/{chatMemberId}",
       "UpstreamHttpMethod": [

@@ -3,8 +3,10 @@ using LostAndFound.ChatService.CoreLibrary.Internal;
 using LostAndFound.ChatService.CoreLibrary.Requests;
 using LostAndFound.ChatService.CoreLibrary.ResourceParameters;
 using LostAndFound.ChatService.CoreLibrary.Responses;
+using LostAndFound.ChatService.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -21,15 +23,18 @@ namespace LostAndFound.ChatService.Controllers
     public class MessageController : ControllerBase
     {
         private readonly IMessageService _messageService;
+        private readonly IHubContext<ChatHub> _hubContext;
 
         /// <summary>
         /// Default MessageController constructor
         /// </summary>
         /// <param name="messageService">Instance of IMessageService interface</param>
+        /// <param name="hubContext">Chat hub context</param>
         /// <exception cref="ArgumentNullException">Throws ArgumentNullException when IMessageService is null</exception>
-        public MessageController(IMessageService messageService)
+        public MessageController(IMessageService messageService, IHubContext<ChatHub> hubContext)
         {
             _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+            _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
         }
 
 
@@ -58,9 +63,11 @@ namespace LostAndFound.ChatService.Controllers
             CreateMessageRequestDto messageRequestDto)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             var messageResponseDto = await _messageService
                 .SendMessage(rawUserId, messageRequestDto, recipentId);
+
+            await _hubContext.Clients.Group(recipentId.ToString())
+                .SendAsync("ReceiveMessage", messageResponseDto);
 
             return Ok(messageResponseDto);
         }

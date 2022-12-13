@@ -2,9 +2,11 @@ using LostAndFound.ChatService.Core;
 using LostAndFound.ChatService.Core.FluentValidators;
 using LostAndFound.ChatService.CoreLibrary.Settings;
 using LostAndFound.ChatService.DataAccess;
+using LostAndFound.ChatService.Hubs;
 using LostAndFound.ChatService.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -29,6 +31,12 @@ builder.Services.AddControllers(setupAction =>
         new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
 });
 
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddFluentValidators();
 builder.Services.AddDataAccessServices(builder.Configuration);
@@ -46,6 +54,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = true,
             ValidateAudience = true,
             ClockSkew = TimeSpan.Zero
+        };
+
+        config.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                if (!string.IsNullOrEmpty(accessToken))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -102,6 +123,13 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHealthChecks("/healthcheck");
+    endpoints.MapControllers();
+    endpoints.MapHub<ChatHub>("/hubs/chat");
+});
+
 app.UseSwagger();
 app.UseSwaggerUI(setupAction =>
 {
@@ -109,12 +137,6 @@ app.UseSwaggerUI(setupAction =>
         "/swagger/v1/swagger.json",
         "LostAndFound Chat Service");
     setupAction.RoutePrefix = string.Empty;
-});
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapHealthChecks("/healthcheck");
-    endpoints.MapControllers();
 });
 
 app.Run();
