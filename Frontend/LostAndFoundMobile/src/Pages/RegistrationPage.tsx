@@ -1,5 +1,6 @@
+import { register, RegisterRequestType } from 'commons';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { DevSettings, Text, View } from 'react-native';
 import {
   CustomTextInput,
   InputSection,
@@ -9,16 +10,49 @@ import {
   PressableText,
 } from '../Components/MainComponents';
 
-export const RegistrationPage = (props: { navigation: string[] }) => {
-  const [email, setEmail] = React.useState<String | null>(null);
-  const [password, setPassword] = React.useState<String | null>(null);
+async function registerAccount(
+  username: string,
+  email: string,
+  password: string,
+  confirmPassword: string,
+) {
+  console.log('AAA');
+  if (!email || !password || !username || !confirmPassword) return;
+  const registerRequest: RegisterRequestType = {
+    username,
+    email,
+    password,
+    confirmPassword,
+  };
 
-  const onUsernameChange = (email: String) => {
+  console.log(registerRequest);
+  const registerResponse = await register(registerRequest);
+  if (registerResponse) {
+    console.log(registerResponse);
+    DevSettings.reload();
+  }
+}
+
+export const RegistrationPage = (props: { navigation: string[] }) => {
+  const [email, setEmail] = React.useState<string>('');
+  const [username, setUsername] = React.useState<string>('');
+  const [password, setPassword] = React.useState<string>('');
+  const [confirmPassword, setConfirmPassword] = React.useState<string>('');
+
+  const onEmailChange = (email: string) => {
     setEmail(email);
   };
 
-  const onPasswordChange = (password: String) => {
+  const onUsernameChange = (email: string) => {
+    setUsername(email);
+  };
+
+  const onPasswordChange = (password: string) => {
     setPassword(password);
+  };
+
+  const onConfirmPasswordChange = (password: string) => {
+    setConfirmPassword(password);
   };
 
   return (
@@ -26,7 +60,7 @@ export const RegistrationPage = (props: { navigation: string[] }) => {
       <MainTitle>Zarejestruj się</MainTitle>
       <InputSection title="E-mail">
         <CustomTextInput
-          onChangeText={onUsernameChange}
+          onChangeText={onEmailChange}
           keyboardType={'email-address'}
           placeholder="Podaj swój adres e-mail"
         />
@@ -48,7 +82,7 @@ export const RegistrationPage = (props: { navigation: string[] }) => {
       </InputSection>
       <InputSection title="Powtórz hasło">
         <CustomTextInput
-          onChangeText={onPasswordChange}
+          onChangeText={onConfirmPasswordChange}
           secureTextEntry={true}
           keyboardType={'default'}
           placeholder="********"
@@ -56,7 +90,9 @@ export const RegistrationPage = (props: { navigation: string[] }) => {
       </InputSection>
       <MainButton
         label="Zarejestruj się"
-        onPress={() => props.navigation.push('Login')}
+        onPress={async () =>
+          await registerAccount(username, email, password, confirmPassword)
+        }
       />
       <View style={{ alignItems: 'center' }}>
         <Text>Masz konto?</Text>

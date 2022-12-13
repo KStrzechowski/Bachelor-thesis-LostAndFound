@@ -12,12 +12,25 @@ import {
 } from '../Components';
 import { GetPosts } from '../Data/Post';
 import { GetProfiles } from '../Data/Profile';
+import { getPublication, PublicationResponseType } from 'commons';
+import { getAccessToken } from '../SecureStorage';
 
 export const PostPage = (props: any) => {
+  const publicationId = props.route.params.publicationId;
   const [width, setWidth] = React.useState<number>(10);
-  const postData = GetPosts()[0];
+  //const postData = GetPosts()[0];
   const profileData = GetProfiles()[0];
-  const incidentDate = format(postData.incidentDate, 'dd.MM.yyyy');
+  var incidentDate = format(postData.incidentDate, 'dd.MM.yyyy');
+
+  const [postData, setPostData] = React.useState<PublicationResponseType>();
+  React.useEffect(() => {
+    async () => {
+      const accessToken = await getAccessToken();
+      if (accessToken) {
+        setPostData(await getPublication(publicationId, accessToken));
+      }
+    };
+  }, []);
 
   return (
     <MainContainer>
