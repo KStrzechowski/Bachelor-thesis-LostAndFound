@@ -1,11 +1,12 @@
 using LostAndFound.ChatService.Core;
 using LostAndFound.ChatService.Core.FluentValidators;
-using LostAndFound.ChatService.Core.Hubs;
 using LostAndFound.ChatService.CoreLibrary.Settings;
 using LostAndFound.ChatService.DataAccess;
+using LostAndFound.ChatService.Hubs;
 using LostAndFound.ChatService.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -28,6 +29,12 @@ builder.Services.AddControllers(setupAction =>
         new ProducesResponseTypeAttribute(StatusCodes.Status406NotAcceptable));
     setupAction.Filters.Add(
         new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
+});
+
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
 });
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
@@ -116,6 +123,13 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHealthChecks("/healthcheck");
+    endpoints.MapControllers();
+    endpoints.MapHub<ChatHub>("/hubs/chat");
+});
+
 app.UseSwagger();
 app.UseSwaggerUI(setupAction =>
 {
@@ -123,13 +137,6 @@ app.UseSwaggerUI(setupAction =>
         "/swagger/v1/swagger.json",
         "LostAndFound Chat Service");
     setupAction.RoutePrefix = string.Empty;
-});
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapHealthChecks("/healthcheck");
-    endpoints.MapControllers();
-    endpoints.MapHub<ChatHub>("/hubs/chat");
 });
 
 app.Run();
