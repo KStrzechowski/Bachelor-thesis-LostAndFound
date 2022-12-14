@@ -42,6 +42,32 @@ export const http = async <RESB = undefined, REQB = undefined>(
   }
 };
 
+export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
+  config: HttpRequest<REQB>,
+  requestData: FormData
+): Promise<HttpResponse<RESB>> => {
+  console.log(`${config.method} ${webAPIUrl}${config.path}`);
+
+  const request = new Request(`${webAPIUrl}${config.path}`, {
+    method: config.method || "get",
+    body: requestData,
+  });
+  if (config.accessToken) {
+    request.headers.set("Authorization", `Bearer ${config.accessToken}`);
+  }
+
+  console.log(request);
+  const response = await fetch(request);
+  if (response.ok) {
+    console.log("Status: OK");
+    const body = await response.json();
+    return { ok: response.ok, body };
+  } else {
+    logError(request, response);
+    return { ok: response.ok };
+  }
+};
+
 const logError = async (request: Request, response: Response) => {
   const contentType = response.headers.get("content-type");
   let body: any;

@@ -32,7 +32,7 @@ export type PublicationRequestType = {
     incidentDate: Date;
     subjectCategoryId?: string;
     publicationType: PublicationType;
-    publicationState: PublicationState;
+    publicationState?: PublicationState;
 };
 export type PublicationResponseType = {
     publicationId: string;
