@@ -14,6 +14,8 @@ import {
   PostPage,
   PostsPage,
   ProfilePage,
+  ProfilePageMe,
+  EditProfilePage,
   SearchPostsPage,
 } from '../Pages';
 
@@ -37,7 +39,7 @@ const CustomDrawerContent = (props: any) => {
         />
         <DrawerItem
           label="Profil"
-          onPress={() => props.navigation.push('Home', { screen: 'Profile' })}
+          onPress={() => props.navigation.push('Home', { screen: 'ProfileMe' })}
         />
         <DrawerItem
           label="Ogłoszenia"
@@ -65,7 +67,21 @@ export function DrawerScreenStack() {
       screenOptions={{ headerShown: false }}
       drawerContent={props => <CustomDrawerContent {...props} />}>
       <DrawerStack.Screen name="Posts" component={PostsPage} />
-      <DrawerStack.Screen name="Profile" component={ProfilePage} />
+      <DrawerStack.Screen
+        name="Profile"
+        component={ProfilePage}
+        options={{
+          drawerItemStyle: { display: 'none' },
+        }}
+      />
+      <DrawerStack.Screen name="ProfileMe" component={ProfilePageMe} />
+      <DrawerStack.Screen
+        name="EditProfile"
+        component={EditProfilePage}
+        options={{
+          drawerItemStyle: { display: 'none' },
+        }}
+      />
       <DrawerStack.Screen
         name="Post"
         component={PostPage}

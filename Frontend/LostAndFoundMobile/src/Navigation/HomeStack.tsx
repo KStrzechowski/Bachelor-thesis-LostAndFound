@@ -6,6 +6,8 @@ import {
   PostPage,
   PostsPage,
   ProfilePage,
+  ProfilePageMe,
+  EditProfilePage,
   SearchPostsPage,
 } from '../Pages';
 
@@ -19,6 +21,8 @@ export function HomeScreenStack() {
         options={{ headerShown: false }}
       />
       <HomeStack.Screen name="Profile" component={ProfilePage} />
+      <HomeStack.Screen name="ProfileMe" component={ProfilePageMe} />
+      <HomeStack.Screen name="EditProfile" component={EditProfilePage} />
       <HomeStack.Screen name="Posts" component={PostsPage} />
       <HomeStack.Screen name="Post" component={PostPage} />
       <HomeStack.Screen name="SearchPosts" component={SearchPostsPage} />
