@@ -6,6 +6,7 @@ import {
 import React from 'react';
 import { View } from 'react-native';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
+import { AuthContext } from '../../Config';
 import { SecondaryButton } from '../Components';
 import {
   ChatPage,
@@ -18,6 +19,7 @@ import {
 
 const CustomDrawerContent = (props: any) => {
   const [width, setWidth] = React.useState<number>(10);
+  const { signOut } = React.useContext(AuthContext);
 
   return (
     <DrawerContentScrollView
@@ -48,7 +50,7 @@ const CustomDrawerContent = (props: any) => {
         <View style={{ alignItems: 'center', marginTop: 40 }}>
           <SecondaryButton
             label="Wyloguj się"
-            onPress={() => props.navigation.push('Login')}
+            onPress={async () => await signOut()}
           />
         </View>
       </View>

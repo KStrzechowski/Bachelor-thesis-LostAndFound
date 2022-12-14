@@ -15,9 +15,7 @@ async function registerAccount(
   email: string,
   password: string,
   confirmPassword: string,
-) {
-  console.log('AAA');
-  if (!email || !password || !username || !confirmPassword) return;
+): Promise<boolean> {
   const registerRequest: RegisterRequestType = {
     username,
     email,
@@ -28,8 +26,9 @@ async function registerAccount(
   console.log(registerRequest);
   const registerResponse = await register(registerRequest);
   if (registerResponse) {
-    console.log(registerResponse);
-    DevSettings.reload();
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -90,9 +89,17 @@ export const RegistrationPage = (props: { navigation: string[] }) => {
       </InputSection>
       <MainButton
         label="Zarejestruj się"
-        onPress={async () =>
-          await registerAccount(username, email, password, confirmPassword)
-        }
+        onPress={async () => {
+          const isRegistered = await registerAccount(
+            username,
+            email,
+            password,
+            confirmPassword,
+          );
+          if (isRegistered) {
+            props.navigation.push('Login');
+          }
+        }}
       />
       <View style={{ alignItems: 'center' }}>
         <Text>Masz konto?</Text>
