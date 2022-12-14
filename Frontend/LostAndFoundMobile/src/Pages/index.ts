@@ -1,6 +1,7 @@
 export { ChatPage } from './ChatPage';
 export { ChatsPage } from './ChatsPage';
 export { LoginPage } from './LoginPage';
+export { AddPostPage } from './AddPostPage';
 export { PostPage } from './PostPage';
 export { PostsPage } from './PostsPage';
 export { ProfilePage } from './ProfilePage';

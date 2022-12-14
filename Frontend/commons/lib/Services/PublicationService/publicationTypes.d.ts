@@ -1,15 +1,15 @@
 export declare enum SinglePublicationVote {
-    NoVote = 0,
-    Up = 1,
-    Down = 2
+    NoVote = "NoVote",
+    Up = "Up",
+    Down = "Down"
 }
 export declare enum PublicationType {
     LostSubject = "LostSubject",
     FoundSubject = "FoundSubject"
 }
 export declare enum PublicationState {
-    Open = 0,
-    Closed = 1
+    Open = "Open",
+    Closed = "Closed"
 }
 export type CategoryType = {
     id?: string;

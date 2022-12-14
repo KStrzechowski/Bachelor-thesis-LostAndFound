@@ -10,19 +10,27 @@ import {
   MainTitle,
   ScoreView,
 } from '../Components';
-import { GetProfiles } from '../Data/Profile';
 import {
   CategoryType,
+  editPublicationRating,
   getCategories,
   getProfileDetails,
   getPublication,
   ProfileResponseType,
   PublicationResponseType,
+  SinglePublicationVote,
 } from 'commons';
 import { getAccessToken } from '../SecureStorage';
 
+const giveVote = async (publicationId: string, vote: SinglePublicationVote) => {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    await editPublicationRating(publicationId, vote, accessToken);
+  }
+};
+
 export const PostPage = (props: any) => {
-  const publicationId = props.route.params.publicationId;
+  const publicationId = props.route.params?.publicationId;
   const [width, setWidth] = React.useState<number>(10);
   const [postData, setPostData] = React.useState<
     PublicationResponseType | undefined
@@ -31,27 +39,47 @@ export const PostPage = (props: any) => {
   const [profile, setProfile] = React.useState<
     ProfileResponseType | undefined
   >();
+  const [categories, setCategories] = React.useState<CategoryType[]>([]);
   const [category, setCategory] = React.useState<CategoryType | undefined>();
+  const [update, setUpdate] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    async () => {
+    const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
         setPostData(await getPublication(publicationId, accessToken));
-        if (postData) {
-          setIncidentDate(format(postData.incidentDate, 'dd.MM.yyyy'));
-          setProfile(await getProfileDetails(postData.author.id, accessToken));
-
-          const categories = await getCategories(accessToken);
-          setCategory(
-            categories?.find(
-              category => category.id === postData.subjectCategoryId,
-            ),
-          );
-        }
+        setCategories(await getCategories(accessToken));
       }
     };
-  }, []);
+
+    getData();
+  }, [publicationId, update]);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      const accessToken = await getAccessToken();
+      if (accessToken && postData) {
+        setIncidentDate(format(postData.incidentDate, 'dd.MM.yyyy'));
+        setProfile(await getProfileDetails(postData.author.id, accessToken));
+      }
+    };
+
+    getData();
+  }, [postData]);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      if (postData) {
+        setCategory(
+          categories?.find(
+            category => category.id === postData.subjectCategoryId,
+          ),
+        );
+      }
+    };
+
+    getData();
+  }, [categories]);
 
   return (
     <MainContainer>
@@ -70,11 +98,11 @@ export const PostPage = (props: any) => {
           />
           <Text
             style={
-              postData?.aggregateRaing && postData?.aggregateRaing > 0
+              postData?.aggregateRaing && postData?.aggregateRaing >= 0
                 ? styles.positiveScore
                 : styles.negativeScore
             }>
-            {postData?.aggregateRaing && postData?.aggregateRaing > 0
+            {postData?.aggregateRaing && postData?.aggregateRaing >= 0
               ? `+${postData?.aggregateRaing}`
               : postData?.aggregateRaing}
           </Text>
@@ -99,16 +127,62 @@ export const PostPage = (props: any) => {
             style={{
               flexDirection: 'row',
             }}>
-            <MaterialCommunityIcon
-              style={{ marginRight: 20, color: 'green' }}
-              name="thumb-up"
-              size={20}
-            />
-            <MaterialCommunityIcon
-              style={{ color: 'red' }}
-              name="thumb-down"
-              size={20}
-            />
+            <Pressable
+              onPress={() => {
+                if (postData) {
+                  if (postData?.userVote !== SinglePublicationVote.Up) {
+                    giveVote(postData?.publicationId, SinglePublicationVote.Up);
+                    setUpdate(!update);
+                  } else {
+                    giveVote(
+                      postData?.publicationId,
+                      SinglePublicationVote.NoVote,
+                    );
+                    setUpdate(!update);
+                  }
+                }
+              }}>
+              <MaterialCommunityIcon
+                style={{
+                  marginRight: 20,
+                  color:
+                    postData?.userVote === SinglePublicationVote.Up
+                      ? 'green'
+                      : 'grey',
+                }}
+                name="thumb-up"
+                size={20}
+              />
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                if (postData) {
+                  if (postData?.userVote !== SinglePublicationVote.Down) {
+                    giveVote(
+                      postData?.publicationId,
+                      SinglePublicationVote.Down,
+                    );
+                    setUpdate(!update);
+                  } else {
+                    giveVote(
+                      postData?.publicationId,
+                      SinglePublicationVote.NoVote,
+                    );
+                    setUpdate(!update);
+                  }
+                }
+              }}>
+              <MaterialCommunityIcon
+                style={{
+                  color:
+                    postData?.userVote === SinglePublicationVote.Down
+                      ? 'red'
+                      : 'grey',
+                }}
+                name="thumb-down"
+                size={20}
+              />
+            </Pressable>
           </View>
         </View>
         <Text style={{ fontSize: 14 }}>{postData?.description}</Text>

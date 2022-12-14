@@ -15,7 +15,7 @@ export const editPublicationRating = async (
     PublicationFromServerType,
     { newPublicationVote: SinglePublicationVote }
   >({
-    path: `/pulication/${publicationId}/rating`,
+    path: `/publication/${publicationId}/rating`,
     method: "patch",
     body: { newPublicationVote: rating },
     accessToken,

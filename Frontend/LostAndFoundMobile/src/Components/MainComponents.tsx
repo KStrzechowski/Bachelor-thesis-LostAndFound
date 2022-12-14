@@ -37,20 +37,10 @@ export const InputSection: React.FC<
   );
 };
 
-export const CustomTextInput: React.FC<TextInputProps> = ({
-  onChangeText,
-  keyboardType,
-  placeholder,
-  secureTextEntry,
-}) => {
+export const CustomTextInput: React.FC<TextInputProps> = props => {
   return (
     <View style={styles.inputContainer}>
-      <TextInput
-        onChangeText={onChangeText}
-        keyboardType={keyboardType}
-        placeholder={placeholder}
-        secureTextEntry={secureTextEntry}
-      />
+      <TextInput {...props} />
     </View>
   );
 };

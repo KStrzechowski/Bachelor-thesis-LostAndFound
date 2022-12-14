@@ -1,7 +1,7 @@
 export enum SinglePublicationVote {
-  NoVote,
-  Up,
-  Down,
+  NoVote = "NoVote",
+  Up = "Up",
+  Down = "Down",
 }
 
 export enum PublicationType {
@@ -10,8 +10,8 @@ export enum PublicationType {
 }
 
 export enum PublicationState {
-  Open,
-  Closed,
+  Open = "Open",
+  Closed = "Closed",
 }
 
 export type CategoryType = {

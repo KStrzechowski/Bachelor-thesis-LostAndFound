@@ -6,7 +6,7 @@ export const deletePublication = async (
   accessToken: string
 ): Promise<boolean | undefined> => {
   const result = await http<PublicationFromServerType>({
-    path: `/pulication/${publicationId}`,
+    path: `/publication/${publicationId}`,
     method: "delete",
     accessToken,
   });

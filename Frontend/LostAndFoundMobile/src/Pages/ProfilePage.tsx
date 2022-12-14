@@ -44,7 +44,7 @@ const CommentItem = (props: any) => {
 };
 
 export const ProfilePage = (props: any) => {
-  const userId = props.route.params.userId;
+  const userId = props.route.params?.userId;
   const [width, setWidth] = React.useState<number>(10);
   const [profile, setProfile] = React.useState<ProfileResponseType>();
   const [profileComments, setProfileComments] =

@@ -15,7 +15,7 @@ export const editPublicationState = async (
     PublicationFromServerType,
     { publicationState: PublicationState }
   >({
-    path: `/pulication/${publicationId}`,
+    path: `/publication/${publicationId}`,
     method: "patch",
     body: { publicationState: state },
     accessToken,

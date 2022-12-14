@@ -9,6 +9,7 @@ import {
   InputSection,
   CustomTextInput,
 } from '../Components';
+import { PublicationState } from 'commons';
 
 export const SearchPostsPage = (props: any) => {
   const [title, setTitle] = React.useState<string>('');
@@ -58,8 +59,8 @@ export const SearchPostsPage = (props: any) => {
         <Picker
           selectedValue={postState}
           onValueChange={itemValue => setPostState(itemValue)}>
-          <Picker.Item label="Otwarte" value="otwarte" />
-          <Picker.Item label="Zakończone" value="zakończone" />
+          <Picker.Item label="Otwarte" value={PublicationState.Open} />
+          <Picker.Item label="Zakończone" value={PublicationState.Closed} />
         </Picker>
       </InputSection>
       <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>

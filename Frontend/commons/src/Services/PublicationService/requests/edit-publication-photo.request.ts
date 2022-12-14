@@ -11,7 +11,7 @@ export const editPublicationPhoto = async (
   accessToken: string
 ): Promise<PublicationResponseType | undefined> => {
   const result = await http<PublicationFromServerType, string>({
-    path: `/pulication/${publicationId}/photo`,
+    path: `/publication/${publicationId}/photo`,
     method: "patch",
     body: photo,
     accessToken,

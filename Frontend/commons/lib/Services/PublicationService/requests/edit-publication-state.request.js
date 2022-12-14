@@ -2,7 +2,7 @@ import { http } from "../../../http";
 import { mapPublicationFromServer, } from "../publicationTypes";
 export const editPublicationState = async (publicationId, state, accessToken) => {
     const result = await http({
-        path: `/pulication/${publicationId}`,
+        path: `/publication/${publicationId}`,
         method: "patch",
         body: { publicationState: state },
         accessToken,

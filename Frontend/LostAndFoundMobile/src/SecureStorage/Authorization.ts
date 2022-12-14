@@ -36,14 +36,15 @@ export async function getAccessToken(): Promise<string | null> {
 
     // refresh access token
     const data = await refreshToken(refreshJwtToken);
-    if (!data) {
+    if (data) {
+      // save new access token with expiration date
+      await saveAccessToken(data.accessToken, data.accessTokenExpirationTime);
+    } else {
       await clearStorage();
       return null;
     }
-
-    // save new access token with expiration date
-    await saveAccessToken(data.accessToken, data.accessTokenExpirationTime);
   }
+
   // get access token
   const accessToken = await EncryptedStorage.getItem(AccessToken);
   return accessToken;

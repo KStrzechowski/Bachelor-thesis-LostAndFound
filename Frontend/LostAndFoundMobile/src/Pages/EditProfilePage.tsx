@@ -1,6 +1,6 @@
-import { ProfileResponseType } from 'commons';
+import { editProfile, ProfileRequestType, ProfileResponseType } from 'commons';
 import React from 'react';
-import { TextInput, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 import {
   CustomTextInput,
   InputSection,
@@ -8,51 +8,44 @@ import {
   MainTitle,
   SecondaryButton,
 } from '../Components';
+import { getAccessToken } from '../SecureStorage';
+
+const editProfileDetails = async (profile: ProfileRequestType) => {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    const response = await editProfile(profile, accessToken);
+    return response;
+  }
+};
 
 export const EditProfilePage = (props: any) => {
   const user: ProfileResponseType = props.route.params.user;
-  const [email, setEmail] = React.useState<string>('');
-  const [username, setUsername] = React.useState<string>('');
-  const [name, setName] = React.useState<string>('');
-  const [surname, setSurname] = React.useState<string>('');
-  const [description, setDescription] = React.useState<string>('');
-  const [city, setCity] = React.useState<string>('');
+  const [name, setName] = React.useState<string | undefined>(user.name);
+  const [surname, setSurname] = React.useState<string | undefined>(
+    user.surname,
+  );
+  const [city, setCity] = React.useState<string | undefined>(user.city);
+  const [description, setDescription] = React.useState<string | undefined>(
+    user.description,
+  );
 
   return (
     <MainContainer>
       <View style={{ alignSelf: 'center', marginBottom: 10 }}>
         <MainTitle>Edytuj Profil</MainTitle>
       </View>
-      <InputSection title="E-mail">
-        <CustomTextInput
-          onChangeText={setEmail}
-          keyboardType={'email-address'}
-          defaultValue={user.email}
-          placeholder="Podaj nowy adres e-mail"
-        />
-      </InputSection>
-      <InputSection title="Nazwa użytkownika">
-        <CustomTextInput
-          onChangeText={setUsername}
-          keyboardType={'default'}
-          defaultValue={user.email}
-          placeholder="Podaj nową nazwę użytkownika"
-        />
-      </InputSection>
       <InputSection title="Imię">
         <CustomTextInput
           onChangeText={setName}
           keyboardType={'default'}
-          defaultValue={user.name}
-          placeholder="Podaj swoje imię"
+          value={name}
         />
       </InputSection>
       <InputSection title="Nazwisko">
         <CustomTextInput
           onChangeText={setSurname}
           keyboardType={'default'}
-          defaultValue={user.surname}
-          placeholder="Podaj swoje nazwisko"
+          value={surname}
         />
       </InputSection>
 
@@ -60,17 +53,33 @@ export const EditProfilePage = (props: any) => {
         <CustomTextInput
           onChangeText={setCity}
           keyboardType={'default'}
-          defaultValue={user.city}
-          placeholder="Podaj miasto, w którym się znajdujesz"
+          value={city}
         />
       </InputSection>
       <InputSection title="Opis">
         <TextInput
           onChangeText={setDescription}
           keyboardType={'default'}
-          placeholder={'Opisz siebie'}
+          value={description}
         />
       </InputSection>
+      <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
+        <SecondaryButton
+          label="Zapisz zmiany"
+          onPress={async () => {
+            const profile: ProfileRequestType = {
+              name,
+              surname,
+              city,
+              description,
+            };
+            const response = await editProfileDetails(profile);
+            if (response) {
+              props.navigation.push('Home', { screen: 'ProfileMe' });
+            }
+          }}
+        />
+      </View>
     </MainContainer>
   );
 };

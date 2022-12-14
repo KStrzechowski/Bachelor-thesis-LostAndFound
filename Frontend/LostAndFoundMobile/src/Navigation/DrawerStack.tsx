@@ -17,6 +17,7 @@ import {
   ProfilePageMe,
   EditProfilePage,
   SearchPostsPage,
+  AddPostPage,
 } from '../Pages';
 
 const CustomDrawerContent = (props: any) => {
@@ -82,6 +83,7 @@ export function DrawerScreenStack() {
           drawerItemStyle: { display: 'none' },
         }}
       />
+      <DrawerStack.Screen name="AddPost" component={AddPostPage} />
       <DrawerStack.Screen
         name="Post"
         component={PostPage}

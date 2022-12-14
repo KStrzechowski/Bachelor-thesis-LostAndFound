@@ -1,7 +1,7 @@
 import { http } from "../../../http";
 export const deletePublicationPhoto = async (publicationId, accessToken) => {
     const result = await http({
-        path: `/pulication/${publicationId}/photo`,
+        path: `/publication/${publicationId}/photo`,
         method: "delete",
         accessToken,
     });

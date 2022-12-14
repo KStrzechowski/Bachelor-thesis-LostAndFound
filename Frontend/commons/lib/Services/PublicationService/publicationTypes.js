@@ -1,8 +1,8 @@
 export var SinglePublicationVote;
 (function (SinglePublicationVote) {
-    SinglePublicationVote[SinglePublicationVote["NoVote"] = 0] = "NoVote";
-    SinglePublicationVote[SinglePublicationVote["Up"] = 1] = "Up";
-    SinglePublicationVote[SinglePublicationVote["Down"] = 2] = "Down";
+    SinglePublicationVote["NoVote"] = "NoVote";
+    SinglePublicationVote["Up"] = "Up";
+    SinglePublicationVote["Down"] = "Down";
 })(SinglePublicationVote || (SinglePublicationVote = {}));
 export var PublicationType;
 (function (PublicationType) {
@@ -11,8 +11,8 @@ export var PublicationType;
 })(PublicationType || (PublicationType = {}));
 export var PublicationState;
 (function (PublicationState) {
-    PublicationState[PublicationState["Open"] = 0] = "Open";
-    PublicationState[PublicationState["Closed"] = 1] = "Closed";
+    PublicationState["Open"] = "Open";
+    PublicationState["Closed"] = "Closed";
 })(PublicationState || (PublicationState = {}));
 export const mapPublicationFromServer = (publication) => ({
     ...publication,

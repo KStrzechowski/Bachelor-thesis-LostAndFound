@@ -3,7 +3,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
 import { format } from 'date-fns';
-import { MainContainer, MainTitle } from '../Components';
+import { MainContainer, MainTitle, SecondaryButton } from '../Components';
 import { getPublications, PublicationResponseType } from 'commons';
 import { getAccessToken } from '../SecureStorage';
 
@@ -53,13 +53,16 @@ export const PostsPage = (props: { navigation: any }) => {
   const [postsData, setPostsData] = React.useState<PublicationResponseType[]>(
     [],
   );
+
   React.useEffect(() => {
-    async () => {
+    const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setPostsData(await getPublications(0, accessToken));
+        setPostsData(await getPublications(1, accessToken));
       }
     };
+
+    getData();
   }, []);
 
   return (
@@ -72,6 +75,16 @@ export const PostsPage = (props: { navigation: any }) => {
           onPress={() =>
             props.navigation.navigate('Home', { screen: 'SearchPosts' })
           }
+        />
+      </View>
+      <View style={{ alignSelf: 'center', width: '80%', marginVertical: 10 }}>
+        <SecondaryButton
+          label="Dodaj ogłoszenie"
+          onPress={() => {
+            props.navigation.push('Home', {
+              screen: 'AddPost',
+            });
+          }}
         />
       </View>
       <FlatList
