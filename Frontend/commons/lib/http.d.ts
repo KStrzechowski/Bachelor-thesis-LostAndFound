@@ -3,6 +3,7 @@ export interface HttpRequest<REQB> {
     method?: string;
     body?: REQB;
     accessToken?: string;
+    contentType?: string;
 }
 export interface HttpResponse<RESB> {
     ok: boolean;

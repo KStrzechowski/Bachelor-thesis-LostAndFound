@@ -4,6 +4,7 @@ export const addPublication = async (publication, accessToken) => {
     const result = await http({
         path: "/publication",
         method: "post",
+        contentType: "multipart/form-data",
         body: publication,
         accessToken,
     });

@@ -1,4 +1,4 @@
-import { ProfileResponseType } from "./profileTypes";
+import { AuthorResponseType } from "./profileTypes";
 
 export type ProfileCommentRequestType = {
   content?: string;
@@ -6,7 +6,7 @@ export type ProfileCommentRequestType = {
 };
 
 export type ProfileCommentResponseType = {
-  author: ProfileResponseType;
+  author: AuthorResponseType;
   content?: string;
   profileRating: number;
   creationDate: Date;
@@ -18,7 +18,7 @@ export type ProfileCommentsSectionResponseType = {
 };
 
 export type ProfileCommentFromServerType = {
-  author: ProfileResponseType;
+  author: AuthorResponseType;
   content?: string;
   profileRating: number;
   creationDate: string;
@@ -28,7 +28,7 @@ export const mapProfileCommentFromServer = (
   comment: ProfileCommentFromServerType
 ): ProfileCommentResponseType => ({
   ...comment,
-  creationDate: new Date(comment.creationDate),
+  creationDate: new Date(comment?.creationDate),
 });
 
 export type ProfileCommentsSectionFromServerType = {
@@ -39,6 +39,6 @@ export type ProfileCommentsSectionFromServerType = {
 export const mapProfileCommentsSectionFromServer = (
   data: ProfileCommentsSectionFromServerType
 ): ProfileCommentsSectionResponseType => ({
-  myComment: mapProfileCommentFromServer(data.myComment),
-  comments: data.comments.map(mapProfileCommentFromServer),
+  myComment: mapProfileCommentFromServer(data?.myComment),
+  comments: data.comments?.map(mapProfileCommentFromServer),
 });

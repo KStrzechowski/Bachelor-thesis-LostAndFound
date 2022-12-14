@@ -13,6 +13,7 @@ export const addPublication = async (
   const result = await http<PublicationFromServerType, PublicationRequestType>({
     path: "/publication",
     method: "post",
+    contentType: "multipart/form-data",
     body: publication,
     accessToken,
   });

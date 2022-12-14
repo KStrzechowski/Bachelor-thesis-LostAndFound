@@ -5,8 +5,8 @@ export enum SinglePublicationVote {
 }
 
 export enum PublicationType {
-  LostSubject,
-  FoundSubject,
+  LostSubject = "LostSubject",
+  FoundSubject = "FoundSubject",
 }
 
 export enum PublicationState {

@@ -1,7 +1,8 @@
 export type ProfileRequestType = {
-  userId: string;
-  email?: string;
-  username?: string;
+  name?: string;
+  surname?: string;
+  description?: string;
+  city?: string;
 };
 
 export type AuthorResponseType = {
