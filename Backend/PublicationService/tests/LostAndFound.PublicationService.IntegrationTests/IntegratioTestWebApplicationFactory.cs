@@ -19,7 +19,6 @@ namespace LostAndFound.PublicationService.IntegrationTests
         where TStartup : class
     {
         private readonly TestcontainerDatabase _container;
-        private readonly IOptions<PublicationServiceDatabaseSettings> _options;
 
         public IntegratioTestWebApplicationFactory()
         {
@@ -31,12 +30,6 @@ namespace LostAndFound.PublicationService.IntegrationTests
                     Password = "mongo",
                 })
                 .Build();
-
-            _options = Options.Create(new PublicationServiceDatabaseSettings()
-            {
-                ConnectionString = _container.ConnectionString,
-                DatabaseName = _container.Database
-            });
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -45,8 +38,13 @@ namespace LostAndFound.PublicationService.IntegrationTests
             {
                 services.RemoveAll<IMongoPublicationServiceDbContext>();
 
+                var options = Options.Create(new PublicationServiceDatabaseSettings()
+                {
+                    ConnectionString = _container.ConnectionString,
+                    DatabaseName = _container.Database
+                });
                 services.AddSingleton<IMongoPublicationServiceDbContext>(_ =>
-                    new MongoPublicationServiceDbContext(_options));
+                    new MongoPublicationServiceDbContext(options));
             });
         }
 
