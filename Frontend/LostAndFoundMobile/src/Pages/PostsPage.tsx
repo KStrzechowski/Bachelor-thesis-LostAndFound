@@ -4,11 +4,11 @@ import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
 import { format } from 'date-fns';
 import { MainContainer, MainTitle } from '../Components';
-import { GetPosts, Post } from '../Data/Post';
-import { HomeScreenStack } from '../Navigation';
+import { getPublications, PublicationResponseType } from 'commons';
+import { getAccessToken } from '../SecureStorage';
 
 const PostItem = (props: any) => {
-  const item: Post = props.item;
+  const item: PublicationResponseType = props.item;
   const incidentDate = format(item.incidentDate, 'dd.MM.yyyy');
   const [width, setWidth] = React.useState<number>(10);
 
@@ -31,9 +31,13 @@ const PostItem = (props: any) => {
           <Text style={{ fontSize: 16 }}>{incidentDate}</Text>
           <Text
             style={
-              item.votesScore > 0 ? styles.positiveScore : styles.negativeScore
+              item.aggregateRaing > 0
+                ? styles.positiveScore
+                : styles.negativeScore
             }>
-            {item.votesScore > 0 ? `+${item.votesScore}` : item.votesScore}
+            {item.aggregateRaing > 0
+              ? `+${item.aggregateRaing}`
+              : item.aggregateRaing}
           </Text>
         </View>
         <Text numberOfLines={3}>{item.description}</Text>
@@ -46,7 +50,17 @@ const PostItem = (props: any) => {
 };
 
 export const PostsPage = (props: { navigation: any }) => {
-  const postsData = GetPosts();
+  const [postsData, setPostsData] = React.useState<PublicationResponseType[]>(
+    [],
+  );
+  React.useEffect(() => {
+    async () => {
+      const accessToken = await getAccessToken();
+      if (accessToken) {
+        setPostsData(await getPublications(0, accessToken));
+      }
+    };
+  }, []);
 
   return (
     <MainContainer>
@@ -68,12 +82,15 @@ export const PostsPage = (props: { navigation: any }) => {
           marginBottom: 15,
         }}
         contentContainerStyle={{ paddingBottom: 20 }}
-        keyExtractor={item => item._id.toString()}
+        keyExtractor={item => item.publicationId.toString()}
         renderItem={({ item }) => (
           <PostItem
             item={item}
             onPress={() =>
-              props.navigation.navigate('Home', { screen: 'Post' })
+              props.navigation.navigate('Home', {
+                screen: 'Post',
+                params: { publicationId: item.publicationId },
+              })
             }
           />
         )}

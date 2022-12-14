@@ -1,10 +1,10 @@
-import { ProfileResponseType } from "./profileTypes";
+import { AuthorResponseType } from "./profileTypes";
 export type ProfileCommentRequestType = {
     content?: string;
     profileRating: number;
 };
 export type ProfileCommentResponseType = {
-    author: ProfileResponseType;
+    author: AuthorResponseType;
     content?: string;
     profileRating: number;
     creationDate: Date;
@@ -14,7 +14,7 @@ export type ProfileCommentsSectionResponseType = {
     comments: ProfileCommentResponseType[];
 };
 export type ProfileCommentFromServerType = {
-    author: ProfileResponseType;
+    author: AuthorResponseType;
     content?: string;
     profileRating: number;
     creationDate: string;

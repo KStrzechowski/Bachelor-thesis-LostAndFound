@@ -1,2 +1,2 @@
 import { CategoryType } from "../publicationTypes";
-export declare const getCategories: (accessToken: string) => Promise<CategoryType[] | undefined>;
+export declare const getCategories: (accessToken: string) => Promise<CategoryType[]>;

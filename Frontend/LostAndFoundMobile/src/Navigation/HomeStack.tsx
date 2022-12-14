@@ -1,25 +1,28 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import { DrawerScreenStack } from './DrawerStack';
 import {
   ChatPage,
   ChatsPage,
   PostPage,
   PostsPage,
   ProfilePage,
+  ProfilePageMe,
+  EditProfilePage,
   SearchPostsPage,
 } from '../Pages';
-import { DrawerScreenStack } from './DrawerStack';
 
 const HomeStack = createNativeStackNavigator();
 export function HomeScreenStack() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen
-        name="Drawer"
+        name="Home"
         component={DrawerScreenStack}
         options={{ headerShown: false }}
       />
       <HomeStack.Screen name="Profile" component={ProfilePage} />
+      <HomeStack.Screen name="ProfileMe" component={ProfilePageMe} />
+      <HomeStack.Screen name="EditProfile" component={EditProfilePage} />
       <HomeStack.Screen name="Posts" component={PostsPage} />
       <HomeStack.Screen name="Post" component={PostPage} />
       <HomeStack.Screen name="SearchPosts" component={SearchPostsPage} />

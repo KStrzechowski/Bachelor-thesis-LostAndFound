@@ -6,6 +6,7 @@ import {
 import React from 'react';
 import { View } from 'react-native';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
+import { AuthContext } from '../../Config';
 import { SecondaryButton } from '../Components';
 import {
   ChatPage,
@@ -13,11 +14,14 @@ import {
   PostPage,
   PostsPage,
   ProfilePage,
+  ProfilePageMe,
+  EditProfilePage,
   SearchPostsPage,
 } from '../Pages';
 
 const CustomDrawerContent = (props: any) => {
   const [width, setWidth] = React.useState<number>(10);
+  const { signOut } = React.useContext(AuthContext);
 
   return (
     <DrawerContentScrollView
@@ -35,7 +39,7 @@ const CustomDrawerContent = (props: any) => {
         />
         <DrawerItem
           label="Profil"
-          onPress={() => props.navigation.push('Home', { screen: 'Profile' })}
+          onPress={() => props.navigation.push('Home', { screen: 'ProfileMe' })}
         />
         <DrawerItem
           label="Ogłoszenia"
@@ -48,7 +52,7 @@ const CustomDrawerContent = (props: any) => {
         <View style={{ alignItems: 'center', marginTop: 40 }}>
           <SecondaryButton
             label="Wyloguj się"
-            onPress={() => props.navigation.push('Login')}
+            onPress={async () => await signOut()}
           />
         </View>
       </View>
@@ -63,7 +67,21 @@ export function DrawerScreenStack() {
       screenOptions={{ headerShown: false }}
       drawerContent={props => <CustomDrawerContent {...props} />}>
       <DrawerStack.Screen name="Posts" component={PostsPage} />
-      <DrawerStack.Screen name="Profile" component={ProfilePage} />
+      <DrawerStack.Screen
+        name="Profile"
+        component={ProfilePage}
+        options={{
+          drawerItemStyle: { display: 'none' },
+        }}
+      />
+      <DrawerStack.Screen name="ProfileMe" component={ProfilePageMe} />
+      <DrawerStack.Screen
+        name="EditProfile"
+        component={EditProfilePage}
+        options={{
+          drawerItemStyle: { display: 'none' },
+        }}
+      />
       <DrawerStack.Screen
         name="Post"
         component={PostPage}

@@ -4,5 +4,7 @@ export { LoginPage } from './LoginPage';
 export { PostPage } from './PostPage';
 export { PostsPage } from './PostsPage';
 export { ProfilePage } from './ProfilePage';
+export { ProfilePageMe } from './ProfilePageMe';
 export { RegistrationPage } from './RegistrationPage';
 export { SearchPostsPage } from './SearchPostsPage';
+export { EditProfilePage } from './EditProfilePage';

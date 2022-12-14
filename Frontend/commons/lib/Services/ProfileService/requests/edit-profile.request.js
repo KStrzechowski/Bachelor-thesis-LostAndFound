@@ -1,7 +1,7 @@
 import { http } from "../../../http";
 export const editProfile = async (profile, accessToken) => {
     const result = await http({
-        path: "/profile/",
+        path: "/profile",
         method: "put",
         body: profile,
         accessToken,
