@@ -1,9 +1,9 @@
 import {
-  getProfileDetails,
+  getProfile,
   getProfileComments,
+  ProfileCommentResponseType,
   ProfileCommentsSectionResponseType,
   ProfileResponseType,
-  ProfileCommentResponseType,
 } from 'commons';
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
@@ -43,8 +43,7 @@ const CommentItem = (props: any) => {
   );
 };
 
-export const ProfilePage = (props: any) => {
-  const userId = props.route.params.userId;
+export const ProfilePageMe = (props: any) => {
   const [width, setWidth] = React.useState<number>(10);
   const [profile, setProfile] = React.useState<ProfileResponseType>();
   const [profileComments, setProfileComments] =
@@ -54,7 +53,7 @@ export const ProfilePage = (props: any) => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setProfile(await getProfileDetails(userId, accessToken));
+        setProfile(await getProfile(accessToken));
         if (profile) {
           setProfileComments(
             await getProfileComments(profile.userId, accessToken),
@@ -97,11 +96,11 @@ export const ProfilePage = (props: any) => {
             <ScoreView score={profile?.averageProfileRating} />
           </View>
           <SecondaryButton
-            label={'Rozpocznij czat'}
+            label={'Edytuj profil'}
             onPress={() =>
               props.navigation.navigate('Home', {
-                screen: 'Chat',
-                params: { username: profile?.username },
+                screen: 'EditProfile',
+                params: { user: profile },
               })
             }></SecondaryButton>
         </View>
@@ -116,7 +115,6 @@ export const ProfilePage = (props: any) => {
           alignItems: 'flex-end',
         }}>
         <Text style={{ fontSize: 20, fontWeight: '600' }}>Komentarze</Text>
-        <SecondaryButton label={'Zostaw komentarz'} onPress={undefined} />
       </View>
       <FlatList
         contentContainerStyle={{ paddingBottom: 20 }}

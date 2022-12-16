@@ -94,7 +94,7 @@ export const PressableText: React.FC<
   );
 };
 
-export const ScoreView = (props: { score: number }) => {
+export const ScoreView = (props: { score?: number }) => {
   return (
     <View
       style={{

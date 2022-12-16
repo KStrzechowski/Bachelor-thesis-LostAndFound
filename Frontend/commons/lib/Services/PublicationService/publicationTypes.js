@@ -6,8 +6,8 @@ export var SinglePublicationVote;
 })(SinglePublicationVote || (SinglePublicationVote = {}));
 export var PublicationType;
 (function (PublicationType) {
-    PublicationType[PublicationType["LostSubject"] = 0] = "LostSubject";
-    PublicationType[PublicationType["FoundSubject"] = 1] = "FoundSubject";
+    PublicationType["LostSubject"] = "LostSubject";
+    PublicationType["FoundSubject"] = "FoundSubject";
 })(PublicationType || (PublicationType = {}));
 export var PublicationState;
 (function (PublicationState) {

@@ -10,19 +10,53 @@ import {
   MainTitle,
   ScoreView,
 } from '../Components';
-import { GetPosts } from '../Data/Post';
 import { GetProfiles } from '../Data/Profile';
+import {
+  CategoryType,
+  getCategories,
+  getProfileDetails,
+  getPublication,
+  ProfileResponseType,
+  PublicationResponseType,
+} from 'commons';
+import { getAccessToken } from '../SecureStorage';
 
 export const PostPage = (props: any) => {
+  const publicationId = props.route.params.publicationId;
   const [width, setWidth] = React.useState<number>(10);
-  const postData = GetPosts()[0];
-  const profileData = GetProfiles()[0];
-  const incidentDate = format(postData.incidentDate, 'dd.MM.yyyy');
+  const [postData, setPostData] = React.useState<
+    PublicationResponseType | undefined
+  >();
+  const [incidentDate, setIncidentDate] = React.useState<string>('');
+  const [profile, setProfile] = React.useState<
+    ProfileResponseType | undefined
+  >();
+  const [category, setCategory] = React.useState<CategoryType | undefined>();
+
+  React.useEffect(() => {
+    async () => {
+      const accessToken = await getAccessToken();
+      if (accessToken) {
+        setPostData(await getPublication(publicationId, accessToken));
+        if (postData) {
+          setIncidentDate(format(postData.incidentDate, 'dd.MM.yyyy'));
+          setProfile(await getProfileDetails(postData.author.id, accessToken));
+
+          const categories = await getCategories(accessToken);
+          setCategory(
+            categories?.find(
+              category => category.id === postData.subjectCategoryId,
+            ),
+          );
+        }
+      }
+    };
+  }, []);
 
   return (
     <MainContainer>
       <ScrollView>
-        <MainTitle>{postData.title}</MainTitle>
+        <MainTitle>{postData?.title}</MainTitle>
         <View
           style={{
             flexDirection: 'row',
@@ -31,18 +65,18 @@ export const PostPage = (props: any) => {
           <SecondaryButton
             label={'Rozpocznij czat'}
             onPress={() =>
-              props.navigation.push('Chat', { username: profileData.username })
+              props.navigation.push('Chat', { username: profile?.username })
             }
           />
           <Text
             style={
-              postData.votesScore > 0
+              postData?.aggregateRaing && postData?.aggregateRaing > 0
                 ? styles.positiveScore
                 : styles.negativeScore
             }>
-            {postData.votesScore > 0
-              ? `+${postData.votesScore}`
-              : postData.votesScore}
+            {postData?.aggregateRaing && postData?.aggregateRaing > 0
+              ? `+${postData?.aggregateRaing}`
+              : postData?.aggregateRaing}
           </Text>
         </View>
         <View
@@ -50,9 +84,9 @@ export const PostPage = (props: any) => {
           style={{ alignContent: 'center' }}>
           <MaterialIconsIcon name="add-a-photo" size={width - 20} />
         </View>
-        <Text style={styles.infoContainer}>{postData.location}</Text>
+        <Text style={styles.infoContainer}>{postData?.incidentAddress}</Text>
         <Text style={styles.infoContainer}>{incidentDate}</Text>
-        <Text style={styles.infoContainer}>{postData.category}</Text>
+        <Text style={styles.infoContainer}>{category?.displayName}</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -77,13 +111,18 @@ export const PostPage = (props: any) => {
             />
           </View>
         </View>
-        <Text style={{ fontSize: 14 }}>{postData.description}</Text>
+        <Text style={{ fontSize: 14 }}>{postData?.description}</Text>
         <Pressable
           style={styles.userContainer}
-          onPress={() => props.navigation.push('Home', { screen: 'Profile' })}>
+          onPress={() =>
+            props.navigation.push('Home', {
+              screen: 'Profile',
+              params: { userId: profile?.userId },
+            })
+          }>
           <IoniconsIcon name="person" size={25} />
-          <Text style={{ fontSize: 18 }}>{profileData.username}</Text>
-          <ScoreView score={profileData.averageScore} />
+          <Text style={{ fontSize: 18 }}>{profile?.username}</Text>
+          <ScoreView score={profile?.averageProfileRating} />
         </Pressable>
       </ScrollView>
     </MainContainer>

@@ -5,6 +5,7 @@ export interface HttpRequest<REQB> {
   method?: string;
   body?: REQB;
   accessToken?: string;
+  contentType?: string;
 }
 
 export interface HttpResponse<RESB> {
@@ -15,10 +16,13 @@ export interface HttpResponse<RESB> {
 export const http = async <RESB = undefined, REQB = undefined>(
   config: HttpRequest<REQB>
 ): Promise<HttpResponse<RESB>> => {
+  console.log(`${config.method} ${webAPIUrl}${config.path}`);
   const request = new Request(`${webAPIUrl}${config.path}`, {
     method: config.method || "get",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": config.contentType
+        ? config.contentType
+        : "application/json",
     },
     body: config.body ? JSON.stringify(config.body) : undefined,
   });
@@ -26,8 +30,36 @@ export const http = async <RESB = undefined, REQB = undefined>(
     request.headers.set("Authorization", `Bearer ${config.accessToken}`);
   }
 
+  console.log(request);
   const response = await fetch(request);
   if (response.ok) {
+    console.log("Status: OK");
+    const body = await response.json();
+    return { ok: response.ok, body };
+  } else {
+    logError(request, response);
+    return { ok: response.ok };
+  }
+};
+
+export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
+  config: HttpRequest<REQB>,
+  requestData: FormData
+): Promise<HttpResponse<RESB>> => {
+  console.log(`${config.method} ${webAPIUrl}${config.path}`);
+
+  const request = new Request(`${webAPIUrl}${config.path}`, {
+    method: config.method || "get",
+    body: requestData,
+  });
+  if (config.accessToken) {
+    request.headers.set("Authorization", `Bearer ${config.accessToken}`);
+  }
+
+  console.log(request);
+  const response = await fetch(request);
+  if (response.ok) {
+    console.log("Status: OK");
     const body = await response.json();
     return { ok: response.ok, body };
   } else {

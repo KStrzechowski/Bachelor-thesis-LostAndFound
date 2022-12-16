@@ -4,8 +4,8 @@ export declare enum SinglePublicationVote {
     Down = 2
 }
 export declare enum PublicationType {
-    LostSubject = 0,
-    FoundSubject = 1
+    LostSubject = "LostSubject",
+    FoundSubject = "FoundSubject"
 }
 export declare enum PublicationState {
     Open = 0,
@@ -32,7 +32,7 @@ export type PublicationRequestType = {
     incidentDate: Date;
     subjectCategoryId?: string;
     publicationType: PublicationType;
-    publicationState: PublicationState;
+    publicationState?: PublicationState;
 };
 export type PublicationResponseType = {
     publicationId: string;

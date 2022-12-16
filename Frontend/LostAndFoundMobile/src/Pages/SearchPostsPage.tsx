@@ -8,18 +8,14 @@ import {
   MainTitle,
   InputSection,
   CustomTextInput,
-  MainButton,
 } from '../Components';
-import { GetPosts } from '../Data/Post';
 
 export const SearchPostsPage = (props: any) => {
-  const [title, setTitle] = React.useState<string | null>(null);
-  const [localization, setLocalization] = React.useState<string | null>(null);
+  const [title, setTitle] = React.useState<string>('');
+  const [localization, setLocalization] = React.useState<string>('');
   const [distance, setDistance] = React.useState<string>();
   const [category, setCategory] = React.useState<string>();
   const [postState, setPostState] = React.useState<string>();
-  const postData = GetPosts()[0];
-  const incidentDate = format(postData.incidentDate, 'dd.MM.yyyy');
 
   return (
     <MainContainer>
@@ -29,7 +25,7 @@ export const SearchPostsPage = (props: any) => {
       <InputSection title="Tytuł">
         <CustomTextInput
           onChangeText={setTitle}
-          keyboardType={'email-address'}
+          keyboardType={'default'}
           placeholder="Podaj tytuł"
         />
       </InputSection>

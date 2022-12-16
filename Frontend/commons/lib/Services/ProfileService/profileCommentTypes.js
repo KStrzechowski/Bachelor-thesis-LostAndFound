@@ -1,8 +1,11 @@
 export const mapProfileCommentFromServer = (comment) => ({
     ...comment,
-    creationDate: new Date(comment.creationDate),
+    creationDate: new Date(comment === null || comment === void 0 ? void 0 : comment.creationDate),
 });
-export const mapProfileCommentsSectionFromServer = (data) => ({
-    myComment: mapProfileCommentFromServer(data.myComment),
-    comments: data.comments.map(mapProfileCommentFromServer),
-});
+export const mapProfileCommentsSectionFromServer = (data) => {
+    var _a;
+    return ({
+        myComment: mapProfileCommentFromServer(data === null || data === void 0 ? void 0 : data.myComment),
+        comments: (_a = data.comments) === null || _a === void 0 ? void 0 : _a.map(mapProfileCommentFromServer),
+    });
+};

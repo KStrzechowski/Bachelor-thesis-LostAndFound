@@ -6,7 +6,7 @@ export const editProfile = async (
   accessToken: string
 ): Promise<ProfileResponseType | undefined> => {
   const result = await http<ProfileResponseType, ProfileRequestType>({
-    path: "/profile/",
+    path: "/profile",
     method: "put",
     body: profile,
     accessToken,

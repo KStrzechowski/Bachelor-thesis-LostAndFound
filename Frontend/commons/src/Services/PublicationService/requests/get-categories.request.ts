@@ -3,7 +3,7 @@ import { CategoryType } from "../publicationTypes";
 
 export const getCategories = async (
   accessToken: string
-): Promise<CategoryType[] | undefined> => {
+): Promise<CategoryType[]> => {
   const result = await http<CategoryType[]>({
     path: "/publication/categories",
     method: "get",
@@ -13,6 +13,6 @@ export const getCategories = async (
   if (result.ok && result.body) {
     return result.body;
   } else {
-    return undefined;
+    return [];
   }
 };

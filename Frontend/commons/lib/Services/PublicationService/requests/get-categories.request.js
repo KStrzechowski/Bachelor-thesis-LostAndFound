@@ -9,6 +9,6 @@ export const getCategories = async (accessToken) => {
         return result.body;
     }
     else {
-        return undefined;
+        return [];
     }
 };
