@@ -84,7 +84,7 @@ namespace LostAndFound.ChatService.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     GET /message/2b1bafcd-b2fd-492b-b050-9b7027653716?pageNumber=3
+        ///     GET chat/message/2b1bafcd-b2fd-492b-b050-9b7027653716?pageNumber=3
         ///
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status404NotFound)]
