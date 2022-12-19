@@ -82,6 +82,7 @@ export const AddPostPage = (props: any) => {
       </View>
       <InputSection title="Tytuł Ogłoszenia">
         <CustomTextInput
+          testID="titlePlaceholder"
           onChangeText={setTitle}
           keyboardType={'default'}
           value={title}

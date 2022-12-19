@@ -26,12 +26,15 @@ export const Subtitle: React.FC<TextProps> = ({ children }) => {
 
 export const InputSection: React.FC<
   PropsWithChildren<{
+    testID?: string;
     title: string;
   }>
-> = ({ children, title }) => {
+> = ({ children, title, testID }) => {
   return (
     <View style={styles.inputSectionContainer}>
-      <Text style={styles.inputSectionTitle}>{title}</Text>
+      <Text testID={testID} style={styles.inputSectionTitle}>
+        {title}
+      </Text>
       {children}
     </View>
   );
@@ -47,12 +50,13 @@ export const CustomTextInput: React.FC<TextInputProps> = props => {
 
 export const MainButton: React.FC<
   PropsWithChildren<{
+    testID?: string;
     label: string;
     onPress: any;
   }>
-> = ({ label, onPress }) => {
+> = ({ label, onPress, testID }) => {
   return (
-    <Pressable style={styles.mainButton} onPress={onPress}>
+    <Pressable style={styles.mainButton} onPress={onPress} testID={testID}>
       <Text style={styles.mainButtonText}>{label}</Text>
     </Pressable>
   );
@@ -60,31 +64,35 @@ export const MainButton: React.FC<
 
 export const SecondaryButton: React.FC<
   PropsWithChildren<{
+    testID?: string;
     label: string;
     onPress: any;
   }>
-> = ({ label, onPress }) => {
+> = ({ label, onPress, testID }) => {
   return (
     <Pressable style={styles.secondaryButton} onPress={onPress}>
-      <Text style={styles.secondaryButtonText}>{label}</Text>
+      <Text testID={testID} style={styles.secondaryButtonText}>
+        {label}
+      </Text>
     </Pressable>
   );
 };
 
 export const PressableText: React.FC<
   PropsWithChildren<{
+    testID?: string;
     text: string;
     onPress: any;
   }>
-> = ({ text, onPress }) => {
+> = ({ text, onPress, testID }) => {
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} testID={testID}>
       <Text style={styles.pressableText}>{text}</Text>
     </Pressable>
   );
 };
 
-export const ScoreView = (props: { score?: number }) => {
+export const ScoreView = (props: { testID?: string; score?: number }) => {
   return (
     <View
       style={{
@@ -93,7 +101,9 @@ export const ScoreView = (props: { score?: number }) => {
         alignContent: 'center',
       }}>
       <AntDesignIcon name="star" size={25} style={{ color: 'gold' }} />
-      <Text style={{ fontSize: 18 }}>{props.score}</Text>
+      <Text testID={props.testID} style={{ fontSize: 18 }}>
+        {props.score}
+      </Text>
     </View>
   );
 };

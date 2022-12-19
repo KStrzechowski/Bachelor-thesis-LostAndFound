@@ -1,6 +1,6 @@
 import { LoginRequestType, login } from 'commons';
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Button, Image, Text, View } from 'react-native';
 import { AuthContext } from '../../Config';
 import {
   CustomTextInput,
@@ -53,6 +53,7 @@ export const LoginPage = (props: { navigation: string[] }) => {
       <Subtitle>Hej! Dobrze cię znowu widzieć</Subtitle>
       <InputSection title="E-mail">
         <CustomTextInput
+          testID="emailPlaceholder"
           onChangeText={onUsernameChange}
           keyboardType={'email-address'}
           placeholder="Podaj swój adres e-mail"
@@ -60,6 +61,7 @@ export const LoginPage = (props: { navigation: string[] }) => {
       </InputSection>
       <InputSection title="Hasło">
         <CustomTextInput
+          testID="passwordPlaceholder"
           onChangeText={onPasswordChange}
           secureTextEntry={true}
           keyboardType={'default'}
@@ -67,6 +69,7 @@ export const LoginPage = (props: { navigation: string[] }) => {
         />
       </InputSection>
       <MainButton
+        testID="loginButton"
         label="Zaloguj się"
         onPress={async () => {
           await loginUser(email, password);
@@ -76,6 +79,7 @@ export const LoginPage = (props: { navigation: string[] }) => {
       <View style={{ alignItems: 'center' }}>
         <Text>Nie masz konta?</Text>
         <PressableText
+          testID="registerButton"
           text="Zarejestruj się"
           onPress={() => props.navigation.push('Registration')}
         />

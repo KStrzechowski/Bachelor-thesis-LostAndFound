@@ -79,6 +79,7 @@ export const PostsPage = (props: { navigation: any }) => {
       </View>
       <View style={{ alignSelf: 'center', width: '80%', marginVertical: 10 }}>
         <SecondaryButton
+          testID="AddPostButton"
           label="Dodaj ogłoszenie"
           onPress={() => {
             props.navigation.push('Home', {
