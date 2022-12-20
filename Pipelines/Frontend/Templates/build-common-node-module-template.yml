@@ -23,6 +23,10 @@ stages:
 
           - script: |
               npm ci
-              npx tsc --if-present
-            displayName: "Run script: npm clean install and build"
+            displayName: "Run script: npm clean install"
+            workingDirectory: ${{ parameters.commonsProjectDirectory }}
+
+          - script: |
+              npx tsc
+            displayName: "Run script: npx tsc"
             workingDirectory: ${{ parameters.commonsProjectDirectory }}
