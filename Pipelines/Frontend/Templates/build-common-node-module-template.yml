@@ -22,6 +22,7 @@ stages:
               versionSpec: "${{ parameters.nodeVersion }}"
 
           - script: |
-              npx tsc
-            displayName: "Run script: npx tsc"
+              npm ci
+              npx tsc --if-present
+            displayName: "Run script: npm clean install and build"
             workingDirectory: ${{ parameters.commonsProjectDirectory }}
