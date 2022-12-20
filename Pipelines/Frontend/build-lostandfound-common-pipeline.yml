@@ -10,6 +10,6 @@ trigger:
 stages:
   - template: Templates/build-common-node-module-template.yml
     parameters:
-      frontendProjectDirectory: Frontend/commons
+      commonsProjectDirectory: Frontend/commons
       nodeVersion: 16.x
       artifactName: lostandfound.commons
