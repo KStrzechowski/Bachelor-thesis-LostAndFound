@@ -1,6 +1,8 @@
 ﻿using LostAndFound.PublicationService.DataAccess.Context.Interfaces;
 using LostAndFound.PublicationService.DataAccess.Entities;
+using LostAndFound.PublicationService.DataAccess.Models;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace LostAndFound.PublicationService.DataAccess.Repositories
@@ -69,12 +71,13 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
             await UpdatePublicationAggregateRating(publicationId);
         }
 
-        public async Task<IEnumerable<Publication>> UseFilterDefinition(FilterDefinition<Publication> filterExpression)
+        public async Task<(long, IReadOnlyList<Publication>)> GetPublicationsPage(
+            PublicationEntityPageParameters resourceParameters, Guid userId)
         {
-            var publications = (await _collection.FindAsync(filterExpression))
-                ?.ToEnumerable<Publication>();
+            var filter = CreateFilterExpression(resourceParameters, userId);
+            var sort = Builders<Publication>.Sort.Descending(x => x.AggregateRating);
 
-            return publications ?? Enumerable.Empty<Publication>();
+            return await AggregateByPage(filter, sort, resourceParameters.PageNumber, resourceParameters.PageSize);
         }
 
         private async Task UpdatePublicationAggregateRating(Guid publicationId)
@@ -90,6 +93,60 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
                 .Set(publication => publication.AggregateRating, newAggregateRating);
 
             await _collection.UpdateOneAsync(filter, update);
+        }
+
+
+        private static FilterDefinition<Publication> CreateFilterExpression(
+            PublicationEntityPageParameters resourceParameters, Guid userId)
+        {
+            var builder = Builders<Publication>.Filter;
+            var filter = builder.Empty;
+
+            if (resourceParameters.PublicationState is not null)
+            {
+                filter = builder.Eq(pub => pub.State, resourceParameters.PublicationState);
+            }
+
+            if (resourceParameters.PublicationType is not null)
+            {
+                filter &= builder.Eq(pub => pub.Type, resourceParameters.PublicationType);
+            }
+
+            if (resourceParameters.OnlyUserPublications)
+            {
+                filter &= builder.Eq(pub => pub.Author.Id, userId);
+            }
+
+            if (!String.IsNullOrEmpty(resourceParameters.SubjectCategoryId))
+            {
+                filter &= builder.Eq(pub => pub.SubjectCategoryId, resourceParameters.SubjectCategoryId);
+            }
+
+            if (resourceParameters.FromDate is not null)
+            {
+                filter &= builder.Gte(pub => pub.IncidentDate, resourceParameters.FromDate);
+            }
+
+            if (resourceParameters.ToDate is not null)
+            {
+                filter &= builder.Lte(pub => pub.IncidentDate, resourceParameters.ToDate);
+            }
+
+            if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
+            {
+                filter &= (builder.Regex(pub => pub.Description, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")) |
+                    builder.Regex(pub => pub.Title, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")));
+            }
+
+            if (resourceParameters.CoordinateBoundaries is not null)
+            {
+                filter &= (builder.Gte(p => p.Latitude, resourceParameters.CoordinateBoundaries.MinLatitude)
+                    & builder.Gte(p => p.Longitude, resourceParameters.CoordinateBoundaries.MinLongitude)
+                    & builder.Lte(p => p.Latitude, resourceParameters.CoordinateBoundaries.MaxLatitude)
+                    & builder.Lte(p => p.Longitude, resourceParameters.CoordinateBoundaries.MaxLatitude));
+            }
+
+            return filter;
         }
     }
 }

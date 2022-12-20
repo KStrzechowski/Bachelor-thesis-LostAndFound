@@ -10,13 +10,12 @@ using LostAndFound.PublicationService.CoreLibrary.ResourceParameters;
 using LostAndFound.PublicationService.CoreLibrary.Responses;
 using LostAndFound.PublicationService.DataAccess.Entities;
 using LostAndFound.PublicationService.DataAccess.Entities.PublicationEnums;
+using LostAndFound.PublicationService.DataAccess.Models;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.GeocodingServices.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.Models;
 using Microsoft.AspNetCore.Http;
-using MongoDB.Bson;
-using MongoDB.Driver;
 
 namespace LostAndFound.PublicationService.Core.PublicationServices
 {
@@ -156,13 +155,9 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
         {
             var userId = ParseUserId(rawUserId);
 
-            var filterExpression = await CreateFilterExpression(resourceParameters, userId);
-            var publications = (await _publicationsRepository.UseFilterDefinition(filterExpression)).ToList();
-
-            var publicationsPage = publications.OrderByDescending(pub => pub.AggregateRating)
-                .Skip(resourceParameters.PageSize * (resourceParameters.PageNumber - 1))
-                .Take(resourceParameters.PageSize)
-                .ToList();
+            var publicationEntityResourceParams = await CreatePublicationResourceParameters(resourceParameters);
+            var (totalItemCount, publicationsPage) = await _publicationsRepository.GetPublicationsPage(
+                publicationEntityResourceParams, userId);
 
             var publicationDtos = Enumerable.Empty<PublicationBaseDataResponseDto>();
             if (publicationsPage != null && publicationsPage.Any())
@@ -181,7 +176,6 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
                 }
             }
 
-            int totalItemCount = publications.Count;
             var paginationMetadata = new PaginationMetadata(totalItemCount, resourceParameters.PageSize, resourceParameters.PageNumber);
 
             return (publicationDtos, paginationMetadata);
@@ -311,38 +305,10 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             return userId;
         }
 
-        private async Task<FilterDefinition<Publication>> CreateFilterExpression(PublicationsResourceParameters resourceParameters, Guid userId)
+        private async Task<PublicationEntityPageParameters> CreatePublicationResourceParameters(
+            PublicationsResourceParameters resourceParameters)
         {
-            var builder = Builders<Publication>.Filter;
-            var filter = builder.Empty;
-
-            if (resourceParameters.PublicationState is not null)
-            {
-                var state = _mapper.Map<State>(resourceParameters.PublicationState);
-                filter = builder.Eq(pub => pub.State, state);
-            }
-
-            if (resourceParameters.PublicationType is not null)
-            {
-                var type = _mapper.Map<DataAccess.Entities.PublicationEnums.Type>(resourceParameters.PublicationType);
-                filter &= builder.Eq(pub => pub.Type, type);
-            }
-
-            if (resourceParameters.OnlyUserPublications)
-                filter &= builder.Eq(pub => pub.Author.Id, userId);
-
-            if (!String.IsNullOrEmpty(resourceParameters.SubjectCategoryId))
-                filter &= builder.Eq(pub => pub.SubjectCategoryId, resourceParameters.SubjectCategoryId);
-
-            if (resourceParameters.FromDate is not null)
-                filter &= builder.Gte(pub => pub.IncidentDate, resourceParameters.FromDate);
-
-            if (resourceParameters.ToDate is not null)
-                filter &= builder.Lte(pub => pub.IncidentDate, resourceParameters.ToDate);
-
-            if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
-                filter &= (builder.Regex(pub => pub.Description, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")) |
-                    builder.Regex(pub => pub.Title, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/")));
+            var publicationEntityResourceParams = _mapper.Map<PublicationEntityPageParameters>(resourceParameters);
 
             if (!String.IsNullOrEmpty(resourceParameters.IncidentAddress))
             {
@@ -355,14 +321,17 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
                         resourceParameters.SearchRadius,
                         DistanceUnit.Kilometers);
 
-                    filter &= (builder.Gte(p => p.Latitude, boundaries.MinLatitude)
-                        & builder.Gte(p => p.Longitude, boundaries.MinLongitude)
-                        & builder.Lte(p => p.Latitude, boundaries.MaxLatitude)
-                        & builder.Lte(p => p.Longitude, boundaries.MaxLatitude));
+                    publicationEntityResourceParams.CoordinateBoundaries = new CoordinateLocationBoundaries()
+                    {
+                        MinLatitude = boundaries.MinLatitude,
+                        MaxLatitude = boundaries.MaxLatitude,
+                        MinLongitude = boundaries.MinLongitude,
+                        MaxLongitude = boundaries.MaxLongitude,
+                    };
                 }
             }
 
-            return filter;
+            return publicationEntityResourceParams;
         }
     }
 }
