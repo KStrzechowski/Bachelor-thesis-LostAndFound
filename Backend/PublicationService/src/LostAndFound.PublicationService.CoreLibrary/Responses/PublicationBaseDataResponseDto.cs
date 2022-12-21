@@ -46,5 +46,15 @@ namespace LostAndFound.PublicationService.CoreLibrary.Responses
         /// Authenticated user vote
         /// </summary>
         public SinglePublicationVote UserVote { get; set; }
+
+        /// <summary>
+        /// Publication type, lost/found object
+        /// </summary>
+        public PublicationType PublicationType { get; set; }
+
+        /// <summary>
+        /// Publication state (open/closed)
+        /// </summary>
+        public PublicationState PublicationState { get; set; }
     }
 }

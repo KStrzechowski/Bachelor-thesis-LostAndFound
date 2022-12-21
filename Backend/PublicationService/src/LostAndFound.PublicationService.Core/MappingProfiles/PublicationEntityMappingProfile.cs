@@ -57,6 +57,8 @@ namespace LostAndFound.PublicationService.Core.MappingProfiles
                 .ForMember(dto => dto.SubjectPhotoUrl, opt => opt.MapFrom(entity => entity.SubjectPhotoUrl))
                 .ForMember(dto => dto.IncidentAddress, opt => opt.MapFrom(entity => entity.IncidentAddress))
                 .ForMember(dto => dto.IncidentDate, opt => opt.MapFrom(entity => entity.IncidentDate))
+                .ForMember(dto => dto.PublicationType, opt => opt.MapFrom(entity => entity.Type))
+                .ForMember(dto => dto.PublicationState, opt => opt.MapFrom(entity => entity.State))
                 .ForMember(dto => dto.AggregateRating, opt => opt.MapFrom(entity => entity.AggregateRating))
                 .ForMember(dto => dto.UserVote, opt => opt.Ignore());
 

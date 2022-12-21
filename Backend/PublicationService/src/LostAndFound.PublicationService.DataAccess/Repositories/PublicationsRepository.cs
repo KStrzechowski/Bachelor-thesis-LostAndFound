@@ -75,7 +75,7 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
             PublicationEntityPageParameters resourceParameters, Guid userId)
         {
             var filter = CreateFilterExpression(resourceParameters, userId);
-            var sort = Builders<Publication>.Sort.Descending(x => x.AggregateRating);
+            var sort = CreateSortExpression(resourceParameters.SortIndicator);
 
             return await AggregateByPage(filter, sort, resourceParameters.PageNumber, resourceParameters.PageSize);
         }
@@ -95,6 +95,24 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
             await _collection.UpdateOneAsync(filter, update);
         }
 
+        private static SortDefinition<Publication> CreateSortExpression(SortIndicatorData sortIndicator)
+        {
+            if (sortIndicator is null || !sortIndicator.IsSortDefined || !sortIndicator.PropertyIndications.Any())
+            {
+                return Builders<Publication>.Sort.Descending(p => p.AggregateRating);
+            }
+
+            var sortDefinitions = new List<SortDefinition<Publication>>();
+            foreach (var ind in sortIndicator.PropertyIndications)
+            {
+                var sortDef = new BsonDocumentSortDefinition<Publication>(
+                    new BsonDocument(ind.PropertyName, ind.SortType));
+
+                sortDefinitions.Add(sortDef);
+            }
+
+            return Builders<Publication>.Sort.Combine(sortDefinitions);
+        }
 
         private static FilterDefinition<Publication> CreateFilterExpression(
             PublicationEntityPageParameters resourceParameters, Guid userId)

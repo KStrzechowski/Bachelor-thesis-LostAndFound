@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Geolocation;
 using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
+using LostAndFound.PublicationService.Core.Helpers.PropertyMapping.Interfaces;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Enums;
 using LostAndFound.PublicationService.CoreLibrary.Exceptions;
@@ -27,9 +28,11 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
         private readonly IMapper _mapper;
         private readonly IFileStorageService _fileStorageService;
         private readonly IGeocodingService _geocodingService;
+        private readonly IPropertyMappingService _propertyMappingService;
 
         public PublicationActionsService(IPublicationsRepository publicationsRepository, ICategoriesRepository categoriesRepository,
-            IDateTimeProvider dateTimeProvider, IMapper mapper, IFileStorageService fileStorageService, IGeocodingService geocodingService)
+            IDateTimeProvider dateTimeProvider, IMapper mapper, IFileStorageService fileStorageService,
+            IGeocodingService geocodingService, IPropertyMappingService propertyMappingService)
         {
             _publicationsRepository = publicationsRepository ?? throw new ArgumentNullException(nameof(publicationsRepository));
             _categoriesRepository = categoriesRepository ?? throw new ArgumentNullException(nameof(categoriesRepository));
@@ -37,6 +40,7 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
             _geocodingService = geocodingService ?? throw new ArgumentNullException(nameof(geocodingService));
+            _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         public async Task<PublicationDetailsResponseDto> CreatePublication(string rawUserId, string username,
@@ -328,6 +332,18 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
                         MinLongitude = boundaries.MinLongitude,
                         MaxLongitude = boundaries.MaxLongitude,
                     };
+                }
+            }
+
+            if (!String.IsNullOrEmpty(resourceParameters.OrderBy))
+            {
+                var propertIndications = _propertyMappingService
+                    .GetPropertySortIndications<PublicationBaseDataResponseDto, Publication>(
+                    resourceParameters.OrderBy);
+
+                if (propertIndications is not null && propertIndications.Any())
+                {
+                    publicationEntityResourceParams.SortIndicator = new SortIndicatorData(propertIndications);
                 }
             }
 

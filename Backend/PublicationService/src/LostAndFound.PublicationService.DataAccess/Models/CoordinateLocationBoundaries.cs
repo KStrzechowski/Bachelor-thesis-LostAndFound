@@ -1,5 +1,4 @@
 ﻿namespace LostAndFound.PublicationService.DataAccess.Models
-
 {
     public class CoordinateLocationBoundaries
     {

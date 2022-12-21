@@ -12,5 +12,6 @@
         public DateTime? ToDate { get; set; }
         public Entities.PublicationEnums.Type? PublicationType { get; set; }
         public CoordinateLocationBoundaries? CoordinateBoundaries { get; set; }
+        public SortIndicatorData SortIndicator { get; set; } = SortIndicatorData.Empty;
     }
 }

@@ -18,7 +18,8 @@ namespace LostAndFound.PublicationService.Core.MappingProfiles
                 .ForMember(ent => ent.ToDate, opt => opt.MapFrom(p => p.ToDate))
                 .ForMember(ent => ent.PublicationState, opt => opt.MapFrom(p => p.PublicationState))
                 .ForMember(ent => ent.PublicationType, opt => opt.MapFrom(p => p.PublicationType))
-                .ForMember(ent => ent.CoordinateBoundaries, opt => opt.Ignore());
+                .ForMember(ent => ent.CoordinateBoundaries, opt => opt.Ignore())
+                .ForMember(ent => ent.SortIndicator, opt => opt.Ignore());
         }
     }
 }
