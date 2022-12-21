@@ -43,7 +43,7 @@ namespace LostAndFound.PublicationService.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     GET /publication?pageNumber=3
+        ///     GET /publication?orderBy=AggregateRating, IncidentDate desc
         ///
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]

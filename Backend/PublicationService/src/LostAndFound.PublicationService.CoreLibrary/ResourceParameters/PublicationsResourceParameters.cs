@@ -72,6 +72,12 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// <summary>
         /// Order by parameter
         /// </summary>
+        /// <remarks>
+        /// Sample orderBy value:
+        ///
+        ///     AggregateRating, IncidentDate desc
+        ///
+        /// </remarks>
         public string? OrderBy { get; set; }
     }
 }
