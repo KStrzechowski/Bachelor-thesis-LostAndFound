@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
 using LostAndFound.PublicationService.Core.FluentValidators;
+using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;

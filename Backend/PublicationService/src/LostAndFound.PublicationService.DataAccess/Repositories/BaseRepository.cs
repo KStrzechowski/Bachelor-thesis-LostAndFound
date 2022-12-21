@@ -24,7 +24,7 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
                 as BsonCollectionAttribute)!.CollectionName;
         }
 
-        public async Task<(long, IReadOnlyList<T>)> AggregateByPage(FilterDefinition<T> filterDefinition, 
+        public async Task<(long, IReadOnlyList<T>)> AggregateByPage(FilterDefinition<T> filterDefinition,
             SortDefinition<T> sortDefinition, int pageNumber, int pageSize)
         {
             var countFacet = AggregateFacet.Create("count",

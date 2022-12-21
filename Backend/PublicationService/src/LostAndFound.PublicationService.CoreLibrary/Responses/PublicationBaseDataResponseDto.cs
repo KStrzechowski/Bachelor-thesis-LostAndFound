@@ -41,7 +41,7 @@ namespace LostAndFound.PublicationService.CoreLibrary.Responses
         /// Publication aggregated rating
         /// </summary>
         public long AggregateRating { get; set; }
-        
+
         /// <summary>
         /// Authenticated user vote
         /// </summary>

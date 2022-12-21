@@ -55,8 +55,10 @@ namespace LostAndFound.PublicationService.Controllers
             var (publicationsDetailsDto, paginationMetadata) = await _publicationService
                 .GetPublications(rawUserId, publicationsResourceParameters);
 
-            paginationMetadata.NextPageLink = CreatePublicationsPageUri(paginationMetadata, ResourceUriType.NextPage);
-            paginationMetadata.PreviousPageLink = CreatePublicationsPageUri(paginationMetadata, ResourceUriType.PreviousPage);
+            paginationMetadata.NextPageLink = CreatePublicationsPageUri(
+                publicationsResourceParameters, paginationMetadata, ResourceUriType.NextPage);
+            paginationMetadata.PreviousPageLink = CreatePublicationsPageUri(
+                publicationsResourceParameters, paginationMetadata, ResourceUriType.PreviousPage);
 
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(paginationMetadata));
@@ -302,8 +304,12 @@ namespace LostAndFound.PublicationService.Controllers
             return NoContent();
         }
 
-        private string? CreatePublicationsPageUri(PaginationMetadata paginationMetadata, ResourceUriType type)
+        private string? CreatePublicationsPageUri(PublicationsResourceParameters publicationsResourceParameters,
+            PaginationMetadata paginationMetadata, ResourceUriType type)
         {
+            double? searchRadius = publicationsResourceParameters.IncidentAddress is null ?
+                null : publicationsResourceParameters.SearchRadius;
+
             switch (type)
             {
                 case ResourceUriType.PreviousPage:
@@ -315,7 +321,17 @@ namespace LostAndFound.PublicationService.Controllers
                         new
                         {
                             pageNumber = paginationMetadata.CurrentPage - 1,
-                            pageSize = paginationMetadata.PageSize
+                            pageSize = paginationMetadata.PageSize,
+                            onlyUserPublications = publicationsResourceParameters.OnlyUserPublications,
+                            subjectCategoryId = publicationsResourceParameters.SubjectCategoryId,
+                            publicationState = publicationsResourceParameters.PublicationState,
+                            searchQuery = publicationsResourceParameters.SearchQuery,
+                            incidentAddress = publicationsResourceParameters.IncidentAddress,
+                            searchRadius = searchRadius,
+                            fromDate = publicationsResourceParameters.FromDate,
+                            toDate = publicationsResourceParameters.ToDate,
+                            publicationType = publicationsResourceParameters.PublicationType,
+                            orderBy = publicationsResourceParameters.OrderBy,
                         });
                 case ResourceUriType.NextPage:
                     if (paginationMetadata.CurrentPage >= paginationMetadata.TotalPageCount)
@@ -327,14 +343,34 @@ namespace LostAndFound.PublicationService.Controllers
                         new
                         {
                             pageNumber = paginationMetadata.CurrentPage + 1,
-                            pageSize = paginationMetadata.PageSize
+                            pageSize = paginationMetadata.PageSize,
+                            onlyUserPublications = publicationsResourceParameters.OnlyUserPublications,
+                            subjectCategoryId = publicationsResourceParameters.SubjectCategoryId,
+                            publicationState = publicationsResourceParameters.PublicationState,
+                            searchQuery = publicationsResourceParameters.SearchQuery,
+                            incidentAddress = publicationsResourceParameters.IncidentAddress,
+                            searchRadius = searchRadius,
+                            fromDate = publicationsResourceParameters.FromDate,
+                            toDate = publicationsResourceParameters.ToDate,
+                            publicationType = publicationsResourceParameters.PublicationType,
+                            orderBy = publicationsResourceParameters.OrderBy,
                         });
                 default:
                     return Url.Link("GetPublications",
                         new
                         {
                             pageNumber = paginationMetadata.CurrentPage,
-                            pageSize = paginationMetadata.PageSize
+                            pageSize = paginationMetadata.PageSize,
+                            onlyUserPublications = publicationsResourceParameters.OnlyUserPublications,
+                            subjectCategoryId = publicationsResourceParameters.SubjectCategoryId,
+                            publicationState = publicationsResourceParameters.PublicationState,
+                            searchQuery = publicationsResourceParameters.SearchQuery,
+                            incidentAddress = publicationsResourceParameters.IncidentAddress,
+                            searchRadius = searchRadius,
+                            fromDate = publicationsResourceParameters.FromDate,
+                            toDate = publicationsResourceParameters.ToDate,
+                            publicationType = publicationsResourceParameters.PublicationType,
+                            orderBy = publicationsResourceParameters.OrderBy,
                         });
             }
         }

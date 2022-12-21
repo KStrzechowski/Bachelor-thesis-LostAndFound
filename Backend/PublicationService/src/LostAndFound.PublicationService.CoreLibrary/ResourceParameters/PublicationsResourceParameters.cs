@@ -72,6 +72,6 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// <summary>
         /// Order by parameter
         /// </summary>
-        public string OrderBy { get; set; } = "IncidentDate desc";
+        public string? OrderBy { get; set; }
     }
 }
