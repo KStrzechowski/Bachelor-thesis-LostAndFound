@@ -1,6 +1,6 @@
 ﻿using LostAndFound.PublicationService.Core.CategoryServices;
 using LostAndFound.PublicationService.Core.CategoryServices.Interfaces;
-using LostAndFound.PublicationService.Core.DateTimeProviders;
+using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
 using LostAndFound.PublicationService.Core.PublicationServices;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using Microsoft.Extensions.DependencyInjection;

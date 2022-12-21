@@ -1,5 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using LostAndFound.PublicationService.Core.DateTimeProviders;
+using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
 using LostAndFound.PublicationService.Core.FluentValidators;
 using LostAndFound.PublicationService.CoreLibrary.Enums;
 using LostAndFound.PublicationService.CoreLibrary.Requests;

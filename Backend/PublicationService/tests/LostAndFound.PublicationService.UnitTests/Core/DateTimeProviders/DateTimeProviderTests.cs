@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using LostAndFound.PublicationService.Core.DateTimeProviders;
+using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
 using System;
 using Xunit;
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Geolocation;
-using LostAndFound.PublicationService.Core.DateTimeProviders;
+using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Enums;
 using LostAndFound.PublicationService.CoreLibrary.Exceptions;

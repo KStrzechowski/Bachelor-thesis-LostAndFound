@@ -1,4 +1,4 @@
-﻿namespace LostAndFound.PublicationService.Core.DateTimeProviders
+﻿namespace LostAndFound.PublicationService.Core.Helpers.DateTimeProviders
 {
     public class DateTimeProvider : IDateTimeProvider
     {

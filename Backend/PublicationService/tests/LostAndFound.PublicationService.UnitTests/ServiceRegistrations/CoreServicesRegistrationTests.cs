@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LostAndFound.PublicationService.Core;
 using LostAndFound.PublicationService.Core.CategoryServices.Interfaces;
-using LostAndFound.PublicationService.Core.DateTimeProviders;
+using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Settings;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;

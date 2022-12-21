@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using LostAndFound.PublicationService.Core.DateTimeProviders;
+using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
 using LostAndFound.PublicationService.CoreLibrary.Requests;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
 
