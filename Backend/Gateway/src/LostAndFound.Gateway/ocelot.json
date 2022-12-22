@@ -66,6 +66,9 @@
       "UpstreamHttpMethod": [
         "Get"
       ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -95,7 +98,7 @@
           "Port": 5200
         }
       ],
-      "UpstreamPathTemplate": "/hubs/chat/{path}",
+      "UpstreamPathTemplate": "/hubs/chat/{path}"
     },
     {
       "UpstreamPathTemplate": "/chat/{chatMemberId}",
@@ -119,6 +122,9 @@
         "Get",
         "Post"
       ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -199,6 +205,9 @@
         "Put",
         "Delete"
       ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -230,6 +239,9 @@
         "Get",
         "Post"
       ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -333,6 +345,6 @@
   ],
 
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost"
+    "BaseUrl": "https://localhost/5000"
   }
 }
