@@ -71,6 +71,7 @@ namespace LostAndFound.PublicationService.Core.MappingProfiles
                 .ForMember(dto => dto.IncidentDate, opt => opt.MapFrom(entity => entity.IncidentDate))
                 .ForMember(dto => dto.AggregateRating, opt => opt.MapFrom(entity => entity.AggregateRating))
                 .ForMember(dto => dto.SubjectCategoryId, opt => opt.MapFrom(entity => entity.SubjectCategoryId))
+                .ForMember(dto => dto.SubjectCategoryId, opt => opt.MapFrom(entity => entity.SubjectCategoryId))
                 .ForMember(dto => dto.PublicationType, opt => opt.MapFrom(entity => entity.Type))
                 .ForMember(dto => dto.PublicationState, opt => opt.MapFrom(entity => entity.State))
                 .ForMember(dto => dto.LastModificationDate, opt => opt.MapFrom(entity => entity.LastModificationDate))

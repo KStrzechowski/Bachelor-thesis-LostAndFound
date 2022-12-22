@@ -43,9 +43,9 @@ namespace LostAndFound.PublicationService.CoreLibrary.Responses
         public long AggregateRating { get; set; }
 
         /// <summary>
-        /// Authenticated user vote
+        /// Category id of the object being the subject of the publication
         /// </summary>
-        public SinglePublicationVote UserVote { get; set; }
+        public string SubjectCategoryId { get; set; } = string.Empty;
 
         /// <summary>
         /// Publication type, lost/found object
@@ -56,5 +56,10 @@ namespace LostAndFound.PublicationService.CoreLibrary.Responses
         /// Publication state (open/closed)
         /// </summary>
         public PublicationState PublicationState { get; set; }
+
+        /// <summary>
+        /// Authenticated user vote
+        /// </summary>
+        public SinglePublicationVote UserVote { get; set; }
     }
 }

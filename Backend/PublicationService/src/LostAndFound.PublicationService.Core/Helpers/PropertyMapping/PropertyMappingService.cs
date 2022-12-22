@@ -19,6 +19,7 @@ namespace LostAndFound.PublicationService.Core.Helpers.PropertyMapping
                 { "AggregateRating", new(new[] { "AggregateRating" }) },
                 { "PublicationState", new(new[] { "State" }) },
                 { "PublicationType", new(new[] { "Type" }) },
+                { "SubjectCategoryId", new(new[] { "SubjectCategoryId" }) },
             };
 
         private readonly IList<IPropertyMapping> _propertyMappings = new List<IPropertyMapping>();
