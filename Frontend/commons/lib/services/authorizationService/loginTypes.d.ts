@@ -1,13 +1,13 @@
-export declare type LoginRequestType = {
+export type LoginRequestType = {
     email: string;
     password: string;
 };
-export declare type LoginResponseType = {
+export type LoginResponseType = {
     accessToken: string;
     accessTokenExpirationTime: Date;
     refreshToken: string;
 };
-export declare type LoginFromServerType = {
+export type LoginFromServerType = {
     accessToken: string;
     accessTokenExpirationTime: string;
     refreshToken: string;
