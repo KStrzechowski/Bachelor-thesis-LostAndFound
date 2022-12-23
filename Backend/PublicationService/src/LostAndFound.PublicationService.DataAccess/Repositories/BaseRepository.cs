@@ -24,6 +24,42 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
                 as BsonCollectionAttribute)!.CollectionName;
         }
 
+        public async Task<(long, IReadOnlyList<T>)> AggregateByPage(FilterDefinition<T> filterDefinition,
+            SortDefinition<T> sortDefinition, int pageNumber, int pageSize)
+        {
+            var countFacet = AggregateFacet.Create("count",
+                PipelineDefinition<T, AggregateCountResult>.Create(new[]
+                {
+                    PipelineStageDefinitionBuilder.Count<T>()
+                }));
+
+            var dataFacet = AggregateFacet.Create("data",
+                PipelineDefinition<T, T>.Create(new[]
+                {
+                    PipelineStageDefinitionBuilder.Sort(sortDefinition),
+                    PipelineStageDefinitionBuilder.Skip<T>((pageNumber - 1) * pageSize),
+                    PipelineStageDefinitionBuilder.Limit<T>(pageSize),
+                }));
+
+            var aggregation = await _collection.Aggregate()
+                .Match(filterDefinition)
+                .Facet(countFacet, dataFacet)
+                .ToListAsync();
+
+            var totalCount = aggregation.First()
+                .Facets.First(x => x.Name == "count")
+                .Output<AggregateCountResult>()
+                ?.AsEnumerable()
+                ?.FirstOrDefault()
+                ?.Count;
+
+            var data = aggregation.First()
+                .Facets.First(x => x.Name == "data")
+                .Output<T>();
+
+            return (totalCount ?? 0, data);
+        }
+
         public virtual IQueryable<T> AsQueryable()
         {
             return _collection.AsQueryable();

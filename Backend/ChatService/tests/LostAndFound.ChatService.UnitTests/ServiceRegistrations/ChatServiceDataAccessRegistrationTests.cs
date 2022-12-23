@@ -39,7 +39,6 @@ namespace LostAndFound.ChatService.UnitTests.ServiceRegistrations
         }
 
         [Theory]
-        [InlineData(typeof(IMessagesRepository))]
         [InlineData(typeof(IChatsRepository))]
         public void AddApplicationDataAccessServices_Execute_RepositoriesAreRegistered(Type type)
         {

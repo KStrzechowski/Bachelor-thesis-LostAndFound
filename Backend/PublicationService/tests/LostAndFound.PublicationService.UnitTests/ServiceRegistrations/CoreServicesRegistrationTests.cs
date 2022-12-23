@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using LostAndFound.PublicationService.Core;
 using LostAndFound.PublicationService.Core.CategoryServices.Interfaces;
-using LostAndFound.PublicationService.Core.DateTimeProviders;
+using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
+using LostAndFound.PublicationService.Core.Helpers.PropertyMapping.Interfaces;
 using LostAndFound.PublicationService.Core.PublicationServices.Interfaces;
 using LostAndFound.PublicationService.CoreLibrary.Settings;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
@@ -28,6 +29,7 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
 
         [Theory]
         [InlineData(typeof(IDateTimeProvider))]
+        [InlineData(typeof(IPropertyMappingService))]
         public void AddCoreServices_Execute_ResultsInExpectedServiceIsRegistered(Type type)
         {
             _services.AddCoreServices();
@@ -35,7 +37,7 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
 
             Assert.NotNull(serviceProvider.GetService(type));
         }
-        
+
         [Fact]
         public void AddCoreServices_Execute_ResultsInPublicationActionsServiceIsRegistered()
         {

@@ -7,6 +7,9 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
     /// </summary>
     public class PublicationsResourceParameters
     {
+        private const int maxPageSize = 100;
+        private int _pageSize = 20;
+
         /// <summary>
         /// Page number
         /// </summary>
@@ -15,7 +18,11 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// <summary>
         /// Page size
         /// </summary>
-        public int PageSize { get; set; } = 20;
+        public int PageSize
+        {
+            get => _pageSize;
+            set => _pageSize = (value > maxPageSize) ? maxPageSize : value;
+        }
 
         /// <summary>
         /// Include only user publications
@@ -45,7 +52,7 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// <summary>
         /// Search radius from the given address
         /// </summary>
-        public int SearchRadius { get; set; } = 10;
+        public double SearchRadius { get; set; } = 10d;
 
         /// <summary>
         /// Filter publications from accident date
@@ -61,5 +68,16 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// Type of publication to filter
         /// </summary>
         public PublicationType? PublicationType { get; set; }
+
+        /// <summary>
+        /// Order by parameter
+        /// </summary>
+        /// <remarks>
+        /// Sample orderBy value:
+        ///
+        ///     AggregateRating, IncidentDate desc
+        ///
+        /// </remarks>
+        public string? OrderBy { get; set; }
     }
 }

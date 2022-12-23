@@ -5,11 +5,11 @@ using Xunit;
 
 namespace LostAndFound.ChatService.IntegrationTests
 {
-    public class HealthCheckTests : IClassFixture<WebApplicationFactory<Program>>
+    public class HealthCheckTests : IClassFixture<IntegratioTestWebApplicationFactory<Program>>
     {
         private readonly HttpClient _httpClient;
 
-        public HealthCheckTests(WebApplicationFactory<Program> factory)
+        public HealthCheckTests(IntegratioTestWebApplicationFactory<Program> factory)
         {
             _httpClient = factory.CreateDefaultClient();
         }

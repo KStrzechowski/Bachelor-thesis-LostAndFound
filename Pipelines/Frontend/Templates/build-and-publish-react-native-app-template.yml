@@ -3,6 +3,9 @@ parameters:
     type: string
     default: "16.x"
 
+  - name: commonsProjectDirectory
+    type: string
+
   - name: mobileProjectDirectory
     type: string
 
@@ -23,7 +26,12 @@ stages:
 
           - script: |
               npm ci
-            displayName: "Run script: npm clean install"
+            displayName: "Run script: npm clean install in commons project directory"
+            workingDirectory: ${{ parameters.commonsProjectDirectory }}
+
+          - script: |
+              npm ci
+            displayName: "Run script: npm clean install in mobile project directory"
             workingDirectory: ${{ parameters.mobileProjectDirectory }}
 
           - task: Gradle@2

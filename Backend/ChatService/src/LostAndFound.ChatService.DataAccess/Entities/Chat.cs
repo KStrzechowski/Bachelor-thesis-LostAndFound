@@ -1,13 +1,13 @@
 ﻿using LostAndFound.ChatService.DataAccess.Attributes;
-using MongoDB.Bson;
 
 namespace LostAndFound.ChatService.DataAccess.Entities
 {
     [BsonCollection("chats")]
     public class Chat : BaseDocument
     {
-        public ObjectId ChatId { get; set; }
-        public IEnumerable<string> MemberIds { get; set; } = Enumerable.Empty<string>();
+        public Guid ExposedId { get; set; }
+        public Member[] Members { get; set; } = Array.Empty<Member>();
         public bool ContainUnreadMessage { get; set; }
+        public Message[] Messages { get; set; } = Array.Empty<Message>();
     }
 }

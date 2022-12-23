@@ -17,7 +17,6 @@ namespace LostAndFound.ChatService.DataAccess
 
             services.AddSingleton<IMongoChatServiceDbContext, MongoChatServiceDbContext>();
             services.AddScoped<IChatsRepository, ChatsRepository>();
-            services.AddScoped<IMessagesRepository, MessagesRepository>();
 
             return services;
         }

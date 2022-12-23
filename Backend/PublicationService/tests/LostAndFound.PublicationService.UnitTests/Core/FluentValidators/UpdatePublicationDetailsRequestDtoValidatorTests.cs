@@ -1,6 +1,6 @@
 ﻿using FluentValidation.TestHelper;
-using LostAndFound.PublicationService.Core.DateTimeProviders;
 using LostAndFound.PublicationService.Core.FluentValidators;
+using LostAndFound.PublicationService.Core.Helpers.DateTimeProviders;
 using LostAndFound.PublicationService.CoreLibrary.Enums;
 using LostAndFound.PublicationService.CoreLibrary.Requests;
 using LostAndFound.PublicationService.DataAccess.Repositories.Interfaces;
@@ -13,7 +13,7 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
 {
     public class UpdatePublicationDetailsRequestDtoValidatorTests
     {
-        private readonly UpdatePublicationDetailsRequestDtoValidator _validator;
+        private readonly Mock<ICategoriesRepository> _categoriesRepositoryMock;
         private readonly Mock<IDateTimeProvider> _dateTimeProvideMock;
         private readonly DateTime _utcDateNowForTests;
 
@@ -21,26 +21,31 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         {
             _utcDateNowForTests = DateTime.UtcNow;
             _dateTimeProvideMock = new Mock<IDateTimeProvider>();
-
-            var categoriesRepositoryMock = new Mock<ICategoriesRepository>();
-            categoriesRepositoryMock
-                .Setup(repo => repo.DoesCategoryExist(It.IsAny<string>()))
-                .Returns<string>(_ => false);
+            _categoriesRepositoryMock = new Mock<ICategoriesRepository>();
 
             _dateTimeProvideMock.Setup(x => x.UtcNow)
                 .Returns(_utcDateNowForTests).Verifiable();
+        }
 
-            _validator = new UpdatePublicationDetailsRequestDtoValidator(_dateTimeProvideMock.Object, 
-                categoriesRepositoryMock.Object);
+        [Fact]
+        public void Validate_DtoWithCategoryThatNotExist_ReturnsFailure()
+        {
+            var validator = CreateValidator(true);
+            var dtoModel = GetValidCreatePublicationRequestDto();
+
+            var result = validator.TestValidate(dtoModel);
+
+            result.ShouldHaveAnyValidationError();
         }
 
         [Fact]
         public void Validate_DtoWithFutureIncidentDate_ReturnsFailure()
         {
+            var validator = CreateValidator(false);
             var dtoModel = GetValidCreatePublicationRequestDto();
             dtoModel.IncidentDate = _utcDateNowForTests.AddDays(1);
 
-            var result = _validator.TestValidate(dtoModel);
+            var result = validator.TestValidate(dtoModel);
 
             result.ShouldHaveAnyValidationError();
         }
@@ -48,10 +53,11 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         [Fact]
         public void Validate_DtoWithEmptyIncidentDate_ReturnsFailure()
         {
+            var validator = CreateValidator(false);
             var dtoModel = GetValidCreatePublicationRequestDto();
             dtoModel.IncidentDate = default;
 
-            var result = _validator.TestValidate(dtoModel);
+            var result = validator.TestValidate(dtoModel);
 
             result.ShouldHaveAnyValidationError();
         }
@@ -59,10 +65,11 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         [Fact]
         public void Validate_DtoWithEmptyTitle_ReturnsFailure()
         {
+            var validator = CreateValidator(false);
             var dtoModel = GetValidCreatePublicationRequestDto();
             dtoModel.Title = String.Empty;
 
-            var result = _validator.TestValidate(dtoModel);
+            var result = validator.TestValidate(dtoModel);
 
             result.ShouldHaveAnyValidationError();
         }
@@ -70,10 +77,11 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         [Fact]
         public void Validate_DtoWithEmptyDescription_ReturnsFailure()
         {
+            var validator = CreateValidator(false);
             var dtoModel = GetValidCreatePublicationRequestDto();
             dtoModel.Description = String.Empty;
 
-            var result = _validator.TestValidate(dtoModel);
+            var result = validator.TestValidate(dtoModel);
 
             result.ShouldHaveAnyValidationError();
         }
@@ -81,10 +89,11 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         [Fact]
         public void Validate_DtoWithEmptyIncidentAddress_ReturnsFailure()
         {
+            var validator = CreateValidator(false);
             var dtoModel = GetValidCreatePublicationRequestDto();
             dtoModel.IncidentAddress = String.Empty;
 
-            var result = _validator.TestValidate(dtoModel);
+            var result = validator.TestValidate(dtoModel);
 
             result.ShouldHaveAnyValidationError();
         }
@@ -92,10 +101,11 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         [Fact]
         public void Validate_DtoWithEmptySubjectCategory_ReturnsFailure()
         {
+            var validator = CreateValidator(false);
             var dtoModel = GetValidCreatePublicationRequestDto();
             dtoModel.SubjectCategoryId = String.Empty;
 
-            var result = _validator.TestValidate(dtoModel);
+            var result = validator.TestValidate(dtoModel);
 
             result.ShouldHaveAnyValidationError();
         }
@@ -105,10 +115,11 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         [InlineData(100)]
         public void Validate_DtoWithInvalidPublicationType_ReturnsFailure(int value)
         {
+            var validator = CreateValidator(false);
             var dtoModel = GetValidCreatePublicationRequestDto();
             dtoModel.PublicationType = (PublicationType)value;
 
-            var result = _validator.TestValidate(dtoModel);
+            var result = validator.TestValidate(dtoModel);
 
             result.ShouldHaveAnyValidationError();
         }
@@ -117,7 +128,9 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
         [MemberData(nameof(GetValidRequestDtos))]
         public void Validate_WithValidDto_ReturnsSuccess(UpdatePublicationDetailsRequestDto requestDto)
         {
-            var result = _validator.TestValidate(requestDto);
+            var validator = CreateValidator(false);
+
+            var result = validator.TestValidate(requestDto);
 
             result.ShouldNotHaveAnyValidationErrors();
         }
@@ -170,6 +183,16 @@ namespace LostAndFound.PublicationService.UnitTests.Core.FluentValidators
                 PublicationType = PublicationType.FoundSubject,
                 PublicationState = PublicationState.Open,
             };
+        }
+
+        private UpdatePublicationDetailsRequestDtoValidator CreateValidator(bool doesCategoryExist)
+        {
+            _categoriesRepositoryMock
+                .Setup(repo => repo.DoesCategoryExist(It.IsAny<string>()))
+                .Returns<string>(_ => doesCategoryExist);
+
+            return new UpdatePublicationDetailsRequestDtoValidator(
+                _dateTimeProvideMock.Object, _categoriesRepositoryMock.Object);
         }
     }
 }
