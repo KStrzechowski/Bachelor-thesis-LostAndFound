@@ -68,5 +68,16 @@ namespace LostAndFound.PublicationService.CoreLibrary.ResourceParameters
         /// Type of publication to filter
         /// </summary>
         public PublicationType? PublicationType { get; set; }
+
+        /// <summary>
+        /// Order by parameter
+        /// </summary>
+        /// <remarks>
+        /// Sample orderBy value:
+        ///
+        ///     AggregateRating, IncidentDate desc
+        ///
+        /// </remarks>
+        public string? OrderBy { get; set; }
     }
 }

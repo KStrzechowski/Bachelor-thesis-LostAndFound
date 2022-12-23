@@ -10,14 +10,14 @@ namespace LostAndFound.PublicationService.Core.MappingProfiles
         {
             CreateMap<PublicationEntityState, PublicationDtoState>()
                 .ConvertUsing((value, destination) =>
-            {
-                return value switch
                 {
-                    PublicationEntityState.Closed => PublicationDtoState.Closed,
-                    PublicationEntityState.Open => PublicationDtoState.Open,
-                    _ => default,
-                };
-            });
+                    return value switch
+                    {
+                        PublicationEntityState.Closed => PublicationDtoState.Closed,
+                        PublicationEntityState.Open => PublicationDtoState.Open,
+                        _ => default,
+                    };
+                });
 
             CreateMap<PublicationDtoState, PublicationEntityState>()
                 .ConvertUsing((value, destination) =>
