@@ -23,11 +23,11 @@ namespace LostAndFound.ChatService.UnitTests.ServiceRegistrations
             _testCustomConfiguration = new Dictionary<string, string>
             {
                 {
-                    "LostAndFoundChatServiceDb:ConnectionString",
+                    "LostAndFoundMongoCluster:ConnectionString",
                     "mongodb://localhost:27017"
                 },
                 {
-                    "LostAndFoundChatServiceDb:DatabaseName",
+                    "LostAndFoundMongoCluster:DatabaseName",
                     "test-name-db"
                 },
             };
@@ -67,8 +67,8 @@ namespace LostAndFound.ChatService.UnitTests.ServiceRegistrations
                 as IOptions<ChatServiceDatabaseSettings>;
 
             configuration?.Value.Should().NotBeNull();
-            configuration!.Value.ConnectionString.Should().Be(_testCustomConfiguration["LostAndFoundChatServiceDb:ConnectionString"]);
-            configuration!.Value.DatabaseName.Should().Be(_testCustomConfiguration["LostAndFoundChatServiceDb:DatabaseName"]);
+            configuration!.Value.ConnectionString.Should().Be(_testCustomConfiguration["LostAndFoundMongoCluster:ConnectionString"]);
+            configuration!.Value.DatabaseName.Should().Be(_testCustomConfiguration["LostAndFoundMongoCluster:DatabaseName"]);
         }
     }
 }
