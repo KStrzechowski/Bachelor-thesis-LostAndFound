@@ -1,26 +1,26 @@
 import { AuthorResponseType } from "./profileTypes";
-export type ProfileCommentRequestType = {
+export declare type ProfileCommentRequestType = {
     content?: string;
     profileRating: number;
 };
-export type ProfileCommentResponseType = {
+export declare type ProfileCommentResponseType = {
     author: AuthorResponseType;
     content?: string;
     profileRating: number;
     creationDate: Date;
 };
-export type ProfileCommentsSectionResponseType = {
+export declare type ProfileCommentsSectionResponseType = {
     myComment: ProfileCommentResponseType;
     comments: ProfileCommentResponseType[];
 };
-export type ProfileCommentFromServerType = {
+export declare type ProfileCommentFromServerType = {
     author: AuthorResponseType;
     content?: string;
     profileRating: number;
     creationDate: string;
 };
 export declare const mapProfileCommentFromServer: (comment: ProfileCommentFromServerType) => ProfileCommentResponseType;
-export type ProfileCommentsSectionFromServerType = {
+export declare type ProfileCommentsSectionFromServerType = {
     myComment: ProfileCommentFromServerType;
     comments: ProfileCommentFromServerType[];
 };

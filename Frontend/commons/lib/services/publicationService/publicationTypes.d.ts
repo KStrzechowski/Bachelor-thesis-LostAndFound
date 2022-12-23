@@ -11,21 +11,21 @@ export declare enum PublicationState {
     Open = "Open",
     Closed = "Closed"
 }
-export type CategoryType = {
+export declare type CategoryType = {
     id?: string;
     displayName?: string;
 };
-export type UserType = {
+export declare type UserType = {
     id: string;
     username?: string;
 };
-export type PublicationRatingRequestType = {
+export declare type PublicationRatingRequestType = {
     newPublicationVote: SinglePublicationVote;
 };
-export type PublicationStateRequestType = {
+export declare type PublicationStateRequestType = {
     publicationState: PublicationState;
 };
-export type PublicationRequestType = {
+export declare type PublicationRequestType = {
     title?: string;
     description?: string;
     incidentAddress?: string;
@@ -34,7 +34,7 @@ export type PublicationRequestType = {
     publicationType: PublicationType;
     publicationState?: PublicationState;
 };
-export type PublicationResponseType = {
+export declare type PublicationResponseType = {
     publicationId: string;
     title?: string;
     description?: string;
@@ -50,7 +50,7 @@ export type PublicationResponseType = {
     creationDate: Date;
     author: UserType;
 };
-export type PublicationFromServerType = {
+export declare type PublicationFromServerType = {
     publicationId: string;
     title?: string;
     description?: string;
@@ -67,7 +67,7 @@ export type PublicationFromServerType = {
     author: UserType;
 };
 export declare const mapPublicationFromServer: (publication: PublicationFromServerType) => PublicationResponseType;
-export type PublicationSearchRequestType = {
+export declare type PublicationSearchRequestType = {
     title?: string;
     incidentAddress?: string;
     incidentDistance?: number;

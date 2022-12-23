@@ -1,15 +1,15 @@
-export type ProfileRequestType = {
+export declare type ProfileRequestType = {
     name?: string;
     surname?: string;
     description?: string;
     city?: string;
 };
-export type AuthorResponseType = {
+export declare type AuthorResponseType = {
     id: string;
     username?: string;
     pictureUrl?: string;
 };
-export type ProfileResponseType = {
+export declare type ProfileResponseType = {
     userId: string;
     email?: string;
     username?: string;
