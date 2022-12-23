@@ -4,9 +4,7 @@
  *
  * @format
  */
-const localPackagePaths = [
-  '../commons',
-]
+const localPackagePaths = ['../commons'];
 
 module.exports = {
   transformer: {

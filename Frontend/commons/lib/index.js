@@ -1,4 +1,4 @@
 export { http } from "./http";
-export * from "./Services/AuthorizationService/index";
-export * from "./Services/ProfileService/index";
-export * from "./Services/PublicationService/index";
+export * from "./services/authorizationService/index";
+export * from "./services/profileService/index";
+export * from "./services/publicationService/index";
