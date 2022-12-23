@@ -9,8 +9,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { MainContainer, MainTitle } from '../Components';
-import { GetMessages, Message } from '../Data/Chat';
+import { MainContainer, MainTitle } from '../../Components';
+import { GetMessages, Message } from '../../Data/Chat';
 
 const MessageItem = (props: any) => {
   const message: Message = props.item;

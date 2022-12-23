@@ -19,8 +19,8 @@ import {
   MainContainer,
   MainTitle,
   SecondaryButton,
-} from '../Components';
-import { getAccessToken } from '../SecureStorage';
+} from '../../Components';
+import { getAccessToken } from '../../SecureStorage';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const addNewPost = async (

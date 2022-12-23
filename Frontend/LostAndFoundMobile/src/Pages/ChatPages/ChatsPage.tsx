@@ -2,8 +2,8 @@ import { format } from 'date-fns';
 import React from 'react';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { MainContainer, MainTitle, Subtitle } from '../Components';
-import { Chat, GetChats } from '../Data/Chat';
+import { MainContainer, MainTitle, Subtitle } from '../../Components';
+import { Chat, GetChats } from '../../Data/Chat';
 
 export const ChatItem = (props: any) => {
   const item: Chat = props.item;

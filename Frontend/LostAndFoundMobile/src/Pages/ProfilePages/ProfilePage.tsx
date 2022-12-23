@@ -16,8 +16,8 @@ import {
   MainTitle,
   ScoreView,
   SecondaryButton,
-} from '../Components';
-import { getAccessToken } from '../SecureStorage';
+} from '../../Components';
+import { getAccessToken } from '../../SecureStorage';
 import { TextInput } from 'react-native-gesture-handler';
 
 const CommentItem = (props: any) => {

@@ -1,7 +1,7 @@
 import { LoginRequestType, getProfile, login } from 'commons';
 import React from 'react';
 import { Button, Image, Text, View } from 'react-native';
-import { AuthContext } from '../../Config';
+import { AuthContext } from '../../../Config';
 import {
   CustomTextInput,
   InputSection,
@@ -10,10 +10,10 @@ import {
   MainTitle,
   PressableText,
   Subtitle,
-} from '../Components/MainComponents';
-import { Logo } from '../Images';
-import { saveAccessToken, saveRefreshToken } from '../SecureStorage';
-import { saveUserId } from '../SecureStorage/Authorization';
+} from '../../Components/MainComponents';
+import { Logo } from '../../Images';
+import { saveAccessToken, saveRefreshToken } from '../../SecureStorage';
+import { saveUserId } from '../../SecureStorage/Authorization';
 
 const loginUser = async (email: string, password: string) => {
   const loginRequest: LoginRequestType = {

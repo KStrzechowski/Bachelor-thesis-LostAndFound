@@ -9,7 +9,7 @@ import {
   MainContainer,
   MainTitle,
   ScoreView,
-} from '../Components';
+} from '../../Components';
 import {
   CategoryType,
   editPublicationRating,
@@ -20,8 +20,8 @@ import {
   PublicationResponseType,
   SinglePublicationVote,
 } from 'commons';
-import { getAccessToken } from '../SecureStorage';
-import { getUserId } from '../SecureStorage/Authorization';
+import { getAccessToken } from '../../SecureStorage';
+import { getUserId } from '../../SecureStorage/Authorization';
 
 const giveVote = async (publicationId: string, vote: SinglePublicationVote) => {
   const accessToken = await getAccessToken();

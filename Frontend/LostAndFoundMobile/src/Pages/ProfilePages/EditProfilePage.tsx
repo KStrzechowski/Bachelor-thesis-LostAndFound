@@ -7,8 +7,8 @@ import {
   MainContainer,
   MainTitle,
   SecondaryButton,
-} from '../Components';
-import { getAccessToken } from '../SecureStorage';
+} from '../../Components';
+import { getAccessToken } from '../../SecureStorage';
 
 const editProfileDetails = async (profile: ProfileRequestType) => {
   const accessToken = await getAccessToken();

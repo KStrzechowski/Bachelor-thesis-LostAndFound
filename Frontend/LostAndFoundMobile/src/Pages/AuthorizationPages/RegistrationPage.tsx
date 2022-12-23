@@ -8,7 +8,7 @@ import {
   MainContainer,
   MainTitle,
   PressableText,
-} from '../Components/MainComponents';
+} from '../../Components/MainComponents';
 
 async function registerAccount(
   username: string,

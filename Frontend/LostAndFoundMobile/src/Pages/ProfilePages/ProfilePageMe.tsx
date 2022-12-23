@@ -13,8 +13,8 @@ import {
   MainTitle,
   ScoreView,
   SecondaryButton,
-} from '../Components';
-import { getAccessToken } from '../SecureStorage';
+} from '../../Components';
+import { getAccessToken } from '../../SecureStorage';
 
 const CommentItem = (props: any) => {
   const item: ProfileCommentResponseType = props.item;

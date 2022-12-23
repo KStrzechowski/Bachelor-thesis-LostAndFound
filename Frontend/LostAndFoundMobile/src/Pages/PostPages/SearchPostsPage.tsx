@@ -8,7 +8,7 @@ import {
   MainTitle,
   InputSection,
   CustomTextInput,
-} from '../Components';
+} from '../../Components';
 import {
   CategoryType,
   PublicationRequestType,
@@ -17,7 +17,7 @@ import {
   PublicationType,
   getCategories,
 } from 'commons';
-import { getAccessToken } from '../SecureStorage';
+import { getAccessToken } from '../../SecureStorage';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { PublicationSearchRequestType } from 'commons/lib/Services/PublicationService/publicationTypes';
 
