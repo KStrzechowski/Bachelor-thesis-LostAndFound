@@ -8,6 +8,7 @@ export {
   PublicationStateRequestType,
   PublicationRequestType,
   PublicationResponseType,
+  PublicationSearchRequestType,
 } from "./publicationTypes";
 export { addPublication } from "./requests/add-publication.request";
 export { deletePublication } from "./requests/delete-publication.request";

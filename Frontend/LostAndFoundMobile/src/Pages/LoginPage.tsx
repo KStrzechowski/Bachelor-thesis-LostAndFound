@@ -1,4 +1,4 @@
-import { LoginRequestType, login } from 'commons';
+import { LoginRequestType, getProfile, login } from 'commons';
 import React from 'react';
 import { Button, Image, Text, View } from 'react-native';
 import { AuthContext } from '../../Config';
@@ -13,6 +13,7 @@ import {
 } from '../Components/MainComponents';
 import { Logo } from '../Images';
 import { saveAccessToken, saveRefreshToken } from '../SecureStorage';
+import { saveUserId } from '../SecureStorage/Authorization';
 
 const loginUser = async (email: string, password: string) => {
   const loginRequest: LoginRequestType = {
@@ -27,6 +28,10 @@ const loginUser = async (email: string, password: string) => {
       loginResponse.accessTokenExpirationTime,
     );
     await saveRefreshToken(loginResponse.refreshToken);
+    const profile = await getProfile(loginResponse.accessToken);
+    if (profile) {
+      await saveUserId(profile?.userId);
+    }
   }
 };
 

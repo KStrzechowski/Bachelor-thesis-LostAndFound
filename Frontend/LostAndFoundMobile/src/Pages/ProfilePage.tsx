@@ -4,6 +4,9 @@ import {
   ProfileCommentsSectionResponseType,
   ProfileResponseType,
   ProfileCommentResponseType,
+  addProfileComment,
+  ProfileCommentRequestType,
+  editProfileComment,
 } from 'commons';
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
@@ -15,6 +18,7 @@ import {
   SecondaryButton,
 } from '../Components';
 import { getAccessToken } from '../SecureStorage';
+import { TextInput } from 'react-native-gesture-handler';
 
 const CommentItem = (props: any) => {
   const item: ProfileCommentResponseType = props.item;
@@ -34,11 +38,84 @@ const CommentItem = (props: any) => {
           justifyContent: 'space-between',
         }}>
         <Text style={{ fontSize: 18, fontWeight: '500', color: 'black' }}>
-          {item.author.userId}
+          {item.author.username}
         </Text>
         <ScoreView score={item.profileRating} />
       </View>
       <Text>{item.content}</Text>
+    </View>
+  );
+};
+
+async function leaveComment(
+  userId: string,
+  content: ProfileCommentRequestType,
+  commentExists: boolean,
+) {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    if (commentExists) {
+      editProfileComment(userId, content, accessToken);
+    } else {
+      addProfileComment(userId, content, accessToken);
+    }
+  }
+}
+
+const MyComment = (props: {
+  item?: ProfileCommentResponseType;
+  userId: string;
+}) => {
+  const item = props.item;
+  const userId = props.userId;
+  const [profileRating, setProfileRating] = React.useState<number | undefined>(
+    props.item?.profileRating,
+  );
+  const [commentContent, setCommentContent] = React.useState<
+    string | undefined
+  >(props.item?.content);
+
+  React.useEffect(() => {
+    setProfileRating(item?.profileRating);
+    setCommentContent(item?.content);
+  }, [item]);
+
+  return (
+    <View
+      style={{
+        marginTop: 20,
+        padding: 10,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: 'light-grey',
+      }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
+        <SecondaryButton
+          label={item ? 'Edytuj komentarz' : 'Zostaw komentarz'}
+          onPress={() => {
+            const myComment: ProfileCommentRequestType = {
+              content: commentContent,
+              profileRating: profileRating ? profileRating : 0,
+            };
+            if (item) {
+              leaveComment(userId, myComment, true);
+            } else {
+              leaveComment(userId, myComment, false);
+            }
+          }}
+        />
+        {item ? <ScoreView score={profileRating ? profileRating : 0} /> : <></>}
+      </View>
+      <TextInput
+        onChangeText={setCommentContent}
+        value={commentContent}
+        keyboardType={'default'}
+        placeholder="Zostaw komentarz"
+      />
     </View>
   );
 };
@@ -49,6 +126,7 @@ export const ProfilePage = (props: any) => {
   const [profile, setProfile] = React.useState<ProfileResponseType>();
   const [profileComments, setProfileComments] =
     React.useState<ProfileCommentsSectionResponseType>();
+  const [update, setUpdate] = React.useState<boolean>();
 
   React.useEffect(() => {
     const getData = async () => {
@@ -64,7 +142,20 @@ export const ProfilePage = (props: any) => {
     };
 
     getData();
-  }, []);
+  }, [update]);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      const accessToken = await getAccessToken();
+      if (accessToken && profile) {
+        setProfileComments(
+          await getProfileComments(profile.userId, accessToken),
+        );
+      }
+    };
+
+    getData();
+  }, [profile]);
 
   return (
     <MainContainer>
@@ -107,21 +198,11 @@ export const ProfilePage = (props: any) => {
         </View>
       </View>
       <Text>{profile?.description}</Text>
-      <View
-        style={{
-          marginTop: 30,
-          marginBottom: 10,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-        }}>
-        <Text style={{ fontSize: 20, fontWeight: '600' }}>Komentarze</Text>
-        <SecondaryButton label={'Zostaw komentarz'} onPress={undefined} />
-      </View>
+      <MyComment item={profileComments?.myComment} userId={userId} />
       <FlatList
         contentContainerStyle={{ paddingBottom: 20 }}
         data={profileComments?.comments}
-        keyExtractor={item => item.author.userId.toString()}
+        keyExtractor={item => item.author.id.toString()}
         renderItem={({ item }) => <CommentItem item={item} />}
       />
     </MainContainer>

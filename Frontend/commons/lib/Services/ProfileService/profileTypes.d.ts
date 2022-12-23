@@ -5,7 +5,7 @@ export type ProfileRequestType = {
     city?: string;
 };
 export type AuthorResponseType = {
-    userId: string;
+    id: string;
     username?: string;
     pictureUrl?: string;
 };

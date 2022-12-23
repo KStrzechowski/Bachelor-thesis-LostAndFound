@@ -21,6 +21,7 @@ import {
   SinglePublicationVote,
 } from 'commons';
 import { getAccessToken } from '../SecureStorage';
+import { getUserId } from '../SecureStorage/Authorization';
 
 const giveVote = async (publicationId: string, vote: SinglePublicationVote) => {
   const accessToken = await getAccessToken();
@@ -82,8 +83,8 @@ export const PostPage = (props: any) => {
   }, [categories]);
 
   return (
-    <MainContainer>
-      <ScrollView>
+    <ScrollView>
+      <MainContainer>
         <MainTitle>{postData?.title}</MainTitle>
         <View
           style={{
@@ -98,13 +99,13 @@ export const PostPage = (props: any) => {
           />
           <Text
             style={
-              postData?.aggregateRaing && postData?.aggregateRaing >= 0
+              postData && postData.aggregateRating >= 0
                 ? styles.positiveScore
                 : styles.negativeScore
             }>
-            {postData?.aggregateRaing && postData?.aggregateRaing >= 0
-              ? `+${postData?.aggregateRaing}`
-              : postData?.aggregateRaing}
+            {postData && postData.aggregateRating > 0
+              ? `+${postData?.aggregateRating}`
+              : postData?.aggregateRating}
           </Text>
         </View>
         <View
@@ -188,18 +189,25 @@ export const PostPage = (props: any) => {
         <Text style={{ fontSize: 14 }}>{postData?.description}</Text>
         <Pressable
           style={styles.userContainer}
-          onPress={() =>
-            props.navigation.push('Home', {
-              screen: 'Profile',
-              params: { userId: profile?.userId },
-            })
-          }>
+          onPress={async () => {
+            const myUserId = await getUserId();
+            if (myUserId === profile?.userId) {
+              props.navigation.push('Home', {
+                screen: 'ProfileMe',
+              });
+            } else {
+              props.navigation.push('Home', {
+                screen: 'Profile',
+                params: { userId: profile?.userId },
+              });
+            }
+          }}>
           <IoniconsIcon name="person" size={25} />
           <Text style={{ fontSize: 18 }}>{profile?.username}</Text>
           <ScoreView score={profile?.averageProfileRating} />
         </Pressable>
-      </ScrollView>
-    </MainContainer>
+      </MainContainer>
+    </ScrollView>
   );
 };
 

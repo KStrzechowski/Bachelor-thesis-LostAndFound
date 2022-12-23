@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { MainContainer, MainTitle, SecondaryButton } from '../Components';
 import { getPublications, PublicationResponseType } from 'commons';
 import { getAccessToken } from '../SecureStorage';
+import { PublicationSearchRequestType } from 'commons/lib/Services/PublicationService/publicationTypes';
 
 const PostItem = (props: any) => {
   const item: PublicationResponseType = props.item;
@@ -31,13 +32,13 @@ const PostItem = (props: any) => {
           <Text style={{ fontSize: 16 }}>{incidentDate}</Text>
           <Text
             style={
-              item.aggregateRaing > 0
+              item.aggregateRating >= 0
                 ? styles.positiveScore
                 : styles.negativeScore
             }>
-            {item.aggregateRaing > 0
-              ? `+${item.aggregateRaing}`
-              : item.aggregateRaing}
+            {item.aggregateRating > 0
+              ? `+${item.aggregateRating}`
+              : item.aggregateRating}
           </Text>
         </View>
         <Text numberOfLines={3}>{item.description}</Text>
@@ -49,7 +50,9 @@ const PostItem = (props: any) => {
   );
 };
 
-export const PostsPage = (props: { navigation: any }) => {
+export const PostsPage = (props: any) => {
+  const searchPublication: PublicationSearchRequestType =
+    props.route.params?.publication;
   const [postsData, setPostsData] = React.useState<PublicationResponseType[]>(
     [],
   );
@@ -58,7 +61,7 @@ export const PostsPage = (props: { navigation: any }) => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setPostsData(await getPublications(1, accessToken));
+        setPostsData(await getPublications(1, accessToken, searchPublication));
       }
     };
 

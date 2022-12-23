@@ -6,7 +6,7 @@ export type ProfileRequestType = {
 };
 
 export type AuthorResponseType = {
-  userId: string;
+  id: string;
   username?: string;
   pictureUrl?: string;
 };

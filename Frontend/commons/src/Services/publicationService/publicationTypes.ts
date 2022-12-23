@@ -49,7 +49,7 @@ export type PublicationResponseType = {
   subjectPhotoUrl?: string;
   incidentAddress?: string;
   incidentDate: Date;
-  aggregateRaing: number;
+  aggregateRating: number;
   userVote: SinglePublicationVote;
   subjectCategoryId?: string;
   publicationType: PublicationType;
@@ -66,7 +66,7 @@ export type PublicationFromServerType = {
   subjectPhotoUrl?: string;
   incidentAddress?: string;
   incidentDate: string;
-  aggregateRaing: number;
+  aggregateRating: number;
   userVote: SinglePublicationVote;
   subjectCategoryId?: string;
   publicationType: PublicationType;
@@ -84,3 +84,14 @@ export const mapPublicationFromServer = (
   lastModificationDate: new Date(publication.lastModificationDate),
   creationDate: new Date(publication.creationDate),
 });
+
+export type PublicationSearchRequestType = {
+  title?: string;
+  incidentAddress?: string;
+  incidentDistance?: number;
+  incidentFromDate?: Date;
+  incidentToDate?: Date;
+  subjectCategoryId?: string;
+  publicationType?: PublicationType;
+  publicationState?: PublicationState;
+};

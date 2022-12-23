@@ -34,7 +34,7 @@ const CommentItem = (props: any) => {
           justifyContent: 'space-between',
         }}>
         <Text style={{ fontSize: 18, fontWeight: '500', color: 'black' }}>
-          {item.author.userId}
+          {item.author.username ? item.author.username : 'Anonim'}
         </Text>
         <ScoreView score={item.profileRating} />
       </View>
@@ -54,16 +54,24 @@ export const ProfilePageMe = (props: any) => {
       const accessToken = await getAccessToken();
       if (accessToken) {
         setProfile(await getProfile(accessToken));
-        if (profile) {
-          setProfileComments(
-            await getProfileComments(profile.userId, accessToken),
-          );
-        }
       }
     };
 
     getData();
   }, []);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      const accessToken = await getAccessToken();
+      if (accessToken && profile) {
+        setProfileComments(
+          await getProfileComments(profile.userId, accessToken),
+        );
+      }
+    };
+
+    getData();
+  }, [profile]);
 
   return (
     <MainContainer>
@@ -119,7 +127,7 @@ export const ProfilePageMe = (props: any) => {
       <FlatList
         contentContainerStyle={{ paddingBottom: 20 }}
         data={profileComments?.comments}
-        keyExtractor={item => item.author.userId.toString()}
+        keyExtractor={item => item.author.id.toString()}
         renderItem={({ item }) => <CommentItem item={item} />}
       />
     </MainContainer>

@@ -1,24 +1,37 @@
 import { refreshToken } from 'commons';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { AccessToken, RefreshToken, TokenExpirationDate } from '../../Config';
+import {
+  ACCESS_TOKEN,
+  REFRESH_TOKEN,
+  TOKEN_EXPIRATION_DATE,
+  USER_ID,
+} from '../../Config';
+
+export async function saveUserId(userId: string) {
+  await EncryptedStorage.setItem(USER_ID, userId);
+}
+
+export async function getUserId(): Promise<string | null> {
+  return await EncryptedStorage.getItem(USER_ID);
+}
 
 export async function saveRefreshToken(token: string) {
-  await EncryptedStorage.setItem(RefreshToken, token);
+  await EncryptedStorage.setItem(REFRESH_TOKEN, token);
 }
 
 export async function getRefreshToken(): Promise<string | null> {
-  return await EncryptedStorage.getItem(RefreshToken);
+  return await EncryptedStorage.getItem(REFRESH_TOKEN);
 }
 
 export async function saveAccessToken(token: string, expirationDate: Date) {
   // save access token
-  await EncryptedStorage.setItem(AccessToken, token);
+  await EncryptedStorage.setItem(ACCESS_TOKEN, token);
 
   // save expiration date minus 30 seconds
   // we don't want to use access token in the moment it expires
   expirationDate.setSeconds(expirationDate.getSeconds() - 30);
   await EncryptedStorage.setItem(
-    TokenExpirationDate,
+    TOKEN_EXPIRATION_DATE,
     expirationDate.toLocaleString(),
   );
 }
@@ -46,13 +59,13 @@ export async function getAccessToken(): Promise<string | null> {
   }
 
   // get access token
-  const accessToken = await EncryptedStorage.getItem(AccessToken);
+  const accessToken = await EncryptedStorage.getItem(ACCESS_TOKEN);
   return accessToken;
 }
 
 async function isTokenExpired() {
   const tokenExpirationDateString = await EncryptedStorage.getItem(
-    TokenExpirationDate,
+    TOKEN_EXPIRATION_DATE,
   );
   if (!tokenExpirationDateString) return false;
 
