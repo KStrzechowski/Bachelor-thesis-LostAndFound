@@ -9,9 +9,11 @@ import {
   MainContainer,
   MainTitle,
   ScoreView,
+  DeleteButton,
 } from '../../Components';
 import {
   CategoryType,
+  deletePublication,
   editPublicationRating,
   getCategories,
   getProfileDetails,
@@ -23,6 +25,15 @@ import {
 import { getAccessToken } from '../../SecureStorage';
 import { getUserId } from '../../SecureStorage/Authorization';
 
+const deletePost = async (publicationId: string) => {
+  let isDeleted: boolean = false;
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    isDeleted = Boolean(await deletePublication(publicationId, accessToken));
+  }
+  return isDeleted;
+};
+
 const giveVote = async (publicationId: string, vote: SinglePublicationVote) => {
   const accessToken = await getAccessToken();
   if (accessToken) {
@@ -32,6 +43,7 @@ const giveVote = async (publicationId: string, vote: SinglePublicationVote) => {
 
 export const PostPage = (props: any) => {
   const publicationId = props.route.params?.publicationId;
+  const [myUserId, setMyUserId] = React.useState<string | null>();
   const [width, setWidth] = React.useState<number>(10);
   const [postData, setPostData] = React.useState<
     PublicationResponseType | undefined
@@ -47,6 +59,7 @@ export const PostPage = (props: any) => {
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
+      setMyUserId(await getUserId());
       if (accessToken) {
         setPostData(await getPublication(publicationId, accessToken));
         setCategories(await getCategories(accessToken));
@@ -91,12 +104,19 @@ export const PostPage = (props: any) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <SecondaryButton
-            label={'Rozpocznij czat'}
-            onPress={() =>
-              props.navigation.push('Chat', { username: profile?.username })
-            }
-          />
+          {myUserId === profile?.userId ? (
+            <SecondaryButton
+              label={'Edytuj Ogłoszenie'}
+              onPress={() => props.navigation.push('EditPost', { postData })}
+            />
+          ) : (
+            <SecondaryButton
+              label={'Rozpocznij czat'}
+              onPress={() =>
+                props.navigation.push('Chat', { username: profile?.username })
+              }
+            />
+          )}
           <Text
             style={
               postData && postData.aggregateRating >= 0
@@ -190,7 +210,6 @@ export const PostPage = (props: any) => {
         <Pressable
           style={styles.userContainer}
           onPress={async () => {
-            const myUserId = await getUserId();
             if (myUserId === profile?.userId) {
               props.navigation.push('Home', {
                 screen: 'ProfileMe',
@@ -206,6 +225,21 @@ export const PostPage = (props: any) => {
           <Text style={{ fontSize: 18 }}>{profile?.username}</Text>
           <ScoreView score={profile?.averageProfileRating} />
         </Pressable>
+        {myUserId === profile?.userId ? (
+          <DeleteButton
+            label="Usuń Ogłoszenie"
+            onPress={async () => {
+              const isDeleted = await deletePost(publicationId);
+              if (isDeleted) {
+                props.navigation.push('Home', {
+                  screen: 'Posts',
+                });
+              }
+            }}
+          />
+        ) : (
+          <></>
+        )}
       </MainContainer>
     </ScrollView>
   );
@@ -235,7 +269,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   userContainer: {
-    marginTop: 20,
+    marginVertical: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderWidth: 1,

@@ -78,6 +78,22 @@ export const SecondaryButton: React.FC<
   );
 };
 
+export const DeleteButton: React.FC<
+  PropsWithChildren<{
+    testID?: string;
+    label: string;
+    onPress: any;
+  }>
+> = ({ label, onPress, testID }) => {
+  return (
+    <Pressable style={styles.deleteButton} onPress={onPress}>
+      <Text testID={testID} style={styles.deleteButtonText}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+};
+
 export const PressableText: React.FC<
   PropsWithChildren<{
     testID?: string;
@@ -158,6 +174,18 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
   },
   secondaryButtonText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.white,
+  },
+  deleteButton: {
+    alignSelf: 'flex-end',
+    alignItems: 'flex-end',
+    padding: 8,
+    backgroundColor: 'red',
+    borderRadius: 5,
+  },
+  deleteButtonText: {
     fontSize: 18,
     fontWeight: '600',
     color: Colors.white,

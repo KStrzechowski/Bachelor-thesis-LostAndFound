@@ -6,6 +6,7 @@ export {
   CustomTextInput,
   MainButton,
   SecondaryButton,
+  DeleteButton,
   PressableText,
   ScoreView,
 } from './MainComponents';

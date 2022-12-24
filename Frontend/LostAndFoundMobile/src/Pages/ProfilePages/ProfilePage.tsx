@@ -7,11 +7,13 @@ import {
   addProfileComment,
   ProfileCommentRequestType,
   editProfileComment,
+  deleteProfileComment,
 } from 'commons';
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import {
+  DeleteButton,
   MainContainer,
   MainTitle,
   ScoreView,
@@ -47,24 +49,10 @@ const CommentItem = (props: any) => {
   );
 };
 
-async function leaveComment(
-  userId: string,
-  content: ProfileCommentRequestType,
-  commentExists: boolean,
-) {
-  const accessToken = await getAccessToken();
-  if (accessToken) {
-    if (commentExists) {
-      editProfileComment(userId, content, accessToken);
-    } else {
-      addProfileComment(userId, content, accessToken);
-    }
-  }
-}
-
 const MyComment = (props: {
   item?: ProfileCommentResponseType;
   userId: string;
+  update: { do: boolean };
 }) => {
   const item = props.item;
   const userId = props.userId;
@@ -106,6 +94,7 @@ const MyComment = (props: {
             } else {
               leaveComment(userId, myComment, false);
             }
+            props.update.do = !props.update.do;
           }}
         />
         {item ? <ScoreView score={profileRating ? profileRating : 0} /> : <></>}
@@ -116,9 +105,42 @@ const MyComment = (props: {
         keyboardType={'default'}
         placeholder="Zostaw komentarz"
       />
+      {item ? (
+        <DeleteButton
+          label="Usuń komentarz"
+          onPress={async () => {
+            await deleteMyComment(userId);
+            props.update.do = !props.update.do;
+          }}
+        />
+      ) : (
+        <></>
+      )}
     </View>
   );
 };
+
+async function leaveComment(
+  userId: string,
+  content: ProfileCommentRequestType,
+  commentExists: boolean,
+) {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    if (commentExists) {
+      editProfileComment(userId, content, accessToken);
+    } else {
+      addProfileComment(userId, content, accessToken);
+    }
+  }
+}
+
+async function deleteMyComment(userId: string) {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    await deleteProfileComment(userId, accessToken);
+  }
+}
 
 export const ProfilePage = (props: any) => {
   const userId = props.route.params?.userId;
@@ -126,7 +148,7 @@ export const ProfilePage = (props: any) => {
   const [profile, setProfile] = React.useState<ProfileResponseType>();
   const [profileComments, setProfileComments] =
     React.useState<ProfileCommentsSectionResponseType>();
-  const [update, setUpdate] = React.useState<boolean>();
+  const [update, setUpdate] = React.useState<{ do: boolean }>({ do: false });
 
   React.useEffect(() => {
     const getData = async () => {
@@ -156,6 +178,10 @@ export const ProfilePage = (props: any) => {
 
     getData();
   }, [profile]);
+
+  React.useEffect(() => {
+    console.log(profileComments);
+  }, [profileComments]);
 
   return (
     <MainContainer>
@@ -198,7 +224,11 @@ export const ProfilePage = (props: any) => {
         </View>
       </View>
       <Text>{profile?.description}</Text>
-      <MyComment item={profileComments?.myComment} userId={userId} />
+      <MyComment
+        item={profileComments?.myComment}
+        userId={userId}
+        update={update}
+      />
       <FlatList
         contentContainerStyle={{ paddingBottom: 20 }}
         data={profileComments?.comments}
