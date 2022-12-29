@@ -61,6 +61,95 @@
       "SwaggerKey": "accounts"
     },
     {
+      "UpstreamPathTemplate": "/chat",
+      "DownstreamPathTemplate": "/chat",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "SwaggerKey": "chats"
+    },
+    {
+      "UpstreamPathTemplate": "/hubs/chat",
+      "DownstreamPathTemplate": "/hubs/chat",
+      "DownstreamScheme": "wss",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/hubs/chat/{path}",
+      "DownstreamScheme": "wss",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "UpstreamPathTemplate": "/hubs/chat/{path}"
+    },
+    {
+      "UpstreamPathTemplate": "/chat/{chatMemberId}",
+      "DownstreamPathTemplate": "/chat/{chatMemberId}",
+      "UpstreamHttpMethod": [
+        "Patch"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "SwaggerKey": "chats"
+    },
+    {
+      "UpstreamPathTemplate": "/chat/message/{recipentId}",
+      "DownstreamPathTemplate": "/chat/message/{recipentId}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post"
+      ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "SwaggerKey": "chats"
+    },
+    {
+      "UpstreamPathTemplate": "/chat/notification",
+      "DownstreamPathTemplate": "/chat/notification",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "SwaggerKey": "chats"
+    },
+    {
       "UpstreamPathTemplate": "/profile",
       "DownstreamPathTemplate": "/profile",
       "UpstreamHttpMethod": [
@@ -116,6 +205,9 @@
         "Put",
         "Delete"
       ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -147,6 +239,9 @@
         "Get",
         "Post"
       ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -250,6 +345,6 @@
   ],
 
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost"
+    "BaseUrl": "https://localhost/5000"
   }
 }

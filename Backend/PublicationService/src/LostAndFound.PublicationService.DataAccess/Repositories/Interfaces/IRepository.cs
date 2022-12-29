@@ -1,4 +1,5 @@
 ﻿using LostAndFound.PublicationService.DataAccess.Entities.Interfaces;
+using MongoDB.Driver;
 using System.Linq.Expressions;
 
 namespace LostAndFound.PublicationService.DataAccess.Repositories.Interfaces
@@ -13,5 +14,7 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories.Interfaces
         Task ReplaceOneAsync(T document);
         Task DeleteOneAsync(Expression<Func<T, bool>> filterExpression);
         Task DeleteManyAsync(Expression<Func<T, bool>> filterExpression);
+        Task<(long, IReadOnlyList<T>)> AggregateByPage(FilterDefinition<T> filterDefinition,
+            SortDefinition<T> sortDefinition, int page, int pageSize);
     }
 }

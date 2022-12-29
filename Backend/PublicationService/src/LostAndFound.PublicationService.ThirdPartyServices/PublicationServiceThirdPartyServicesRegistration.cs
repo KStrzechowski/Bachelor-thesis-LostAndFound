@@ -1,5 +1,4 @@
 ﻿using Azure.Storage.Blobs;
-using Geocoding.Google;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices;
 using LostAndFound.PublicationService.ThirdPartyServices.AzureServices.Interfaces;
 using LostAndFound.PublicationService.ThirdPartyServices.GeocodingServices;
@@ -20,16 +19,16 @@ namespace LostAndFound.PublicationService.ThirdPartyServices
 
             services.AddSingleton(x =>
                 new BlobServiceClient(blobStorageSettings.ConnectionString));
-
-            var googleGeocoderSettings = new GoogleGeocoderSettings();
-            configuration.Bind(GoogleGeocoderSettings.SettingName, googleGeocoderSettings);
-            services.AddSingleton(googleGeocoderSettings);
-
-            services.AddSingleton(x =>
-                new GoogleGeocoder() { ApiKey = googleGeocoderSettings.ApiKey });
-
-            services.AddScoped<IGeocodingService, GoogleGeocoderService>();
             services.AddScoped<IFileStorageService, BlobStorageService>();
+
+            var positionStackServiceSettings = new PositionStackServiceSettings();
+            configuration.Bind(PositionStackServiceSettings.SettingName, positionStackServiceSettings);
+            services.AddSingleton(positionStackServiceSettings);
+
+            services.AddHttpClient<IGeocodingService, PositionStackService>(c =>
+            {
+                c.BaseAddress = new Uri(positionStackServiceSettings.Uri);
+            });
 
             return services;
         }

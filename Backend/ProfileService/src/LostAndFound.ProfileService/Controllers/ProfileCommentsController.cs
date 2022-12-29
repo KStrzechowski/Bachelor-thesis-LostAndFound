@@ -1,6 +1,7 @@
 ﻿using LostAndFound.ProfileService.Core.UserProfileServices.Interfaces;
 using LostAndFound.ProfileService.CoreLibrary.Internal;
 using LostAndFound.ProfileService.CoreLibrary.Requests;
+using LostAndFound.ProfileService.CoreLibrary.ResourceParameters;
 using LostAndFound.ProfileService.CoreLibrary.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,6 @@ namespace LostAndFound.ProfileService.Controllers
     [ApiController]
     public class ProfileCommentsController : ControllerBase
     {
-        private const int maxCommentsPageSize = 50;
         private readonly IProfileCommentService _profileCommentService;
 
         /// <summary>
@@ -37,8 +37,7 @@ namespace LostAndFound.ProfileService.Controllers
         /// Retrieves a list of comments from a given user profile sorted by creation date. Provides pagination.
         /// </summary>
         /// <param name="profileOwnerId">Profile owner identifier</param>
-        /// <param name="pageNumber">Comments page number</param>
-        /// <param name="pageSize">Number of comment per page</param>
+        /// <param name="resourceParameters">Pagination data</param>
         /// <returns>Profile comments section </returns>
         /// <response code="200">Returns profile comments section</response>
         /// <response code="401">Problem with authentication of user occurred</response>
@@ -51,13 +50,13 @@ namespace LostAndFound.ProfileService.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet(Name = "GetProfileCommentSection")]
-        public async Task<ActionResult<ProfileCommentsSectionResponseDto>> GetProfileCommentsSection(Guid profileOwnerId, int pageNumber = 1, int pageSize = 20)
+        public async Task<ActionResult<ProfileCommentsSectionResponseDto>> GetProfileCommentsSection(Guid profileOwnerId,
+            [FromQuery] ProfileCommentsResourceParameters resourceParameters)
         {
             var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            pageSize = pageSize > maxCommentsPageSize ? maxCommentsPageSize : pageSize;
 
             var (commentsSectionDto, paginationMetadata) = await _profileCommentService
-                .GetProfileCommentsSection(rawUserId, profileOwnerId, pageNumber, pageSize);
+                .GetProfileCommentsSection(rawUserId, profileOwnerId, resourceParameters);
 
             paginationMetadata.NextPageLink = CreateProfileCommentSectionUri(paginationMetadata, ResourceUriType.NextPage);
             paginationMetadata.PreviousPageLink = CreateProfileCommentSectionUri(paginationMetadata, ResourceUriType.PreviousPage);

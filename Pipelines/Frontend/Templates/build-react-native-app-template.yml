@@ -3,6 +3,9 @@ parameters:
     type: string
     default: "16.x"
 
+  - name: commonsProjectDirectory
+    type: string
+
   - name: mobileProjectDirectory
     type: string
 
@@ -20,6 +23,11 @@ stages:
             displayName: "Install Node.js"
             inputs:
               versionSpec: "${{ parameters.nodeVersion }}"
+
+          - script: |
+              npm ci
+            displayName: "Run script: npm clean install in commons project directory"
+            workingDirectory: ${{ parameters.commonsProjectDirectory }}
 
           - script: |
               npm ci

@@ -1,6 +1,6 @@
 ﻿using LostAndFound.PublicationService.DataAccess.Attributes;
-using PublicationType = LostAndFound.PublicationService.DataAccess.Entities.PublicationEnums.Type;
 using PublicationState = LostAndFound.PublicationService.DataAccess.Entities.PublicationEnums.State;
+using PublicationType = LostAndFound.PublicationService.DataAccess.Entities.PublicationEnums.Type;
 
 namespace LostAndFound.PublicationService.DataAccess.Entities
 {
