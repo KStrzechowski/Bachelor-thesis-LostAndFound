@@ -14,7 +14,6 @@ import { MainContainer, MainTitle, SecondaryButton } from '../../Components';
 import { getPublications, PublicationResponseType } from 'commons';
 import { getAccessToken } from '../../SecureStorage';
 import { PublicationSearchRequestType } from 'commons/lib/Services/PublicationService/publicationTypes';
-import { AzureLogo } from '../../Images';
 
 const PostItem = (props: any) => {
   const item: PublicationResponseType = props.item;
