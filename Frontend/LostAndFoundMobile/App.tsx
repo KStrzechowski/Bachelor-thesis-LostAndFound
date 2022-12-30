@@ -1,11 +1,14 @@
 import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
-import { AuthContext } from './Config';
+import { AuthContext, ProfileContext } from './Config';
 import { AuthScreenStack, HomeScreenStack } from './src/Navigation';
 import { getAccessToken } from './src/SecureStorage';
 import { clearStorage } from './src/SecureStorage/Authorization';
 
 const App = () => {
+  const [updatePhotoUrlValue, setUpdatePhotoUrlValue] =
+    React.useState<boolean>(false);
+
   const [state, dispatch] = React.useReducer(
     (prevState: any, action: { type: any }) => {
       switch (action.type) {
@@ -63,9 +66,17 @@ const App = () => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        {state.isSignedIn ? <HomeScreenStack /> : <AuthScreenStack />}
-      </NavigationContainer>
+      <ProfileContext.Provider
+        value={{
+          updatePhotoUrl: async () => {
+            setUpdatePhotoUrlValue(!updatePhotoUrlValue);
+          },
+          updatePhotoUrlValue,
+        }}>
+        <NavigationContainer>
+          {state.isSignedIn ? <HomeScreenStack /> : <AuthScreenStack />}
+        </NavigationContainer>
+      </ProfileContext.Provider>
     </AuthContext.Provider>
   );
 };

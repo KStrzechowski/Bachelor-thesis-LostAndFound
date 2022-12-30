@@ -3,6 +3,7 @@ import { Picker } from '@react-native-picker/picker';
 import {
   CategoryType,
   editPublication,
+  editPublicationPhoto,
   getCategories,
   PublicationRequestType,
   PublicationResponseType,
@@ -14,6 +15,8 @@ import React from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import {
   CustomTextInput,
+  DeleteButton,
+  DocumentSelector,
   InputSection,
   MainContainer,
   MainTitle,
@@ -21,6 +24,7 @@ import {
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { ScrollView } from 'react-native-gesture-handler';
+import { DocumentPickerResponse } from 'react-native-document-picker';
 
 const editPost = async (
   publicationId: string,
@@ -37,12 +41,36 @@ const editPost = async (
   }
 };
 
+const updatePostPhoto = async (
+  publicationId: string,
+  photo: DocumentPickerResponse,
+) => {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    const photoRequest = {
+      name: photo.name,
+      type: photo.type,
+      uri: photo.uri,
+      size: photo.size,
+    };
+    const response = await editPublicationPhoto(
+      publicationId,
+      photoRequest,
+      accessToken,
+    );
+    return response;
+  }
+};
+
 export const EditPostPage = (props: any) => {
   const postData: PublicationResponseType = props.route.params?.postData;
 
   const [show, setShow] = React.useState<boolean>(false);
   const [categories, setCategories] = React.useState<CategoryType[]>([]);
 
+  const [fileResponse, setFileResponse] = React.useState<
+    DocumentPickerResponse[]
+  >([]);
   const [title, setTitle] = React.useState<string | undefined>('');
   const [description, setDescription] = React.useState<string | undefined>('');
   const [incidentAddress, setIncidentAddress] = React.useState<
@@ -182,6 +210,11 @@ export const EditPostPage = (props: any) => {
             value={description}
           />
         </InputSection>
+        <DocumentSelector
+          fileResponse={fileResponse}
+          setFileResponse={setFileResponse}
+          label={postData?.subjectPhotoUrl ? 'Edytuj zdjęcie' : 'Dodaj zdjęcie'}
+        />
         <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
           <SecondaryButton
             label="Zapisz zmiany"
@@ -201,7 +234,11 @@ export const EditPostPage = (props: any) => {
                 newPostData,
               );
               if (response) {
-                console.log(response);
+                if (fileResponse.length > 0)
+                  await updatePostPhoto(
+                    postData.publicationId,
+                    fileResponse[0],
+                  );
                 props.navigation.push('Home', {
                   screen: 'Post',
                   params: { publicationId: response?.publicationId },

@@ -3,7 +3,14 @@ import React from 'react';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   SecondaryButton,
   MainContainer,
@@ -14,22 +21,35 @@ import {
 import {
   CategoryType,
   deletePublication,
+  deletePublicationPhoto,
   editPublicationRating,
   getCategories,
   getProfileDetails,
   getPublication,
   ProfileResponseType,
   PublicationResponseType,
+  PublicationState,
+  PublicationType,
   SinglePublicationVote,
 } from 'commons';
-import { getAccessToken } from '../../SecureStorage';
-import { getUserId } from '../../SecureStorage/Authorization';
+import { getAccessToken, getUserId } from '../../SecureStorage';
 
 const deletePost = async (publicationId: string) => {
   let isDeleted: boolean = false;
   const accessToken = await getAccessToken();
   if (accessToken) {
     isDeleted = Boolean(await deletePublication(publicationId, accessToken));
+  }
+  return isDeleted;
+};
+
+const deleteImage = async (publicationId: string) => {
+  let isDeleted: boolean = false;
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    isDeleted = Boolean(
+      await deletePublicationPhoto(publicationId, accessToken),
+    );
   }
   return isDeleted;
 };
@@ -55,6 +75,10 @@ export const PostPage = (props: any) => {
   const [categories, setCategories] = React.useState<CategoryType[]>([]);
   const [category, setCategory] = React.useState<CategoryType | undefined>();
   const [update, setUpdate] = React.useState<boolean>(false);
+  const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
+    width: number;
+    height: number;
+  }>();
 
   React.useEffect(() => {
     const getData = async () => {
@@ -95,10 +119,40 @@ export const PostPage = (props: any) => {
     getData();
   }, [categories]);
 
+  React.useEffect(() => {
+    if (postData?.subjectPhotoUrl) {
+      let imageSize = { width: 100, height: 100 };
+      Image.getSize(
+        postData?.subjectPhotoUrl,
+        (width, height) => (imageSize = { width, height }),
+      );
+      const displayedWidth = width - 20;
+      const displayedHeight =
+        (imageSize.height * displayedWidth) / imageSize.width;
+      setImageDisplayedSize({
+        width: displayedWidth,
+        height: displayedHeight,
+      });
+    }
+  }, [postData, width]);
+
   return (
     <ScrollView>
       <MainContainer>
+        <View style={{ alignSelf: 'center', marginBottom: 10 }}>
+          {postData?.publicationState === PublicationState.Closed ? (
+            <MainTitle>Ogłoszenie zamknięte</MainTitle>
+          ) : (
+            <></>
+          )}
+        </View>
+        <MainTitle>
+          {postData?.publicationType === PublicationType.FoundSubject
+            ? 'Znaleziono'
+            : 'Zgubiono'}
+        </MainTitle>
         <MainTitle>{postData?.title}</MainTitle>
+
         <View
           style={{
             flexDirection: 'row',
@@ -131,7 +185,30 @@ export const PostPage = (props: any) => {
         <View
           onLayout={event => setWidth(event.nativeEvent.layout.width)}
           style={{ alignContent: 'center' }}>
-          <MaterialIconsIcon name="add-a-photo" size={width - 20} />
+          {postData && postData.subjectPhotoUrl ? (
+            <View>
+              <Image
+                source={{ uri: postData?.subjectPhotoUrl }}
+                style={{
+                  alignSelf: 'center',
+                  marginVertical: 10,
+                  width: imageDisplayedSize?.width,
+                  height: imageDisplayedSize?.height,
+                }}
+              />
+              <DeleteButton
+                label="Usuń zdjęcie"
+                onPress={async () => {
+                  const isDeleted = await deleteImage(publicationId);
+                  if (isDeleted) {
+                    setUpdate(!update);
+                  }
+                }}
+              />
+            </View>
+          ) : (
+            <MaterialIconsIcon name="add-a-photo" size={width - 20} />
+          )}
         </View>
         <Text style={styles.infoContainer}>{postData?.incidentAddress}</Text>
         <Text style={styles.infoContainer}>{incidentDate}</Text>

@@ -2,12 +2,14 @@ import React, { PropsWithChildren } from 'react';
 import {
   Pressable,
   SafeAreaView,
+  StyleProp,
   StyleSheet,
   Text,
   TextInput,
   TextInputProps,
   TextProps,
   View,
+  ViewStyle,
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -83,10 +85,11 @@ export const DeleteButton: React.FC<
     testID?: string;
     label: string;
     onPress: any;
+    style?: StyleProp<ViewStyle>;
   }>
-> = ({ label, onPress, testID }) => {
+> = ({ label, onPress, testID, style }) => {
   return (
-    <Pressable style={styles.deleteButton} onPress={onPress}>
+    <Pressable style={[styles.deleteButton, style]} onPress={onPress}>
       <Text testID={testID} style={styles.deleteButtonText}>
         {label}
       </Text>

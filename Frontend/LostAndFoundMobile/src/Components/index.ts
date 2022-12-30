@@ -10,3 +10,6 @@ export {
   PressableText,
   ScoreView,
 } from './MainComponents';
+
+export { StarRating } from './StarRating';
+export { DocumentSelector } from './DocumentSelector';
