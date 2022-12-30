@@ -34,7 +34,10 @@ export const http = async <RESB = undefined, REQB = undefined>(
   const response = await fetch(request);
   if (response.ok) {
     console.log("Status: OK");
-    const body = await response.json();
+    let body;
+    try {
+      body = await response.json();
+    } catch {}
     return { ok: response.ok, body };
   } else {
     logError(request, response);
@@ -60,8 +63,12 @@ export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
   const response = await fetch(request);
   if (response.ok) {
     console.log("Status: OK");
-    const body = await response.json();
-    return { ok: response.ok, body };
+    try {
+      const body = await response.json();
+      return { ok: response.ok, body };
+    } catch {
+      return { ok: response.ok };
+    }
   } else {
     logError(request, response);
     return { ok: response.ok };

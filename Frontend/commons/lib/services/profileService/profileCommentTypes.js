@@ -5,7 +5,9 @@ export const mapProfileCommentFromServer = (comment) => ({
 export const mapProfileCommentsSectionFromServer = (data) => {
     var _a;
     return ({
-        myComment: mapProfileCommentFromServer(data === null || data === void 0 ? void 0 : data.myComment),
+        myComment: data.myComment
+            ? mapProfileCommentFromServer(data.myComment)
+            : undefined,
         comments: (_a = data.comments) === null || _a === void 0 ? void 0 : _a.map(mapProfileCommentFromServer),
     });
 };

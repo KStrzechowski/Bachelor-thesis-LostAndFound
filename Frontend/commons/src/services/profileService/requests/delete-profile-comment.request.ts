@@ -1,15 +1,13 @@
 import { http } from "../../../http";
 import {
   ProfileCommentRequestType,
-  ProfileCommentResponseType,
   ProfileCommentFromServerType,
-  mapProfileCommentFromServer,
 } from "../profileCommentTypes";
 
 export const deleteProfileComment = async (
   userId: string,
   accessToken: string
-): Promise<ProfileCommentResponseType | undefined> => {
+): Promise<boolean> => {
   const result = await http<
     ProfileCommentFromServerType,
     ProfileCommentRequestType
@@ -19,9 +17,9 @@ export const deleteProfileComment = async (
     accessToken,
   });
 
-  if (result.ok && result.body) {
-    return mapProfileCommentFromServer(result.body);
+  if (result.ok) {
+    return true;
   } else {
-    return undefined;
+    return false;
   }
 };

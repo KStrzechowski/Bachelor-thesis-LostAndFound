@@ -1,15 +1,14 @@
 import { http } from "../../../http";
-import { mapProfileCommentFromServer, } from "../profileCommentTypes";
 export const deleteProfileComment = async (userId, accessToken) => {
     const result = await http({
         path: `/profile/${userId}/comments`,
         method: "delete",
         accessToken,
     });
-    if (result.ok && result.body) {
-        return mapProfileCommentFromServer(result.body);
+    if (result.ok) {
+        return true;
     }
     else {
-        return undefined;
+        return false;
     }
 };

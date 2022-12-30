@@ -1,12 +1,17 @@
-import { http } from "../../../http";
+import { multipartFormDataHttp } from "../../../http";
 import { mapPublicationFromServer, } from "../publicationTypes";
 export const editPublicationPhoto = async (publicationId, photo, accessToken) => {
-    const result = await http({
+    const data = new FormData();
+    data.append("photo", JSON.parse(JSON.stringify({
+        name: photo.name,
+        type: photo.type,
+        uri: photo.uri,
+    })));
+    const result = await multipartFormDataHttp({
         path: `/publication/${publicationId}/photo`,
         method: "patch",
-        body: photo,
         accessToken,
-    });
+    }, data);
     if (result.ok && result.body) {
         return mapPublicationFromServer(result.body);
     }

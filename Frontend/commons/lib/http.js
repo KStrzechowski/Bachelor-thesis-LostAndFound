@@ -17,7 +17,11 @@ export const http = async (config) => {
     const response = await fetch(request);
     if (response.ok) {
         console.log("Status: OK");
-        const body = await response.json();
+        let body;
+        try {
+            body = await response.json();
+        }
+        catch { }
         return { ok: response.ok, body };
     }
     else {
@@ -38,8 +42,13 @@ export const multipartFormDataHttp = async (config, requestData) => {
     const response = await fetch(request);
     if (response.ok) {
         console.log("Status: OK");
-        const body = await response.json();
-        return { ok: response.ok, body };
+        try {
+            const body = await response.json();
+            return { ok: response.ok, body };
+        }
+        catch {
+            return { ok: response.ok };
+        }
     }
     else {
         logError(request, response);

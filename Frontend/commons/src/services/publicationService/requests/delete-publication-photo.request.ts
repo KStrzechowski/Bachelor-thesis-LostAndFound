@@ -4,16 +4,16 @@ import { PublicationFromServerType } from "../publicationTypes";
 export const deletePublicationPhoto = async (
   publicationId: string,
   accessToken: string
-): Promise<boolean | undefined> => {
+): Promise<boolean> => {
   const result = await http<PublicationFromServerType>({
     path: `/publication/${publicationId}/photo`,
     method: "delete",
     accessToken,
   });
 
-  if (result.ok && result.body) {
+  if (result.ok) {
     return true;
   } else {
-    return undefined;
+    return false;
   }
 };
