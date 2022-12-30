@@ -2,7 +2,7 @@
 {
     public class ChatServiceDatabaseSettings
     {
-        private const string settingName = "LostAndFoundChatServiceDb";
+        private const string settingName = "LostAndFoundMongoCluster";
 
         public static string SettingName => settingName;
         public string ConnectionString { get; set; } = string.Empty;

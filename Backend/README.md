@@ -40,13 +40,13 @@ It was created for solution testing and development, so feel free to use. (Be aw
 <br />
 
 When you have the new connection string ready, you just need to update "appsettings.Development.json" files in all 4 microservices. So you need to make the following changes:
-* Replace value for **LostAndFoundAuthServiceDb:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
+* Replace value for **LostAndFoundMongoCluster:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
 	> Backend\AuthService\src\LostAndFound.AuthService\appsettings.Development.json
-* Replace value for **LostAndFoundChatServiceDb:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
+* Replace value for **LostAndFoundMongoCluster:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
 	> Backend\ChatService\src\LostAndFound.ChatService\appsettings.Development.json
-* Replace value for **LostAndFoundProfileServiceDb:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
+* Replace value for **LostAndFoundMongoCluster:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
 	> Backend\ProfileService\src\LostAndFound.ProfileService\appsettings.Development.json
-* Replace value for **LostAndFoundPublicationServiceDb:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
+* Replace value for **LLostAndFoundMongoCluster:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
 	> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json
 
 <br />

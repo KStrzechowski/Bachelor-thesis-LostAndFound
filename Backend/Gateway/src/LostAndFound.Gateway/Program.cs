@@ -7,6 +7,7 @@ builder.Configuration.AddJsonFile("ocelot.json");
 
 builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
+builder.Services.AddCors();
 
 builder.Services.AddOcelot();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
@@ -21,6 +22,14 @@ app.UseSwaggerForOcelotUI(opt => {}, uiOpt => {
 });
 
 app.UseRouting();
+
+app.UseCors(options => options
+    .WithOrigins(new[] { builder.Configuration["ReactClient:Url"] })
+    .WithExposedHeaders("X-Pagination")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+);
 
 app.UseEndpoints(endpoints =>
 {

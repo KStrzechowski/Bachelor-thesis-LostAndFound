@@ -23,11 +23,11 @@ namespace LostAndFound.AuthService.UnitTests.ServiceRegistrations
             _testCustomConfiguration = new Dictionary<string, string>
             {
                 {
-                    "LostAndFoundAuthServiceDb:ConnectionString",
+                    "LostAndFoundMongoCluster:ConnectionString",
                     "mongodb://localhost:27017"
                 },
                 {
-                    "LostAndFoundAuthServiceDb:DatabaseName",
+                    "LostAndFoundMongoCluster:DatabaseName",
                     "test-name-db"
                 },
             };
@@ -67,8 +67,8 @@ namespace LostAndFound.AuthService.UnitTests.ServiceRegistrations
                 as IOptions<AuthServiceDatabaseSettings>;
 
             configuration?.Value.Should().NotBeNull();
-            configuration!.Value.ConnectionString.Should().Be(_testCustomConfiguration["LostAndFoundAuthServiceDb:ConnectionString"]);
-            configuration!.Value.DatabaseName.Should().Be(_testCustomConfiguration["LostAndFoundAuthServiceDb:DatabaseName"]);
+            configuration!.Value.ConnectionString.Should().Be(_testCustomConfiguration["LostAndFoundMongoCluster:ConnectionString"]);
+            configuration!.Value.DatabaseName.Should().Be(_testCustomConfiguration["LostAndFoundMongoCluster:DatabaseName"]);
         }
     }
 }
