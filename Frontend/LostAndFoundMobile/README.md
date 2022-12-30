@@ -1,4 +1,4 @@
-# How to Run Mobile App
+# How to run Mobile App
 
 First make sure you have installed following tools:
 - Node.js
@@ -20,3 +20,16 @@ Now build and run mobile app:
 > npm install
 3. Now you should be able to run app using
 > npx react-native run-android
+
+
+# How to run Mobile App tests
+
+First install detox cli
+> npm install detox-cli --global
+
+Now you should configure detox to use your local emulator. Define it's name in the .detoxrc.js file.
+For more details see the officiall detox site (step 3): 
+https://wix.github.io/Detox/docs/introduction/getting-started
+
+Run tests using the following command (it's recommended to start the emulator before running tests)
+> detox test --configuration android.emu.debug
