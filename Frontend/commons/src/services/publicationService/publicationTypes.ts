@@ -94,4 +94,5 @@ export type PublicationSearchRequestType = {
   subjectCategoryId?: string;
   publicationType?: PublicationType;
   publicationState?: PublicationState;
+  onlyUserPublications?: boolean;
 };

@@ -11,8 +11,24 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 
 @import "bootstrap";
 
-.App {
+body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+		"Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+		"Helvetica Neue", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	max-height: 100vh;
+	background-image: linear-gradient(
+		180deg,
+		$light -15%,
+		$light2 65%,
+		$dark 200%
+	);
 	text-align: center;
-	width: 100%;
+}
+
+#root {
 	height: 100vh;
+	overflow-y: scroll;
 }

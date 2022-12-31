@@ -9,3 +9,4 @@ export { editPublicationState } from "./requests/edit-publication-state.request"
 export { getCategories } from "./requests/get-categories.request";
 export { getPublication } from "./requests/get-publication.request";
 export { getPublications } from "./requests/get-publications.request";
+export { getPublicationsUndef } from "./requests/get-publications-undef.request";
