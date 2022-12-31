@@ -202,7 +202,12 @@ namespace LostAndFound.PublicationService.Core.PublicationServices
             UpdatePublicationRatingRequestDto publicationRatingDto)
         {
             var userId = ParseUserId(rawUserId);
-            var publicationEntity = await GetUserPublication(userId, publicationId);
+
+            var publicationEntity = await _publicationsRepository.GetSingleAsync(x => x.ExposedId == publicationId);
+            if (publicationEntity == null)
+            {
+                throw new NotFoundException("Publication not found.");
+            }
 
             var userVote = publicationEntity.Votes.FirstOrDefault(x => x.VoterId == userId);
             if (userVote != null)
