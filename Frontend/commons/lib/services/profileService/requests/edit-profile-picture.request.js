@@ -1,11 +1,16 @@
-import { http } from "../../../http";
+import { multipartFormDataHttp } from "../../../http";
 export const editProfilePhoto = async (photo, accessToken) => {
-    const result = await http({
+    const data = new FormData();
+    data.append("picture", JSON.parse(JSON.stringify({
+        name: photo.name,
+        type: photo.type,
+        uri: photo.uri,
+    })));
+    const result = await multipartFormDataHttp({
         path: "/profile/picture",
         method: "patch",
-        body: photo,
         accessToken,
-    });
+    }, data);
     if (result.ok && result.body) {
         return result.body;
     }

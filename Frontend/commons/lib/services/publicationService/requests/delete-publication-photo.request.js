@@ -5,10 +5,10 @@ export const deletePublicationPhoto = async (publicationId, accessToken) => {
         method: "delete",
         accessToken,
     });
-    if (result.ok && result.body) {
+    if (result.ok) {
         return true;
     }
     else {
-        return undefined;
+        return false;
     }
 };

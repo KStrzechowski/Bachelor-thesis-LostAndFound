@@ -12,8 +12,12 @@ import {
   Subtitle,
 } from '../../Components/MainComponents';
 import { Logo } from '../../Images';
-import { saveAccessToken, saveRefreshToken } from '../../SecureStorage';
-import { saveUserId } from '../../SecureStorage/Authorization';
+import {
+  saveAccessToken,
+  saveRefreshToken,
+  saveUserId,
+} from '../../SecureStorage';
+import { saveUserPhotoUrl } from '../../SecureStorage/Profile';
 
 const loginUser = async (email: string, password: string) => {
   const loginRequest: LoginRequestType = {
@@ -31,6 +35,9 @@ const loginUser = async (email: string, password: string) => {
     const profile = await getProfile(loginResponse.accessToken);
     if (profile) {
       await saveUserId(profile?.userId);
+      if (profile?.pictureUrl) {
+        await saveUserPhotoUrl(profile.pictureUrl);
+      }
     }
   }
 };

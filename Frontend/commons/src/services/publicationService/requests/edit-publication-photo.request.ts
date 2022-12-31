@@ -1,4 +1,4 @@
-import { http } from "../../../http";
+import { multipartFormDataHttp } from "../../../http";
 import {
   PublicationResponseType,
   PublicationFromServerType,
@@ -7,15 +7,28 @@ import {
 
 export const editPublicationPhoto = async (
   publicationId: string,
-  photo: string,
+  photo: { name: string | null; type: string | null; uri: string },
   accessToken: string
 ): Promise<PublicationResponseType | undefined> => {
-  const result = await http<PublicationFromServerType, string>({
-    path: `/publication/${publicationId}/photo`,
-    method: "patch",
-    body: photo,
-    accessToken,
-  });
+  const data: FormData = new FormData();
+  data.append(
+    "photo",
+    JSON.parse(
+      JSON.stringify({
+        name: photo.name,
+        type: photo.type,
+        uri: photo.uri,
+      })
+    )
+  );
+  const result = await multipartFormDataHttp<PublicationFromServerType, string>(
+    {
+      path: `/publication/${publicationId}/photo`,
+      method: "patch",
+      accessToken,
+    },
+    data
+  );
 
   if (result.ok && result.body) {
     return mapPublicationFromServer(result.body);

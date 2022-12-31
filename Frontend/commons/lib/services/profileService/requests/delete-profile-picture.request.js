@@ -1,14 +1,14 @@
 import { http } from "../../../http";
 export const deleteProfilePhoto = async (accessToken) => {
     const result = await http({
-        path: `/profile/photo`,
+        path: `/profile/picture`,
         method: "delete",
         accessToken,
     });
-    if (result.ok && result.body) {
+    if (result.ok) {
         return true;
     }
     else {
-        return undefined;
+        return false;
     }
 };

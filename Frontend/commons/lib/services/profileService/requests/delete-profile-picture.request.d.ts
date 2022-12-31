@@ -1,1 +1,1 @@
-export declare const deleteProfilePhoto: (accessToken: string) => Promise<boolean | undefined>;
+export declare const deleteProfilePhoto: (accessToken: string) => Promise<boolean>;

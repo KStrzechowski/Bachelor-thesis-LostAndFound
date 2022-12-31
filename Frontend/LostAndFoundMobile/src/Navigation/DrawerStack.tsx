@@ -4,9 +4,9 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 import React from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
-import { AuthContext } from '../../Config';
+import { AuthContext, ProfileContext } from '../../Config';
 import { SecondaryButton } from '../Components';
 import {
   ChatPage,
@@ -18,26 +18,71 @@ import {
   EditProfilePage,
   SearchPostsPage,
   AddPostPage,
+  EditPostPage,
 } from '../Pages';
+import { getUserPhotoUrl } from '../SecureStorage/Profile';
 
 const CustomDrawerContent = (props: any) => {
-  const [width, setWidth] = React.useState<number>(10);
   const { signOut } = React.useContext(AuthContext);
+  const { updatePhotoUrlValue } = React.useContext(ProfileContext);
+  const [userPhotoUrl, setUserPhotoUrl] = React.useState<string | null>();
+  const [width, setWidth] = React.useState<number>(10);
+  const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
+    width: number;
+    height: number;
+  }>();
+
+  React.useEffect(() => {
+    const getData = async () => {
+      setUserPhotoUrl(await getUserPhotoUrl());
+    };
+    getData();
+  }, [updatePhotoUrlValue]);
+
+  React.useEffect(() => {
+    if (userPhotoUrl) {
+      let imageSize = { width: 100, height: 100 };
+      Image.getSize(
+        userPhotoUrl,
+        (width, height) => (imageSize = { width, height }),
+      );
+      const displayedWidth = width / 3;
+      const displayedHeight =
+        (imageSize.height * displayedWidth) / imageSize.width;
+      setImageDisplayedSize({
+        width: displayedWidth,
+        height: displayedHeight,
+      });
+    }
+  }, [userPhotoUrl, width]);
 
   return (
     <DrawerContentScrollView
       {...props}
       onLayout={event => setWidth(event.nativeEvent.layout.width)}>
       <View style={{ flex: 1 }}>
-        <IoniconsIcon
-          style={{
-            alignSelf: 'center',
-            marginTop: 60,
-            marginBottom: 20,
-          }}
-          name="person"
-          size={width / 3}
-        />
+        {userPhotoUrl ? (
+          <Image
+            source={{ uri: userPhotoUrl }}
+            style={{
+              alignSelf: 'center',
+              marginTop: 60,
+              marginBottom: 20,
+              height: imageDisplayedSize?.height,
+              width: imageDisplayedSize?.width,
+            }}
+          />
+        ) : (
+          <IoniconsIcon
+            style={{
+              alignSelf: 'center',
+              marginTop: 60,
+              marginBottom: 20,
+            }}
+            name="person"
+            size={width / 3}
+          />
+        )}
         <DrawerItem
           label="Profil"
           onPress={() => props.navigation.push('Home', { screen: 'ProfileMe' })}
@@ -62,7 +107,7 @@ const CustomDrawerContent = (props: any) => {
 };
 
 const DrawerStack = createDrawerNavigator();
-export function DrawerScreenStack() {
+export const DrawerScreenStack = () => {
   return (
     <DrawerStack.Navigator
       screenOptions={{ headerShown: false }}
@@ -84,6 +129,7 @@ export function DrawerScreenStack() {
         }}
       />
       <DrawerStack.Screen name="AddPost" component={AddPostPage} />
+      <DrawerStack.Screen name="EditPost" component={EditPostPage} />
       <DrawerStack.Screen
         name="Post"
         component={PostPage}
@@ -108,4 +154,4 @@ export function DrawerScreenStack() {
       />
     </DrawerStack.Navigator>
   );
-}
+};

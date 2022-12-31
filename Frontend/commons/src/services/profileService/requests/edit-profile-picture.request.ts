@@ -1,16 +1,29 @@
-import { http } from "../../../http";
+import { multipartFormDataHttp } from "../../../http";
 import { ProfileResponseType } from "../profileTypes";
 
 export const editProfilePhoto = async (
-  photo: string,
+  photo: { name: string | null; type: string | null; uri: string },
   accessToken: string
 ): Promise<ProfileResponseType | undefined> => {
-  const result = await http<ProfileResponseType, string>({
-    path: "/profile/picture",
-    method: "patch",
-    body: photo,
-    accessToken,
-  });
+  const data: FormData = new FormData();
+  data.append(
+    "picture",
+    JSON.parse(
+      JSON.stringify({
+        name: photo.name,
+        type: photo.type,
+        uri: photo.uri,
+      })
+    )
+  );
+  const result = await multipartFormDataHttp<ProfileResponseType, string>(
+    {
+      path: "/profile/picture",
+      method: "patch",
+      accessToken,
+    },
+    data
+  );
 
   if (result.ok && result.body) {
     return result.body;

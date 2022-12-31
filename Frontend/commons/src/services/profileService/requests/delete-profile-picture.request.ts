@@ -3,16 +3,16 @@ import { ProfileResponseType } from "../profileTypes";
 
 export const deleteProfilePhoto = async (
   accessToken: string
-): Promise<boolean | undefined> => {
+): Promise<boolean> => {
   const result = await http<ProfileResponseType>({
-    path: `/profile/photo`,
+    path: `/profile/picture`,
     method: "delete",
     accessToken,
   });
 
-  if (result.ok && result.body) {
+  if (result.ok) {
     return true;
   } else {
-    return undefined;
+    return false;
   }
 };

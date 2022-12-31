@@ -1,5 +1,12 @@
 import React from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
 import { format } from 'date-fns';
@@ -12,6 +19,27 @@ const PostItem = (props: any) => {
   const item: PublicationResponseType = props.item;
   const incidentDate = format(item.incidentDate, 'dd.MM.yyyy');
   const [width, setWidth] = React.useState<number>(10);
+  const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
+    width: number;
+    height: number;
+  }>();
+
+  React.useEffect(() => {
+    if (item?.subjectPhotoUrl) {
+      let imageSize = { width: 100, height: 100 };
+      Image.getSize(
+        item.subjectPhotoUrl,
+        (width, height) => (imageSize = { width, height }),
+      );
+      const displayedWidth = width - 20;
+      const displayedHeight =
+        (imageSize.height * displayedWidth) / imageSize.width;
+      setImageDisplayedSize({
+        width: displayedWidth,
+        height: displayedHeight,
+      });
+    }
+  }, [item, width]);
 
   return (
     <Pressable
@@ -44,7 +72,23 @@ const PostItem = (props: any) => {
         <Text numberOfLines={3}>{item.description}</Text>
       </View>
       <View style={{}}>
-        <MaterialIconsIcon name="add-a-photo" size={width - 20} />
+        {item?.subjectPhotoUrl ? (
+          <Image
+            source={{
+              uri: item?.subjectPhotoUrl,
+            }}
+            style={{
+              width: imageDisplayedSize?.width
+                ? imageDisplayedSize.width
+                : width - 20,
+              height: imageDisplayedSize?.height
+                ? imageDisplayedSize.height
+                : 100,
+            }}
+          />
+        ) : (
+          <MaterialIconsIcon name="add-a-photo" size={width - 20} />
+        )}
       </View>
     </Pressable>
   );

@@ -15,6 +15,7 @@ import React from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import {
   CustomTextInput,
+  DocumentSelector,
   InputSection,
   MainContainer,
   MainTitle,
@@ -22,6 +23,7 @@ import {
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { ScrollView } from 'react-native-gesture-handler';
+import { DocumentPickerResponse } from 'react-native-document-picker';
 
 const addNewPost = async (
   publication: PublicationRequestType,
@@ -37,6 +39,9 @@ export const AddPostPage = (props: any) => {
   const [show, setShow] = React.useState<boolean>(false);
   const [categories, setCategories] = React.useState<CategoryType[]>([]);
 
+  const [fileResponse, setFileResponse] = React.useState<
+    DocumentPickerResponse[]
+  >([]);
   const [title, setTitle] = React.useState<string>('');
   const [description, setDescription] = React.useState<string>('');
   const [incidentAddress, setIncidentAddress] = React.useState<string>('');
@@ -145,6 +150,11 @@ export const AddPostPage = (props: any) => {
             value={description}
           />
         </InputSection>
+        <DocumentSelector
+          fileResponse={fileResponse}
+          setFileResponse={setFileResponse}
+          label="Dodaj zdjęcie"
+        />
         <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
           <SecondaryButton
             label="Zapisz zmiany"

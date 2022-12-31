@@ -1,11 +1,13 @@
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import {
-  addPublication,
   CategoryType,
+  editPublication,
+  editPublicationPhoto,
   getCategories,
   PublicationRequestType,
   PublicationResponseType,
+  PublicationState,
   PublicationType,
 } from 'commons';
 import { format } from 'date-fns';
@@ -13,6 +15,8 @@ import React from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import {
   CustomTextInput,
+  DeleteButton,
+  DocumentSelector,
   InputSection,
   MainContainer,
   MainTitle,
@@ -20,43 +24,100 @@ import {
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { ScrollView } from 'react-native-gesture-handler';
+import { DocumentPickerResponse } from 'react-native-document-picker';
 
-const addNewPost = async (
+const editPost = async (
+  publicationId: string,
   publication: PublicationRequestType,
 ): Promise<PublicationResponseType | undefined> => {
   const accessToken = await getAccessToken();
   if (accessToken) {
-    const response = await addPublication(publication, accessToken);
+    const response = await editPublication(
+      publicationId,
+      publication,
+      accessToken,
+    );
+    return response;
+  }
+};
+
+const updatePostPhoto = async (
+  publicationId: string,
+  photo: DocumentPickerResponse,
+) => {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    const photoRequest = {
+      name: photo.name,
+      type: photo.type,
+      uri: photo.uri,
+      size: photo.size,
+    };
+    const response = await editPublicationPhoto(
+      publicationId,
+      photoRequest,
+      accessToken,
+    );
     return response;
   }
 };
 
 export const EditPostPage = (props: any) => {
+  const postData: PublicationResponseType = props.route.params?.postData;
+
   const [show, setShow] = React.useState<boolean>(false);
   const [categories, setCategories] = React.useState<CategoryType[]>([]);
 
-  const [title, setTitle] = React.useState<string>('');
-  const [description, setDescription] = React.useState<string>('');
-  const [incidentAddress, setIncidentAddress] = React.useState<string>('');
+  const [fileResponse, setFileResponse] = React.useState<
+    DocumentPickerResponse[]
+  >([]);
+  const [title, setTitle] = React.useState<string | undefined>('');
+  const [description, setDescription] = React.useState<string | undefined>('');
+  const [incidentAddress, setIncidentAddress] = React.useState<
+    string | undefined
+  >('');
   const [incidentDate, setIncidentDate] = React.useState<Date>(new Date());
-  const [subjectCategory, setSubjectCategory] = React.useState<
-    CategoryType | undefined
-  >({ id: 'Other', displayName: 'Inne' });
+  const [category, setCategory] = React.useState<CategoryType | undefined>({
+    id: 'Other',
+    displayName: 'Inne',
+  });
   const [publicationType, setPublicationType] = React.useState<PublicationType>(
     PublicationType.LostSubject,
   );
+  const [publicationState, setPublicationState] =
+    React.useState<PublicationState>(PublicationState.Open);
 
   React.useEffect(() => {
     const getData = async () => {
+      setTitle(postData.title);
+      setDescription(postData.description);
+      setIncidentAddress(postData.incidentAddress);
+      setIncidentDate(postData.incidentDate);
+      setPublicationType(postData.publicationType);
+      setPublicationState(postData.publicationState);
+
       const accessToken = await getAccessToken();
       if (accessToken) {
         setCategories(await getCategories(accessToken));
-        if (categories.length > 0) setSubjectCategory(categories[0]);
       }
     };
 
     getData();
   }, []);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      if (postData) {
+        setCategory(
+          categories?.find(
+            category => category.id === postData.subjectCategoryId,
+          ),
+        );
+      }
+    };
+
+    getData();
+  }, [categories]);
 
   const mapCategories = categories.map(category => {
     return (
@@ -69,7 +130,7 @@ export const EditPostPage = (props: any) => {
   });
 
   const onChange = (event: any, selectedDate: Date | undefined) => {
-    const currentDate = selectedDate || incidentDate;
+    const currentDate = selectedDate || postData.incidentDate;
     setShow(false);
     setIncidentDate(currentDate);
   };
@@ -78,7 +139,7 @@ export const EditPostPage = (props: any) => {
     <ScrollView>
       <MainContainer>
         <View style={{ alignSelf: 'center', marginBottom: 10 }}>
-          <MainTitle>Stwórz Ogłoszenie</MainTitle>
+          <MainTitle>Edytuj Ogłoszenie</MainTitle>
         </View>
         <InputSection title="Tytuł Ogłoszenia">
           <CustomTextInput
@@ -119,21 +180,27 @@ export const EditPostPage = (props: any) => {
           </Pressable>
         </InputSection>
         <InputSection title="Kategoria">
-          <Picker
-            selectedValue={subjectCategory}
-            onValueChange={setSubjectCategory}>
+          <Picker selectedValue={category} onValueChange={setCategory}>
             {mapCategories}
           </Picker>
         </InputSection>
         <InputSection title="Typ ogłoszenia">
           <Picker
             selectedValue={publicationType}
-            onValueChange={itemValue => setPublicationType(itemValue)}>
+            onValueChange={setPublicationType}>
             <Picker.Item label="Zgubione" value={PublicationType.LostSubject} />
             <Picker.Item
               label="Znalezione"
               value={PublicationType.FoundSubject}
             />
+          </Picker>
+        </InputSection>
+        <InputSection title="Status ogłoszenia">
+          <Picker
+            selectedValue={publicationState}
+            onValueChange={setPublicationState}>
+            <Picker.Item label="Otwarte" value={PublicationState.Open} />
+            <Picker.Item label="Zamknięte" value={PublicationState.Closed} />
           </Picker>
         </InputSection>
         <InputSection title="Opis">
@@ -143,22 +210,35 @@ export const EditPostPage = (props: any) => {
             value={description}
           />
         </InputSection>
+        <DocumentSelector
+          fileResponse={fileResponse}
+          setFileResponse={setFileResponse}
+          label={postData?.subjectPhotoUrl ? 'Edytuj zdjęcie' : 'Dodaj zdjęcie'}
+        />
         <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
           <SecondaryButton
             label="Zapisz zmiany"
             onPress={async () => {
-              const publication: PublicationRequestType = {
+              const newPostData: PublicationRequestType = {
                 title,
                 description,
                 incidentAddress,
                 incidentDate,
-                subjectCategoryId: subjectCategory?.id,
+                subjectCategoryId: category?.id,
                 publicationType,
+                publicationState,
               };
-              console.log(publication);
-              const response = await addNewPost(publication);
+
+              const response = await editPost(
+                postData.publicationId,
+                newPostData,
+              );
               if (response) {
-                console.log(response);
+                if (fileResponse.length > 0)
+                  await updatePostPhoto(
+                    postData.publicationId,
+                    fileResponse[0],
+                  );
                 props.navigation.push('Home', {
                   screen: 'Post',
                   params: { publicationId: response?.publicationId },

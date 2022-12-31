@@ -7,15 +7,18 @@ import {
   addProfileComment,
   ProfileCommentRequestType,
   editProfileComment,
+  deleteProfileComment,
 } from 'commons';
-import React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import React, { Dispatch, SetStateAction } from 'react';
+import { FlatList, Image, Text, View } from 'react-native';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import {
+  DeleteButton,
   MainContainer,
   MainTitle,
   ScoreView,
   SecondaryButton,
+  StarRating,
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { TextInput } from 'react-native-gesture-handler';
@@ -47,36 +50,21 @@ const CommentItem = (props: any) => {
   );
 };
 
-async function leaveComment(
-  userId: string,
-  content: ProfileCommentRequestType,
-  commentExists: boolean,
-) {
-  const accessToken = await getAccessToken();
-  if (accessToken) {
-    if (commentExists) {
-      editProfileComment(userId, content, accessToken);
-    } else {
-      addProfileComment(userId, content, accessToken);
-    }
-  }
-}
-
 const MyComment = (props: {
   item?: ProfileCommentResponseType;
   userId: string;
+  update: boolean;
+  updateHandler: Dispatch<SetStateAction<boolean>>;
 }) => {
   const item = props.item;
   const userId = props.userId;
-  const [profileRating, setProfileRating] = React.useState<number | undefined>(
-    props.item?.profileRating,
-  );
+  const [profileRating, setProfileRating] = React.useState<number>(0);
   const [commentContent, setCommentContent] = React.useState<
     string | undefined
   >(props.item?.content);
 
   React.useEffect(() => {
-    setProfileRating(item?.profileRating);
+    setProfileRating(item?.profileRating ? item.profileRating : 0);
     setCommentContent(item?.content);
   }, [item]);
 
@@ -99,16 +87,20 @@ const MyComment = (props: {
           onPress={() => {
             const myComment: ProfileCommentRequestType = {
               content: commentContent,
-              profileRating: profileRating ? profileRating : 0,
+              profileRating: profileRating,
             };
             if (item) {
               leaveComment(userId, myComment, true);
             } else {
               leaveComment(userId, myComment, false);
             }
+            props.updateHandler(!props.update);
           }}
         />
-        {item ? <ScoreView score={profileRating ? profileRating : 0} /> : <></>}
+        <StarRating
+          starRating={profileRating}
+          ratingHandler={setProfileRating}
+        />
       </View>
       <TextInput
         onChangeText={setCommentContent}
@@ -116,9 +108,42 @@ const MyComment = (props: {
         keyboardType={'default'}
         placeholder="Zostaw komentarz"
       />
+      {item ? (
+        <DeleteButton
+          label="Usuń komentarz"
+          onPress={async () => {
+            await deleteMyComment(userId);
+            props.updateHandler(!props.update);
+          }}
+        />
+      ) : (
+        <></>
+      )}
     </View>
   );
 };
+
+async function leaveComment(
+  userId: string,
+  content: ProfileCommentRequestType,
+  commentExists: boolean,
+) {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    if (commentExists) {
+      editProfileComment(userId, content, accessToken);
+    } else {
+      addProfileComment(userId, content, accessToken);
+    }
+  }
+}
+
+async function deleteMyComment(userId: string) {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    await deleteProfileComment(userId, accessToken);
+  }
+}
 
 export const ProfilePage = (props: any) => {
   const userId = props.route.params?.userId;
@@ -126,7 +151,11 @@ export const ProfilePage = (props: any) => {
   const [profile, setProfile] = React.useState<ProfileResponseType>();
   const [profileComments, setProfileComments] =
     React.useState<ProfileCommentsSectionResponseType>();
-  const [update, setUpdate] = React.useState<boolean>();
+  const [update, setUpdate] = React.useState<boolean>(false);
+  const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
+    width: number;
+    height: number;
+  }>();
 
   React.useEffect(() => {
     const getData = async () => {
@@ -157,6 +186,27 @@ export const ProfilePage = (props: any) => {
     getData();
   }, [profile]);
 
+  React.useEffect(() => {
+    if (profile?.pictureUrl) {
+      let imageSize = { width: 100, height: 100 };
+      Image.getSize(
+        profile?.pictureUrl,
+        (width, height) => (imageSize = { width, height }),
+      );
+      const displayedWidth = (width * 3.5) / 9;
+      const displayedHeight =
+        (imageSize.height * displayedWidth) / imageSize.width;
+      setImageDisplayedSize({
+        width: displayedWidth,
+        height: displayedHeight,
+      });
+    }
+  }, [profile, width]);
+
+  React.useEffect(() => {
+    console.log(profileComments);
+  }, [profileComments]);
+
   return (
     <MainContainer>
       <MainTitle>{profile?.username}</MainTitle>
@@ -168,7 +218,21 @@ export const ProfilePage = (props: any) => {
           marginBottom: 10,
         }}
         onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-        <IoniconsIcon name="person" size={(width * 3) / 8} />
+        <View
+          onLayout={event => setWidth(event.nativeEvent.layout.width)}
+          style={{ alignContent: 'center' }}>
+          {profile?.pictureUrl ? (
+            <Image
+              source={{ uri: profile.pictureUrl }}
+              style={{
+                width: imageDisplayedSize?.width,
+                height: imageDisplayedSize?.height,
+              }}
+            />
+          ) : (
+            <IoniconsIcon name="person" size={(width * 3) / 8} />
+          )}
+        </View>
         <View
           style={{
             alignSelf: 'flex-end',
@@ -198,7 +262,12 @@ export const ProfilePage = (props: any) => {
         </View>
       </View>
       <Text>{profile?.description}</Text>
-      <MyComment item={profileComments?.myComment} userId={userId} />
+      <MyComment
+        item={profileComments?.myComment}
+        userId={userId}
+        update={update}
+        updateHandler={setUpdate}
+      />
       <FlatList
         contentContainerStyle={{ paddingBottom: 20 }}
         data={profileComments?.comments}

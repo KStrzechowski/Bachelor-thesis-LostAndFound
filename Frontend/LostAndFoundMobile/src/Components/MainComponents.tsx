@@ -2,12 +2,14 @@ import React, { PropsWithChildren } from 'react';
 import {
   Pressable,
   SafeAreaView,
+  StyleProp,
   StyleSheet,
   Text,
   TextInput,
   TextInputProps,
   TextProps,
   View,
+  ViewStyle,
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -72,6 +74,23 @@ export const SecondaryButton: React.FC<
   return (
     <Pressable style={styles.secondaryButton} onPress={onPress}>
       <Text testID={testID} style={styles.secondaryButtonText}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+};
+
+export const DeleteButton: React.FC<
+  PropsWithChildren<{
+    testID?: string;
+    label: string;
+    onPress: any;
+    style?: StyleProp<ViewStyle>;
+  }>
+> = ({ label, onPress, testID, style }) => {
+  return (
+    <Pressable style={[styles.deleteButton, style]} onPress={onPress}>
+      <Text testID={testID} style={styles.deleteButtonText}>
         {label}
       </Text>
     </Pressable>
@@ -158,6 +177,18 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
   },
   secondaryButtonText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.white,
+  },
+  deleteButton: {
+    alignSelf: 'flex-end',
+    alignItems: 'flex-end',
+    padding: 8,
+    backgroundColor: 'red',
+    borderRadius: 5,
+  },
+  deleteButtonText: {
     fontSize: 18,
     fontWeight: '600',
     color: Colors.white,

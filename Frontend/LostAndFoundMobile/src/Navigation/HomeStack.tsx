@@ -10,6 +10,7 @@ import {
   EditProfilePage,
   SearchPostsPage,
   AddPostPage,
+  EditPostPage,
 } from '../Pages';
 
 const HomeStack = createNativeStackNavigator();
@@ -25,6 +26,7 @@ export function HomeScreenStack() {
       <HomeStack.Screen name="ProfileMe" component={ProfilePageMe} />
       <HomeStack.Screen name="EditProfile" component={EditProfilePage} />
       <HomeStack.Screen name="AddPost" component={AddPostPage} />
+      <HomeStack.Screen name="EditPost" component={EditPostPage} />
       <HomeStack.Screen name="Posts" component={PostsPage} />
       <HomeStack.Screen name="Post" component={PostPage} />
       <HomeStack.Screen name="SearchPosts" component={SearchPostsPage} />

@@ -4,16 +4,7 @@ import {
   ACCESS_TOKEN,
   REFRESH_TOKEN,
   TOKEN_EXPIRATION_DATE,
-  USER_ID,
 } from '../../Config';
-
-export async function saveUserId(userId: string) {
-  await EncryptedStorage.setItem(USER_ID, userId);
-}
-
-export async function getUserId(): Promise<string | null> {
-  return await EncryptedStorage.getItem(USER_ID);
-}
 
 export async function saveRefreshToken(token: string) {
   await EncryptedStorage.setItem(REFRESH_TOKEN, token);

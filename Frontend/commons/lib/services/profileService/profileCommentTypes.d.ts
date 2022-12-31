@@ -10,7 +10,7 @@ export type ProfileCommentResponseType = {
     creationDate: Date;
 };
 export type ProfileCommentsSectionResponseType = {
-    myComment: ProfileCommentResponseType;
+    myComment?: ProfileCommentResponseType;
     comments: ProfileCommentResponseType[];
 };
 export type ProfileCommentFromServerType = {
@@ -21,7 +21,7 @@ export type ProfileCommentFromServerType = {
 };
 export declare const mapProfileCommentFromServer: (comment: ProfileCommentFromServerType) => ProfileCommentResponseType;
 export type ProfileCommentsSectionFromServerType = {
-    myComment: ProfileCommentFromServerType;
+    myComment?: ProfileCommentFromServerType;
     comments: ProfileCommentFromServerType[];
 };
 export declare const mapProfileCommentsSectionFromServer: (data: ProfileCommentsSectionFromServerType) => ProfileCommentsSectionResponseType;

@@ -13,7 +13,7 @@ export type ProfileCommentResponseType = {
 };
 
 export type ProfileCommentsSectionResponseType = {
-  myComment: ProfileCommentResponseType;
+  myComment?: ProfileCommentResponseType;
   comments: ProfileCommentResponseType[];
 };
 
@@ -32,13 +32,15 @@ export const mapProfileCommentFromServer = (
 });
 
 export type ProfileCommentsSectionFromServerType = {
-  myComment: ProfileCommentFromServerType;
+  myComment?: ProfileCommentFromServerType;
   comments: ProfileCommentFromServerType[];
 };
 
 export const mapProfileCommentsSectionFromServer = (
   data: ProfileCommentsSectionFromServerType
 ): ProfileCommentsSectionResponseType => ({
-  myComment: mapProfileCommentFromServer(data?.myComment),
+  myComment: data.myComment
+    ? mapProfileCommentFromServer(data.myComment)
+    : undefined,
   comments: data.comments?.map(mapProfileCommentFromServer),
 });
