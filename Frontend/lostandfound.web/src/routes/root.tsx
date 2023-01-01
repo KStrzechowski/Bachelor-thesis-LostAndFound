@@ -5,9 +5,12 @@ import { userContext, UsrCont } from "userContext";
 
 export default function Root() {
 	const [user, setUser] = useState(new UsrCont());
+	const [loading, setIsLoading] = useState(true);
+
 	useEffect(() => {
 		var token = localStorage.getItem("accessToken");
 		if (token !== null) setUser({ authToken: token, isLogged: true });
+		setIsLoading(false);
 	}, []);
 
 	useEffect(() => {
@@ -18,6 +21,7 @@ export default function Root() {
 		}
 	}, [user]);
 
+	if (loading === true) return <div>...</div>;
 	return (
 		<userContext.Provider
 			value={{ user: user, setUser: (arg: UsrCont) => setUser(arg) }}
