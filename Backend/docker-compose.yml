@@ -7,6 +7,17 @@ services:
     ports:
         - 27017:27017
 
+  lostandfound.azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: lostandfound-azurite
+    hostname: azurite
+    restart: always
+    command: 'azurite --loose --blobHost 0.0.0.0 --blobPort 10000 --location /workspace --debug /workspace/debug.log'
+    ports:
+      - 10000:10000
+    volumes:
+      - ./azurite:/workspace
+
   lostandfound.authservice:
     container_name: auth-service
     build:
@@ -15,7 +26,7 @@ services:
     ports:
         - "5100:80"
     depends_on:
-        - "mongodb"
+        - "lostandfound.mongodb"
 
   lostandfound.chatservice:
     container_name: chat-service
@@ -25,7 +36,7 @@ services:
     ports:
         - "5200:80"
     depends_on:
-        - "mongodb"
+        - "lostandfound.mongodb"
 
   lostandfound.gateway:
     container_name: gateway
@@ -48,7 +59,8 @@ services:
     ports:
         - "5300:80"
     depends_on:
-        - "mongodb"
+        - "lostandfound.mongodb"
+        - "lostandfound.azurite"
 
   lostandfound.publicationservice:
     container_name: publication-service
@@ -58,4 +70,5 @@ services:
     ports:
         - "5400:80"
     depends_on:
-        - "mongodb"
+        - "lostandfound.mongodb"
+        - "lostandfound.azurite"

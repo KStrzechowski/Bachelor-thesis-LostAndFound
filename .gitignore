@@ -365,3 +365,6 @@ FodyWeavers.xsd
 .config
 .vscode
 .expo
+
+# Azurite
+azurite/
