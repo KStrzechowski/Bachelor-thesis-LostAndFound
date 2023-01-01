@@ -9,8 +9,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5100
+          "Host": "auth-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "accounts"
@@ -24,8 +24,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5100
+          "Host": "auth-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "accounts"
@@ -39,8 +39,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5100
+          "Host": "auth-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "accounts"
@@ -54,8 +54,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5100
+          "Host": "auth-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "accounts"
@@ -72,8 +72,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5200
+          "Host": "chat-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "chats"
@@ -81,21 +81,21 @@
     {
       "UpstreamPathTemplate": "/hubs/chat",
       "DownstreamPathTemplate": "/hubs/chat",
-      "DownstreamScheme": "wss",
+      "DownstreamScheme": "ws",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5200
+          "Host": "chat-service",
+          "Port": 80
         }
       ]
     },
     {
       "DownstreamPathTemplate": "/hubs/chat/{path}",
-      "DownstreamScheme": "wss",
+      "DownstreamScheme": "ws",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5200
+          "Host": "chat-service",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/hubs/chat/{path}"
@@ -109,8 +109,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5200
+          "Host": "chat-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "chats"
@@ -128,8 +128,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5200
+          "Host": "chat-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "chats"
@@ -143,8 +143,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5200
+          "Host": "chat-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "chats"
@@ -159,8 +159,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5300
+          "Host": "profile-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "profiles"
@@ -174,8 +174,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5300
+          "Host": "profile-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "profiles"
@@ -190,8 +190,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5300
+          "Host": "profile-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "profiles"
@@ -211,8 +211,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5300
+          "Host": "profile-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "profiles"
@@ -226,8 +226,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5400
+          "Host": "publication-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "publications"
@@ -246,7 +246,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5400
+          "Port": 80
         }
       ],
       "SwaggerKey": "publications"
@@ -263,8 +263,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5400
+          "Host": "publication-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "publications"
@@ -278,8 +278,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5400
+          "Host": "publication-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "publications"
@@ -294,8 +294,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5400
+          "Host": "publication-service",
+          "Port": 80
         }
       ],
       "SwaggerKey": "publications"
@@ -308,7 +308,7 @@
         {
           "Name": "LostAndFound.AuthService",
           "Version": "v1",
-          "Url": "http://localhost:5100/swagger/v1/swagger.json"
+          "Url": "http://auth-service:80/swagger/v1/swagger.json"
         }
       ]
     },
@@ -318,7 +318,7 @@
         {
           "Name": "LostAndFound.ChatService",
           "Version": "v1",
-          "Url": "http://localhost:5200/swagger/v1/swagger.json"
+          "Url": "http://chat-service:80/swagger/v1/swagger.json"
         }
       ]
     },
@@ -328,7 +328,7 @@
         {
           "Name": "LostAndFound.ProfileService",
           "Version": "v1",
-          "Url": "http://localhost:5300/swagger/v1/swagger.json"
+          "Url": "http://profile-service:80/swagger/v1/swagger.json"
         }
       ]
     },
@@ -338,7 +338,7 @@
         {
           "Name": "LostAndFound.PublicationService",
           "Version": "v1",
-          "Url": "http://localhost:5400/swagger/v1/swagger.json"
+          "Url": "http://publication-service:80/swagger/v1/swagger.json"
         }
       ]
     }
