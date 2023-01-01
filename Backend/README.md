@@ -107,10 +107,10 @@ Additionally, you can also build and run the system using the solution file ''Lo
 
 ## Service URLs
 By default, services run at the following URLs:
-* **API Gateway** - "https://localhost:5000/"
-* **Auth Service** - "https://localhost:5100/"
-* **Chat Service** - "https://localhost:5200/"
-* **Profile Service** - "https://localhost:5300/"
-* **Publication Service** - "https://localhost:5400/"
+* **API Gateway** - "http://localhost:5000/"
+* **Auth Service** - "http://localhost:5100/"
+* **Chat Service** - "http://localhost:5200/"
+* **Profile Service** - "http://localhost:5300/"
+* **Publication Service** - "http://localhost:5400/"
 
 You can inspect each service swagger documentation using mentioned URLs.
