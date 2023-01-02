@@ -79,6 +79,11 @@ export const PostPage = (props: any) => {
     width: number;
     height: number;
   }>();
+  const [imageProfileDisplayedSize, setImageProfileDisplayedSize] =
+    React.useState<{
+      width: number;
+      height: number;
+    }>();
 
   React.useEffect(() => {
     const getData = async () => {
@@ -123,7 +128,7 @@ export const PostPage = (props: any) => {
     if (postData?.subjectPhotoUrl) {
       let imageSize = { width: 100, height: 100 };
       Image.getSize(
-        postData?.subjectPhotoUrl,
+        postData.subjectPhotoUrl,
         (width, height) => (imageSize = { width, height }),
       );
       const displayedWidth = width - 20;
@@ -135,6 +140,23 @@ export const PostPage = (props: any) => {
       });
     }
   }, [postData, width]);
+
+  React.useEffect(() => {
+    if (profile?.pictureUrl) {
+      let imageSize = { width: 25, height: 25 };
+      Image.getSize(
+        profile.pictureUrl,
+        (width, height) => (imageSize = { width, height }),
+      );
+      const displayedWidth = 25;
+      const displayedHeight =
+        (imageSize.height * displayedWidth) / imageSize.width;
+      setImageProfileDisplayedSize({
+        width: displayedWidth,
+        height: displayedHeight,
+      });
+    }
+  }, [profile]);
 
   return (
     <ScrollView>
@@ -188,7 +210,7 @@ export const PostPage = (props: any) => {
           {postData && postData.subjectPhotoUrl ? (
             <View>
               <Image
-                source={{ uri: postData?.subjectPhotoUrl }}
+                source={{ uri: postData.subjectPhotoUrl }}
                 style={{
                   alignSelf: 'center',
                   marginVertical: 10,
@@ -298,7 +320,22 @@ export const PostPage = (props: any) => {
               });
             }
           }}>
-          <IoniconsIcon name="person" size={25} />
+          <View
+            onLayout={event => setWidth(event.nativeEvent.layout.width)}
+            style={{ alignContent: 'center' }}>
+            {profile && profile.pictureUrl ? (
+              <Image
+                source={{ uri: profile.pictureUrl }}
+                style={{
+                  width: imageProfileDisplayedSize?.width,
+                  height: imageProfileDisplayedSize?.height,
+                }}
+              />
+            ) : (
+              <IoniconsIcon name="person" size={25} />
+            )}
+          </View>
+
           <Text style={{ fontSize: 18 }}>{profile?.username}</Text>
           <ScoreView score={profile?.averageProfileRating} />
         </Pressable>

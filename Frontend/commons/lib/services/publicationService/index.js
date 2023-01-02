@@ -1,4 +1,4 @@
-export { SinglePublicationVote, PublicationType, PublicationState, } from "./publicationTypes";
+export { SinglePublicationVote, PublicationType, PublicationState, Order, } from "./publicationTypes";
 export { addPublication } from "./requests/add-publication.request";
 export { deletePublication } from "./requests/delete-publication.request";
 export { deletePublicationPhoto } from "./requests/delete-publication-photo.request";

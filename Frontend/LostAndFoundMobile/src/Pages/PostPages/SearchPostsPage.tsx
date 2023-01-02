@@ -11,15 +11,15 @@ import {
 } from '../../Components';
 import {
   CategoryType,
-  PublicationRequestType,
-  PublicationResponseType,
   PublicationState,
   PublicationType,
   getCategories,
+  Order,
+  PublicationSortType,
 } from 'commons';
 import { getAccessToken } from '../../SecureStorage';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import { PublicationSearchRequestType } from 'commons/lib/Services/PublicationService/publicationTypes';
+import { PublicationSearchRequestType } from 'commons';
 
 export const SearchPostsPage = (props: any) => {
   const [show1, setShow1] = React.useState<boolean>(false);
@@ -43,6 +43,12 @@ export const SearchPostsPage = (props: any) => {
   );
   const [publicationState, setPublicationState] =
     React.useState<PublicationState>(PublicationState.Open);
+  const [firstArgumentSort, setFirstArgumentSort] = React.useState<string>();
+  const [secondArgumentSort, setSecondArgumentSort] = React.useState<string>();
+  const [firstArgumentSortOrder, setFirstArgumentSortOrder] =
+    React.useState<Order>(Order.Ascending);
+  const [secondArgumentSortOrder, setSecondArgumentSortOrder] =
+    React.useState<Order>(Order.Ascending);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -180,6 +186,44 @@ export const SearchPostsPage = (props: any) => {
             <Picker.Item label="Zakończone" value={PublicationState.Closed} />
           </Picker>
         </InputSection>
+        <InputSection title="Sortuj">
+          <Picker
+            selectedValue={firstArgumentSort}
+            onValueChange={itemValue => setFirstArgumentSort(itemValue)}>
+            <Picker.Item label="Brak" value={undefined} />
+            <Picker.Item label="Tytuł" value={'Title'} />
+            <Picker.Item label="Kategoria" value={'SubjectCategoryId'} />
+            <Picker.Item label="Data zdarzenia" value={'IncidentDate'} />
+            <Picker.Item label="Średnia ocena" value={'AggregateRating'} />
+            <Picker.Item label="Stan ogłoszenia" value={'PublicationState'} />
+            <Picker.Item label="Typ ogłoszenia" value={'PublicationType'} />
+          </Picker>
+          <Picker
+            selectedValue={firstArgumentSortOrder}
+            onValueChange={itemValue => setFirstArgumentSortOrder(itemValue)}>
+            <Picker.Item label="Rosnąco" value={Order.Ascending} />
+            <Picker.Item label="Malejąco" value={Order.Descending} />
+          </Picker>
+        </InputSection>
+        <InputSection title="Sortuj po 2 wartości">
+          <Picker
+            selectedValue={secondArgumentSort}
+            onValueChange={itemValue => setSecondArgumentSort(itemValue)}>
+            <Picker.Item label="Brak" value={undefined} />
+            <Picker.Item label="Tytuł" value={'Title'} />
+            <Picker.Item label="Kategoria" value={'SubjectCategoryId'} />
+            <Picker.Item label="Data zdarzenia" value={'IncidentDate'} />
+            <Picker.Item label="Średnia ocena" value={'AggregateRating'} />
+            <Picker.Item label="Stan ogłoszenia" value={'PublicationState'} />
+            <Picker.Item label="Typ ogłoszenia" value={'PublicationType'} />
+          </Picker>
+          <Picker
+            selectedValue={secondArgumentSortOrder}
+            onValueChange={itemValue => setSecondArgumentSortOrder(itemValue)}>
+            <Picker.Item label="Rosnąco" value={Order.Ascending} />
+            <Picker.Item label="Malejąco" value={Order.Descending} />
+          </Picker>
+        </InputSection>
         <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
           <SecondaryButton
             label="Szukaj"
@@ -194,9 +238,24 @@ export const SearchPostsPage = (props: any) => {
                 publicationType: publicationType,
                 publicationState: publicationState,
               };
+              const firstSort: PublicationSortType | undefined =
+                firstArgumentSort
+                  ? { type: firstArgumentSort, order: firstArgumentSortOrder }
+                  : undefined;
+              const secondSort: PublicationSortType | undefined =
+                secondArgumentSort
+                  ? { type: secondArgumentSort, order: secondArgumentSortOrder }
+                  : undefined;
+
               props.navigation.navigate('Home', {
                 screen: 'Posts',
-                params: { publication: searchPublication },
+                params: {
+                  publication: searchPublication,
+                  orderBy: {
+                    firstArgumentSort: firstSort,
+                    secondArgumentSort: secondSort,
+                  },
+                },
               });
             }}
           />

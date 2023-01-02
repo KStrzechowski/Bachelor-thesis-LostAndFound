@@ -77,3 +77,11 @@ export type PublicationSearchRequestType = {
     publicationType?: PublicationType;
     publicationState?: PublicationState;
 };
+export declare enum Order {
+    Ascending = "Ascending",
+    Descending = "Descending"
+}
+export type PublicationSortType = {
+    type: string;
+    order: Order;
+};
