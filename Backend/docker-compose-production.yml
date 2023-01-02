@@ -1,5 +1,11 @@
 version: '3.9'
 
+x-common-variables: &common-variables
+    ASPNETCORE_ENVIRONMENT: Production
+    ASPNETCORE_URLS: "https://+"
+    ASPNETCORE_Kestrel__Certificates__Default__Password: "pa55w0rd!"
+    ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/LostAndFound.pfx"
+
 services:
   lostandfound.authservice:
     container_name: auth-service
@@ -8,6 +14,11 @@ services:
       dockerfile: AuthService/src/LostAndFound.AuthService/Dockerfile
     ports:
         - "5100:443"
+    environment:
+        <<: *common-variables
+        ASPNETCORE_HTTPS_PORT: "5100"
+    volumes:
+        - ${USERPROFILE}\.aspnet\https:/https/ 
 
   lostandfound.chatservice:
     container_name: chat-service
@@ -16,6 +27,11 @@ services:
       dockerfile: ChatService/src/LostAndFound.ChatService/Dockerfile
     ports:
         - "5200:443"
+    environment:
+        <<: *common-variables
+        ASPNETCORE_HTTPS_PORT: "5200"
+    volumes:
+        - ${USERPROFILE}\.aspnet\https:/https/ 
 
   lostandfound.gateway:
     container_name: gateway
@@ -29,7 +45,12 @@ services:
         - "lostandfound.chatservice"
         - "lostandfound.profileservice"
         - "lostandfound.publicationservice"
-
+    environment:
+        <<: *common-variables
+        ASPNETCORE_HTTPS_PORT: "5000"
+    volumes:
+        - ${USERPROFILE}\.aspnet\https:/https/ 
+        
   lostandfound.profileservice:
     container_name: profile-service
     build:
@@ -37,6 +58,11 @@ services:
       dockerfile: ProfileService/src/LostAndFound.ProfileService/Dockerfile
     ports:
         - "5300:443"
+    environment:
+        <<: *common-variables
+        ASPNETCORE_HTTPS_PORT: "5300"
+    volumes:
+        - ${USERPROFILE}\.aspnet\https:/https/ 
 
   lostandfound.publicationservice:
     container_name: publication-service
@@ -45,3 +71,8 @@ services:
       dockerfile: PublicationService/src/LostAndFound.PublicationService/Dockerfile
     ports:
         - "5400:443"
+    environment:
+        <<: *common-variables
+        ASPNETCORE_HTTPS_PORT: "5400"
+    volumes:
+        - ${USERPROFILE}\.aspnet\https:/https/ 
