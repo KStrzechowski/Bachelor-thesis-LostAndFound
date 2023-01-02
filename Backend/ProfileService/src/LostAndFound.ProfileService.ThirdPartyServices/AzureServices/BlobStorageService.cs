@@ -29,7 +29,13 @@ namespace LostAndFound.ProfileService.ThirdPartyServices.AzureServices
                 ContentType = file.ContentType,
             });
 
-            return blobClient.Uri.ToString();
+            var builder = new UriBuilder(blobClient.Uri);
+            if (_blobStorageSettings.ReplaceHostUri)
+            {
+                builder.Host = _blobStorageSettings.NewUriHostValue;
+            }
+
+            return builder.Uri.ToString();
         }
 
         public async Task DeleteAsync(string blobName)
