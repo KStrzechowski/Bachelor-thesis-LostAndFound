@@ -1,5 +1,0 @@
-start dotnet run --project "AuthService\src\LostAndFound.AuthService"
-start dotnet run --project "ChatService\src\LostAndFound.ChatService"
-start dotnet run --project "ProfileService\src\LostAndFound.ProfileService"
-start dotnet run --project "PublicationService\src\LostAndFound.PublicationService"
-start dotnet run --project "Gateway\src\LostAndFound.Gateway"

@@ -1,4 +1,4 @@
-﻿{
+{
   "profiles": {
     "LostAndFound.ProfileService": {
       "commandName": "Project",
@@ -7,7 +7,15 @@
       "applicationUrl": "http://localhost:5300",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:5300",
+      "dotnetRunMessages": false
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "useSSL": true
     }
   }
 }

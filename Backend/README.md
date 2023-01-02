@@ -12,98 +12,60 @@ Before you will be able to run backend solution of LostAndFound system you need 
 ## Requirements
 <br />
 
-### .Net 6.0
-Backend solution is developed using .NET 6.0. To be able to build the solution, it is required to have .net 6.0 installed on your local machine. 
-You can download .NET 6.0 using the address below:
+### **Docker**
+To get started with Docker, follow these steps:
 
-https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+1. Download and install Docker:
+	* On Windows: Download the Docker Desktop for Windows installer and run it.
+	* On Mac: Download the Docker Desktop for Mac installer and run it.
+	* On Linux: Follow the instructions for your distribution from the Docker installation documentation.
+	
+2. Once Docker is installed, you can verify the installation by running the following command in a terminal:
+	> docker --version
 
-If you want to check your your local .NET versions, use the the following instruction:
-> dotnet --list-sdks
-
-<br />
-
-### **MongoDB**
-MongoDB is an open-source NoSQL database management program. Our solution uses MongoDB as a non-relational database management system.
-That's why each microservice requires a connection to the MongoDB database management server. You have 3 options to satisfy this requirement:
-
-1. Setup a local MongoDB server using MongoDB Community Edition. Here is a guide how to do that:
-	* https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/
-
-2. Use MongoDB Atlas, that provides an easy way to host MongoDB server in the cloud. You can follow this tutorial, which will guide you through creating an Atlas cluster and connecting to it.
-	* https://www.mongodb.com/docs/atlas/getting-started/
-
-3. If you don't want to set up your own MongoDB database management server, you can use the below connection string. It is a build and deployed MongoDB database management cluster, using MongoDB Atlas.<br />
-It was created for solution testing and development, so feel free to use. (Be aware that it may contain already some data)
-	> mongodb+srv://development:<password>@lostandfound-developmen.ygmxcvg.mongodb.net/?retryWrites=true&w=majority
-
-<br />
-
-When you have the new connection string ready, you just need to update "appsettings.Development.json" files in all 4 microservices. So you need to make the following changes:
-* Replace value for **LostAndFoundMongoCluster:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
-	> Backend\AuthService\src\LostAndFound.AuthService\appsettings.Development.json
-* Replace value for **LostAndFoundMongoCluster:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
-	> Backend\ChatService\src\LostAndFound.ChatService\appsettings.Development.json
-* Replace value for **LostAndFoundMongoCluster:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
-	> Backend\ProfileService\src\LostAndFound.ProfileService\appsettings.Development.json
-* Replace value for **LLostAndFoundMongoCluster:ConnectionString** with the new one. (It is by default set to mongodb://localhost:27017)
-	> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json
-
-<br />
-
-### **File Storage**
-Publication and Profile services integrated with **Azure Blob Storage** in order to store pictures. Before running system you need to provide correct blob storage connection string.
-Here you have 2 options:
-
-#### 1. Use Azure Storage Emulator. All you need to do is run Azure Storage Emulator on your local machine. To run the Azure Storage emulator on Windows:
-	1. Select the Start button or press the Windows key.
-	2. Start typing Azure Storage Emulator
-	3. Select an emulator from the list of displayed applications.
-	4. After starting the warehouse emulator, the command line will be displayed. You can use this console window to start and stop the magazine emulator.
-	5. It should start automatically, you can make sure that emulator is working, using "AzureStorageEmulator.exe status" command. In case the emulator didn't start use "AzureStorageEmulator.exe start".
-
-More informations about Azure Storage Emulator:
-	> https://learn.microsoft.com/pl-pl/azure/storage/common/storage-use-emulator
-Note 1: You don't need to change any connection string while using Azure Storage Emulator.
-Note 2: The storage emulator currently operates only in Windows. For emulation in Linux, use [Azurite emulator](https://github.com/azure/azurite).
-
-<br />
-
-#### 2. Create Azure Storage Account using Azure Portal and replace blob storage connection strings:
-
-Guide how to create Azure Storage Account:  https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview
-When you have the new connection string ready, you just need to update "appsettings.Development.json" files in all 4 microservices. So you need to make the following changes:
-* Replace value for **LostAndFoundBlobStorageSettings:ConnectionString** with the new one. (It is by default set to UseDevelopmentStorage=true)
-	> Backend\ProfileService\src\LostAndFound.ProfileService\appsettings.Development.json
-* Replace value for **LostAndFoundBlobStorageSettings:ConnectionString** with the new one. (It is by default set to UseDevelopmentStorage=true)
-	> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json	
-
-
-<br />
+	This should print the version number of Docker that you have installed.
 
 ### **Position Stack Api**
-Publication service communicate with external **Position Stack Api** in order to decode static addresses into geographical coordinates. PositionStack offers a straightforward and reliable solution for forward and reverse geocoding. Before running system you need to provide an api key for position stack api.  
+Publication service communicate with external **Position Stack Api** in order to decode static addresses into geographical coordinates. PositionStack offers a straightforward and reliable solution for forward and reverse geocoding. The publication service contains configured API key for development and you don't need to generate your own API key if you don't want to. However, if you want to use your key, you need to do the following:
 
 
-You can get a FREE Api Key here:  https://positionstack.com/documentation
+1. Get a FREE Api Key here:  https://positionstack.com/documentation
 
-When you have the Api Key ready, you just need to update "appsettings.Development.json" files in all publication microservices. So you need to make the following changes:
-* Replace value for **PositionStackService:AccessKey** with the new Api Key. (It is by default set to paste-access-key)
-	> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json
-
-
-## Build and run
-You can build and run backend solution by following these steps:
-1. Go to Backend directory.
-2. If your Operating System is Windows run dotnet-lostandfound.bat file:
-	> ./dotnet-lostandfound.bat
-3. If you use Unix-like Operating System execute:
-	> ./dotnet-lostandfound.sh
-
-Additionally, you can also build and run the system using the solution file ''LostAndFound.sln'' and VisualStudio 2022.
-
+2. When you have the Api Key ready, you just need to update "appsettings.Development.json" files in all publication microservices. So you need to make the following changes:
+	* Replace value for **PositionStackService:AccessKey** with the new Api Key. (It is by default set to paste-access-key)
+		> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json
 
 <br />
+
+## Build and run in development
+You can build and run backend solution using Docker Compose, following these steps:
+
+1. Make sure you have Docker and Docker Compose installed on your machine. See the previous section for instructions on how to install Docker. Docker Compose is included with Docker Desktop on Mac and Windows. On Linux, you can install it using pip:
+	> pip install docker-compose
+
+2. Navigate to the backend directory:
+	> cd Backend
+
+3. Build and start the containers:
+	> docker-compose up -d
+	
+	This will build the required Docker images and start the containers in the background.
+
+	To stop the containers, execute the following command:
+	> docker-compose down
+
+4. Remember if you make changes to the code, you will need to rebuild the Docker image and restart the containers to see the changes.
+To rebuild the image and restart the containers, you can use the following command:
+	> docker-compose up --build -d
+
+	Alternatively, you can rebuild the image and start the containers individually using the following commands:
+
+	> docker-compose build
+	
+	> docker-compose up -d
+
+	Either way, this will rebuild the image, recreate the containers, and start the containers with the new code.
+
 
 ## Service URLs
 By default, services run at the following URLs:
