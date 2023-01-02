@@ -26,18 +26,18 @@ To get started with Docker, follow these steps:
 	This should print the version number of Docker that you have installed.
 
 ### **Position Stack Api**
-Publication service communicate with external **Position Stack Api** in order to decode static addresses into geographical coordinates. PositionStack offers a straightforward and reliable solution for forward and reverse geocoding. Before running system you need to provide an api key for position stack api.  
+Publication service communicate with external **Position Stack Api** in order to decode static addresses into geographical coordinates. PositionStack offers a straightforward and reliable solution for forward and reverse geocoding. The publication service contains configured API key for development and you don't need to generate your own API key if you don't want to. However, if you want to use your key, you need to do the following:
 
 
-You can get a FREE Api Key here:  https://positionstack.com/documentation
+1. Get a FREE Api Key here:  https://positionstack.com/documentation
 
-When you have the Api Key ready, you just need to update "appsettings.Development.json" files in all publication microservices. So you need to make the following changes:
-* Replace value for **PositionStackService:AccessKey** with the new Api Key. (It is by default set to paste-access-key)
-	> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json
+2. When you have the Api Key ready, you just need to update "appsettings.Development.json" files in all publication microservices. So you need to make the following changes:
+	* Replace value for **PositionStackService:AccessKey** with the new Api Key. (It is by default set to paste-access-key)
+		> Backend\PublicationService\src\LostAndFound.PublicationService\appsettings.Development.json
 
+<br />
 
-
-## Build and run
+## Build and run in development
 You can build and run backend solution using Docker Compose, following these steps:
 
 1. Make sure you have Docker and Docker Compose installed on your machine. See the previous section for instructions on how to install Docker. Docker Compose is included with Docker Desktop on Mac and Windows. On Linux, you can install it using pip:
