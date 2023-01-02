@@ -76,6 +76,7 @@ export type PublicationSearchRequestType = {
     subjectCategoryId?: string;
     publicationType?: PublicationType;
     publicationState?: PublicationState;
+    onlyUserPublications?: boolean;
 };
 export declare enum Order {
     Ascending = "Ascending",

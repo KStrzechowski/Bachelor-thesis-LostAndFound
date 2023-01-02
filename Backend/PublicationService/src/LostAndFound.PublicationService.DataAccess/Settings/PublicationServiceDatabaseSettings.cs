@@ -2,7 +2,7 @@
 {
     public class PublicationServiceDatabaseSettings
     {
-        private const string settingName = "LostAndFoundPublicationServiceDb";
+        private const string settingName = "LostAndFoundMongoCluster";
 
         public static string SettingName => settingName;
         public string ConnectionString { get; set; } = string.Empty;

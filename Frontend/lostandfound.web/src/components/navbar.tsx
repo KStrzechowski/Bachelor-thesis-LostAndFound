@@ -1,13 +1,14 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { userContext, UsrCont } from "userContext";
-import logo from "../logo.png";
+var logo = require("../logo.png");
 
 export default function Navbar() {
 	const userCtx = useContext(userContext);
 
 	function Logout() {
 		userCtx.setUser(new UsrCont());
+		localStorage.removeItem("authToken");
 	}
 
 	return (
@@ -24,6 +25,7 @@ export default function Navbar() {
 				{userCtx.user.isLogged === false && (
 					<div className="me-3">
 						<Link
+							data-testid="btnsignin"
 							className="btn btn-primary rounded-5"
 							to={"/login"}
 						>
@@ -34,12 +36,14 @@ export default function Navbar() {
 				{userCtx.user.isLogged && (
 					<div className="me-3 conatiner-fluid">
 						<Link
+							data-testid="linktoprofile"
 							className="btn btn-primary rounded-5 me-3"
 							to={"/profile"}
 						>
 							Profil
 						</Link>
 						<button
+							data-testid="btnsignout"
 							className="btn btn-outline-primary rounded-5 "
 							onClick={() => Logout()}
 						>

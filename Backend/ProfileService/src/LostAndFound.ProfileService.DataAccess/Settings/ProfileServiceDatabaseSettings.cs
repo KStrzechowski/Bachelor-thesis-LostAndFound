@@ -2,7 +2,7 @@
 {
     public class ProfileServiceDatabaseSettings
     {
-        private const string settingName = "LostAndFoundProfileServiceDb";
+        private const string settingName = "LostAndFoundMongoCluster";
 
         public static string SettingName => settingName;
         public string ConnectionString { get; set; } = string.Empty;

@@ -2,18 +2,23 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Configuration.AddJsonFile("ocelot.json");
+builder.Configuration
+    .AddJsonFile("ocelot.json")
+    .AddJsonFile($"configuration.{builder.Environment.EnvironmentName}.json");
 
 builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
+builder.Services.AddCors();
 
 builder.Services.AddOcelot();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseSwaggerForOcelotUI(opt => {}, uiOpt => {
     uiOpt.DocumentTitle = "LostAndFound system - Api Gateway";
@@ -21,6 +26,14 @@ app.UseSwaggerForOcelotUI(opt => {}, uiOpt => {
 });
 
 app.UseRouting();
+
+app.UseCors(options => options
+    .WithOrigins(new[] { builder.Configuration["ReactClient:Url"] })
+    .WithExposedHeaders("X-Pagination")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+);
 
 app.UseEndpoints(endpoints =>
 {

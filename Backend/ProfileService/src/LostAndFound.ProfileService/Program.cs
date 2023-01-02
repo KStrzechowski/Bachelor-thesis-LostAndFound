@@ -14,7 +14,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 var authenticationSettings = new AuthenticationSettings();
-builder.Configuration.Bind("LostAndFoundAuthentication", authenticationSettings);
+builder.Configuration.Bind(AuthenticationSettings.SettingName, authenticationSettings);
 builder.Services.AddSingleton(authenticationSettings);
 
 builder.Services.AddHealthChecks();

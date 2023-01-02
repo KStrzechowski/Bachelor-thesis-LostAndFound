@@ -1,11 +1,13 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { userContext } from "userContext";
 
 export default function Landing() {
 	const usrCtx = useContext(userContext);
-	if (!usrCtx.user.isLogged) return <Invitation />;
-	return <div>To widzi zalogowany użytkownik</div>;
+	if (!usrCtx.user.isLogged) {
+		return <Invitation />;
+	}
+	return <Navigate to={"/posts"} replace={true}></Navigate>;
 }
 
 function Invitation() {
