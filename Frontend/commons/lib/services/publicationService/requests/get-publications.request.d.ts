@@ -1,2 +1,5 @@
-import { PublicationResponseType, PublicationSearchRequestType } from "../publicationTypes";
-export declare const getPublications: (pageNumber: number, accessToken: string, publication?: PublicationSearchRequestType) => Promise<PublicationResponseType[]>;
+import { PublicationResponseType, PublicationSearchRequestType, PublicationSortType } from "../publicationTypes";
+export declare const getPublications: (pageNumber: number, accessToken: string, publication?: PublicationSearchRequestType, orderBy?: {
+    firstArgumentSort: PublicationSortType;
+    secondArgumentSort: PublicationSortType;
+}) => Promise<PublicationResponseType[]>;

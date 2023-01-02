@@ -96,3 +96,13 @@ export type PublicationSearchRequestType = {
   publicationState?: PublicationState;
   onlyUserPublications?: boolean;
 };
+
+export enum Order {
+  Ascending = "Ascending",
+  Descending = "Descending",
+}
+
+export type PublicationSortType = {
+  type: string;
+  order: Order;
+};

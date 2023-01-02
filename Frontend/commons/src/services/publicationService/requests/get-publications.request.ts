@@ -4,12 +4,18 @@ import {
   PublicationFromServerType,
   mapPublicationFromServer,
   PublicationSearchRequestType,
+  PublicationSortType,
+  Order,
 } from "../publicationTypes";
 
 export const getPublications = async (
   pageNumber: number,
   accessToken: string,
-  publication?: PublicationSearchRequestType
+  publication?: PublicationSearchRequestType,
+  orderBy?: {
+    firstArgumentSort: PublicationSortType;
+    secondArgumentSort: PublicationSortType;
+  }
 ): Promise<PublicationResponseType[]> => {
   let path = `/publication?pageNumber=${pageNumber}`;
   if (publication) {
@@ -18,15 +24,21 @@ export const getPublications = async (
     }
     if (publication.incidentAddress) {
       path = path.concat(`&IncidentAddress=${publication.incidentAddress}`);
-    }
-    if (publication.incidentDistance) {
-      path = path.concat(`&SearchRadius=${publication.incidentDistance}`);
+
+      if (publication.incidentDistance) {
+        path = path.concat(`&SearchRadius=${publication.incidentDistance}`);
+      }
     }
     if (publication.incidentFromDate) {
-      path = path.concat(`&FromDate=${publication.incidentFromDate}`);
+      path = path.concat(
+        `&FromDate=${publication.incidentFromDate.toDateString()}`
+      );
+      console.log(publication.incidentFromDate.toDateString());
     }
     if (publication.incidentToDate) {
-      path = path.concat(`&ToDate=${publication.incidentToDate}`);
+      path = path.concat(
+        `&ToDate=${publication.incidentToDate.toDateString()}`
+      );
     }
     if (publication.publicationState) {
       path = path.concat(`&PublicationState=${publication.publicationState}`);
@@ -39,8 +51,25 @@ export const getPublications = async (
     }
   }
 
+  if (orderBy && orderBy.firstArgumentSort) {
+    const firstSortOrder =
+      orderBy.firstArgumentSort.order === Order.Descending ? " desc" : "";
+
+    if (orderBy.secondArgumentSort) {
+      const secondSortOrder =
+        orderBy.secondArgumentSort.order === Order.Descending ? " desc" : "";
+      path = path.concat(
+        `&orderBy=${orderBy.firstArgumentSort.type}${firstSortOrder}, ${orderBy.secondArgumentSort.type}${secondSortOrder}`
+      );
+    } else {
+      path = path.concat(
+        `&orderBy=${orderBy.firstArgumentSort.type}${firstSortOrder}`
+      );
+    }
+  }
+
   const result = await http<PublicationFromServerType[]>({
-    path: `/publication?pageNumber=${pageNumber}`,
+    path,
     method: "get",
     accessToken,
   });

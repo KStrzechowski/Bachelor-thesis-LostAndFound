@@ -20,3 +20,8 @@ export const mapPublicationFromServer = (publication) => ({
     lastModificationDate: new Date(publication.lastModificationDate),
     creationDate: new Date(publication.creationDate),
 });
+export var Order;
+(function (Order) {
+    Order["Ascending"] = "Ascending";
+    Order["Descending"] = "Descending";
+})(Order || (Order = {}));
