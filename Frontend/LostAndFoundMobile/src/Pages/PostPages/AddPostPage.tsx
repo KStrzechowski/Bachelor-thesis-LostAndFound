@@ -28,11 +28,20 @@ import { DocumentPickerResponse } from 'react-native-document-picker';
 
 const addNewPost = async (
   publication: PublicationRequestType,
+  photo?: DocumentPickerResponse,
 ): Promise<PublicationResponseType | undefined> => {
   const accessToken = await getAccessToken();
   if (accessToken) {
-    const response = await addPublication(publication, accessToken);
-    return response;
+    if (photo) {
+      const photoRequest = {
+        name: photo.name,
+        type: photo.type,
+        uri: photo.uri,
+        size: photo.size,
+      };
+      return await addPublication(publication, accessToken, photoRequest);
+    }
+    return await addPublication(publication, accessToken);
   }
 };
 
@@ -190,7 +199,11 @@ export const AddPostPage = (props: any) => {
                 publicationType,
               };
               console.log(publication);
-              const response = await addNewPost(publication);
+
+              const response = await addNewPost(
+                publication,
+                fileResponse.length > 0 ? fileResponse[0] : undefined,
+              );
               if (response) {
                 if (fileResponse.length > 0)
                   await addPostPhoto(response.publicationId, fileResponse[0]);

@@ -1,6 +1,6 @@
 import { multipartFormDataHttp } from "../../../http";
 import { mapPublicationFromServer, } from "../publicationTypes";
-export const addPublication = async (publication, accessToken) => {
+export const addPublication = async (publication, accessToken, photo) => {
     const data = new FormData();
     if (publication.title)
         data.append("title", publication.title);
@@ -14,6 +14,12 @@ export const addPublication = async (publication, accessToken) => {
         data.append("publicationType", publication.publicationType);
     if (publication.subjectCategoryId)
         data.append("subjectCategoryId", publication.subjectCategoryId);
+    if (photo)
+        data.append("subjectPhoto", JSON.parse(JSON.stringify({
+            name: photo.name,
+            type: photo.type,
+            uri: photo.uri,
+        })));
     const result = await multipartFormDataHttp({
         path: "/publication",
         method: "post",
