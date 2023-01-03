@@ -11,5 +11,7 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices.Interfaces
         Task<ProfileDetailsResponseDto> UpdateProfileDetails(UpdateProfileDetailsRequestDto updateProfileDetailsRequestDto, string rawUserId);
         Task<ProfileDetailsResponseDto> UpdateUserProfilePicture(IFormFile picture, string rawUserId);
         Task DeleteUserProfilePicture(string rawUserId);
+        Task<IEnumerable<ProfileBaseDataResponseDto>> GetBaseProfileDataForListOfUsers(
+            GetBaseProfilesDataRequestDto getBaseProfilesDataRequestDto);
     }
 }
