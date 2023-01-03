@@ -1,6 +1,6 @@
 import { register, RegisterRequestType } from 'commons';
 import React from 'react';
-import { Text, View, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import {
   CustomTextInput,
   InputSection,
