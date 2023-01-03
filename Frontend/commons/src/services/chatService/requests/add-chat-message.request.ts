@@ -6,7 +6,7 @@ import {
   MessageResponseType,
 } from "../messageTypes";
 
-export const getChatMessages = async (
+export const addChatMessage = async (
   recipentId: string,
   message: MessageRequestType,
   accessToken: string
