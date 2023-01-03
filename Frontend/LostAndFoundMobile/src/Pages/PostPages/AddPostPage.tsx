@@ -3,6 +3,7 @@ import { Picker } from '@react-native-picker/picker';
 import {
   addPublication,
   CategoryType,
+  editPublicationPhoto,
   getCategories,
   ProfileResponseType,
   PublicationRequestType,
@@ -31,6 +32,27 @@ const addNewPost = async (
   const accessToken = await getAccessToken();
   if (accessToken) {
     const response = await addPublication(publication, accessToken);
+    return response;
+  }
+};
+
+const addPostPhoto = async (
+  publicationId: string,
+  photo: DocumentPickerResponse,
+) => {
+  const accessToken = await getAccessToken();
+  if (accessToken) {
+    const photoRequest = {
+      name: photo.name,
+      type: photo.type,
+      uri: photo.uri,
+      size: photo.size,
+    };
+    const response = await editPublicationPhoto(
+      publicationId,
+      photoRequest,
+      accessToken,
+    );
     return response;
   }
 };
@@ -170,7 +192,8 @@ export const AddPostPage = (props: any) => {
               console.log(publication);
               const response = await addNewPost(publication);
               if (response) {
-                console.log(response);
+                if (fileResponse.length > 0)
+                  await addPostPhoto(response.publicationId, fileResponse[0]);
                 props.navigation.push('Home', {
                   screen: 'Post',
                   params: { publicationId: response?.publicationId },
