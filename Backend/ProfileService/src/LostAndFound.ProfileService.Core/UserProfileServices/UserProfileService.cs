@@ -98,18 +98,17 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
         }
 
         public async Task<IEnumerable<ProfileBaseDataResponseDto>> GetBaseProfileDataForListOfUsers(
-            GetBaseProfilesDataRequestDto getBaseProfilesDataRequestDto)
+             IEnumerable<Guid> guids)
         {
-            var profiles = await _profilesRepository.FilterByAsync(p =>
-                getBaseProfilesDataRequestDto.UserIds.Contains(p.UserId));
+            var profiles = (await _profilesRepository.FilterByAsync(p =>
+                guids.Contains(p.UserId))).ToList();
 
             var profilesDataDtos = Enumerable.Empty<ProfileBaseDataResponseDto>();
             if (profiles != null && profiles.Any())
             {
                 profilesDataDtos = _mapper.Map<IEnumerable<ProfileBaseDataResponseDto>>(profiles);
-
-                if (profilesDataDtos == null || 
-                    profilesDataDtos.Count() != getBaseProfilesDataRequestDto.UserIds.Count())
+                if (profilesDataDtos == null ||
+                    profilesDataDtos.Count() != guids.Count())
                 {
                     throw new NotFoundException("One of the user's profile could not be found.");
                 }

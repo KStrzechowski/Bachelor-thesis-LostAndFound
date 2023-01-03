@@ -195,7 +195,7 @@ namespace LostAndFound.ProfileService.Controllers
         /// <summary>
         /// Retrieve users profile base data
         /// </summary>
-        /// <param name="getBaseProfilesDataRequestDto">Data to get base profile information for user list</param>
+        /// <param name="userIds">List of users id's</param>
         /// <returns>Users profile base data</returns>
         /// <response code="200">Returns profiles base data</response>
         /// <response code="401">Problem with authentication of user occurred</response>
@@ -205,10 +205,11 @@ namespace LostAndFound.ProfileService.Controllers
         ///
         ///     GET /profile/list
         ///     {
-        ///         "UserIds": [
-        ///             "2b1bafcd-b2fd-492b-b050-9b7027653716",
-        ///             "4c1bafcd-b2fd-492b-b050-9c7027653712"
-        ///         ]
+        ///         QUERY:
+        ///             "UserIds": [
+        ///                 "2b1bafcd-b2fd-492b-b050-9b7027653716",
+        ///                 "4c1bafcd-b2fd-492b-b050-9c7027653712"
+        ///             ]
         ///     }
         ///
         /// </remarks>
@@ -218,10 +219,10 @@ namespace LostAndFound.ProfileService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("list")]
         public async Task<ActionResult<IEnumerable<ProfileBaseDataResponseDto>>> GetBaseProfileDataForListOfUsers(
-            GetBaseProfilesDataRequestDto getBaseProfilesDataRequestDto)
+            [FromQuery] IEnumerable<Guid> userIds)
         {
             var profilesBaseData = await _userProfileService.GetBaseProfileDataForListOfUsers(
-                getBaseProfilesDataRequestDto);
+                userIds);
 
             return Ok(profilesBaseData);
         }

@@ -18,7 +18,6 @@ namespace LostAndFound.ProfileService.UnitTests.ServiceRegistrations
         [InlineData(typeof(CreateProfileRequestDtoValidator))]
         [InlineData(typeof(UpdateProfileCommentRequestDtoValidator))]
         [InlineData(typeof(CreateProfileCommentRequestDtoValidator))]
-        [InlineData(typeof(GetBaseProfilesDataRequestDtoValidator))]
         public void AddFluentValidators_Execute_ResultsInExpectedValidatorIsRegistered(Type type)
         {
             _services.AddFluentValidators();
