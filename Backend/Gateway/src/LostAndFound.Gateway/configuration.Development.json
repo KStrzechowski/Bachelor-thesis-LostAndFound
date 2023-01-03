@@ -166,6 +166,21 @@
       "SwaggerKey": "profiles"
     },
     {
+      "UpstreamPathTemplate": "/profile/list",
+      "DownstreamPathTemplate": "/profile/list",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "SwaggerKey": "profiles"
+    },
+    {
       "UpstreamPathTemplate": "/profile/{userId}",
       "DownstreamPathTemplate": "/profile/{userId}",
       "UpstreamHttpMethod": [

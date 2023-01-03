@@ -191,5 +191,40 @@ namespace LostAndFound.ProfileService.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Retrieve users profile base data
+        /// </summary>
+        /// <param name="userIds">List of users id's</param>
+        /// <returns>Users profile base data</returns>
+        /// <response code="200">Returns profiles base data</response>
+        /// <response code="401">Problem with authentication of user occurred</response>
+        /// <response code="404">Could not find data for one of the user</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET /profile/list
+        ///     {
+        ///         QUERY:
+        ///             "UserIds": [
+        ///                 "2b1bafcd-b2fd-492b-b050-9b7027653716",
+        ///                 "4c1bafcd-b2fd-492b-b050-9c7027653712"
+        ///             ]
+        ///     }
+        ///
+        /// </remarks>
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet("list")]
+        public async Task<ActionResult<IEnumerable<ProfileBaseDataResponseDto>>> GetBaseProfileDataForListOfUsers(
+            [FromQuery] IEnumerable<Guid> userIds)
+        {
+            var profilesBaseData = await _userProfileService.GetBaseProfileDataForListOfUsers(
+                userIds);
+
+            return Ok(profilesBaseData);
+        }
     }
 }

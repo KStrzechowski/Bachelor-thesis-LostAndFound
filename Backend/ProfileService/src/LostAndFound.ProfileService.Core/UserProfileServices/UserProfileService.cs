@@ -97,6 +97,26 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             await _profilesRepository.UpdateProfilePictureUrl(userId, null);
         }
 
+        public async Task<IEnumerable<ProfileBaseDataResponseDto>> GetBaseProfileDataForListOfUsers(
+             IEnumerable<Guid> guids)
+        {
+            var profiles = (await _profilesRepository.FilterByAsync(p =>
+                guids.Contains(p.UserId))).ToList();
+
+            var profilesDataDtos = Enumerable.Empty<ProfileBaseDataResponseDto>();
+            if (profiles != null && profiles.Any())
+            {
+                profilesDataDtos = _mapper.Map<IEnumerable<ProfileBaseDataResponseDto>>(profiles);
+                if (profilesDataDtos == null ||
+                    profilesDataDtos.Count() != guids.Count())
+                {
+                    throw new NotFoundException("One of the user's profile could not be found.");
+                }
+            }
+
+            return profilesDataDtos;
+        }
+
         private async Task DeleteUserPictureFromBlob(string? pictureUrl)
         {
             var blobName = Path.GetFileName(pictureUrl);
