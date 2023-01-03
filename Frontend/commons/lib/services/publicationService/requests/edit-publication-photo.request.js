@@ -9,7 +9,7 @@ export const editPublicationPhoto = async (publicationId, photo, accessToken) =>
     })));
     const result = await multipartFormDataHttp({
         path: `/publication/${publicationId}/photo`,
-        method: "patch",
+        method: "PATCH",
         accessToken,
     }, data);
     if (result.ok && result.body) {

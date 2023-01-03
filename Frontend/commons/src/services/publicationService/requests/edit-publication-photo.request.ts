@@ -24,7 +24,7 @@ export const editPublicationPhoto = async (
   const result = await multipartFormDataHttp<PublicationFromServerType, string>(
     {
       path: `/publication/${publicationId}/photo`,
-      method: "patch",
+      method: "PATCH",
       accessToken,
     },
     data

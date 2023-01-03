@@ -8,7 +8,7 @@ export const editProfilePhoto = async (photo, accessToken) => {
     })));
     const result = await multipartFormDataHttp({
         path: "/profile/picture",
-        method: "patch",
+        method: "PATCH",
         accessToken,
     }, data);
     if (result.ok && result.body) {
