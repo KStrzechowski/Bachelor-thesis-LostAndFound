@@ -19,7 +19,7 @@ export const editProfilePhoto = async (
   const result = await multipartFormDataHttp<ProfileResponseType, string>(
     {
       path: "/profile/picture",
-      method: "patch",
+      method: "PATCH",
       accessToken,
     },
     data
