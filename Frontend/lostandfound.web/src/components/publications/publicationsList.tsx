@@ -1,4 +1,5 @@
 import {
+	CategoryType,
 	editPublicationRating,
 	getCategories,
 	getPublicationsUndef,
@@ -138,14 +139,14 @@ function FiltersForm({
 	setFilter: (arg: PublicationSearchRequestType | undefined) => void;
 }) {
 	const usrCtx = useContext(userContext);
-	const [cats, setCats] = useState([] as (string | undefined)[]);
+	const [cats, setCats] = useState([] as (CategoryType | undefined)[]);
 	const [filt, setFiltLoc] = useState(
 		undefined as PublicationSearchRequestType | undefined
 	);
 	useEffect(() => {
 		if (usrCtx.user.authToken !== null)
 			getCategories(usrCtx.user.authToken).then((x) => {
-				setCats(x.map((y) => y.displayName));
+				setCats(x);
 			});
 	}, [usrCtx]);
 
@@ -165,7 +166,7 @@ function FiltersForm({
 		<div className="border border-dark rounded-5 ps-3 pe-3 p-1 bg-light">
 			<div className="text-start pt-2 h5">Filtrowanie:</div>
 			<div className="pt-2">
-				<div className="form-label text-start">tekst:</div>
+				<div className="form-label text-start">Tekst:</div>
 				<input
 					type="text"
 					className="form-control"
@@ -174,7 +175,7 @@ function FiltersForm({
 				></input>
 			</div>
 			<div className="pt-2">
-				<div className="form-label text-start">lokalizacja:</div>
+				<div className="form-label text-start">Lokalizacja:</div>
 				<input
 					type="text"
 					className="form-control"
@@ -204,7 +205,7 @@ function FiltersForm({
 				/>
 			</div>
 			<div className="pt-2">
-				<div className="form-label text-start">kategoria:</div>
+				<div className="form-label text-start">Kategoria:</div>
 				<select
 					className="form-select w-100"
 					onChange={(e) =>
@@ -216,8 +217,8 @@ function FiltersForm({
 				>
 					<option selected></option>
 					{cats.map((x, i) => (
-						<option key={i} value={x}>
-							{x}
+						<option key={i} value={x?.id}>
+							{x?.displayName}
 						</option>
 					))}
 				</select>
