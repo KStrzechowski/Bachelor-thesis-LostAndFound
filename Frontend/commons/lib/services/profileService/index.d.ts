@@ -9,3 +9,4 @@ export { editProfile } from "./requests/edit-profile.request";
 export { getProfileComments } from "./requests/get-profile-comments.request";
 export { getProfileDetails } from "./requests/get-profile-details.request";
 export { getProfile } from "./requests/get-profile.request";
+export { getBaseProfiles } from "./requests/get-base-profiles.request";
