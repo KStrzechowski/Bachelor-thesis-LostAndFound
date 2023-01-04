@@ -86,7 +86,7 @@ export function ProfileInner({ profile }: { profile: UserProfile }) {
             <h1>{profile.username}</h1>
             {profile.me && (
               <Link className="text-dark btn float-end" to="/profile/edit">
-                <FiEdit size="30" />
+                <FiEdit size="38" />
               </Link>
             )}
             <div
