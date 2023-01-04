@@ -1,6 +1,6 @@
 import { LoginRequestType, getProfile, login } from 'commons';
 import React from 'react';
-import { Button, Image, Text, View } from 'react-native';
+import { Image, ScrollView, Text, View } from 'react-native';
 import { AuthContext } from '../../../Config';
 import {
   CustomTextInput,
@@ -56,46 +56,48 @@ export const LoginPage = (props: { navigation: string[] }) => {
   };
 
   return (
-    <MainContainer>
-      <Image
-        source={Logo}
-        style={{ width: '100%', resizeMode: 'stretch', marginBottom: 20 }}
-      />
-      <MainTitle>Zaloguj się</MainTitle>
-      <Subtitle>Hej! Dobrze cię znowu widzieć</Subtitle>
-      <InputSection title="E-mail">
-        <CustomTextInput
-          testID="emailPlaceholder"
-          onChangeText={onUsernameChange}
-          keyboardType={'email-address'}
-          placeholder="Podaj swój adres e-mail"
+    <ScrollView>
+      <MainContainer>
+        <Image
+          source={Logo}
+          style={{ width: '100%', resizeMode: 'stretch', marginBottom: 20 }}
         />
-      </InputSection>
-      <InputSection title="Hasło">
-        <CustomTextInput
-          testID="passwordPlaceholder"
-          onChangeText={onPasswordChange}
-          secureTextEntry={true}
-          keyboardType={'default'}
-          placeholder="********"
+        <MainTitle>Zaloguj się</MainTitle>
+        <Subtitle>Hej! Dobrze cię znowu widzieć</Subtitle>
+        <InputSection title="E-mail">
+          <CustomTextInput
+            testID="emailPlaceholder"
+            onChangeText={onUsernameChange}
+            keyboardType={'email-address'}
+            placeholder="Podaj swój adres e-mail"
+          />
+        </InputSection>
+        <InputSection title="Hasło">
+          <CustomTextInput
+            testID="passwordPlaceholder"
+            onChangeText={onPasswordChange}
+            secureTextEntry={true}
+            keyboardType={'default'}
+            placeholder="********"
+          />
+        </InputSection>
+        <MainButton
+          testID="loginButton"
+          label="Zaloguj się"
+          onPress={async () => {
+            await loginUser(email, password);
+            await signIn();
+          }}
         />
-      </InputSection>
-      <MainButton
-        testID="loginButton"
-        label="Zaloguj się"
-        onPress={async () => {
-          await loginUser(email, password);
-          await signIn();
-        }}
-      />
-      <View style={{ alignItems: 'center' }}>
-        <Text>Nie masz konta?</Text>
-        <PressableText
-          testID="registerButton"
-          text="Zarejestruj się"
-          onPress={() => props.navigation.push('Registration')}
-        />
-      </View>
-    </MainContainer>
+        <View style={{ alignItems: 'center' }}>
+          <Text>Nie masz konta?</Text>
+          <PressableText
+            testID="registerButton"
+            text="Zarejestruj się"
+            onPress={() => props.navigation.push('Registration')}
+          />
+        </View>
+      </MainContainer>
+    </ScrollView>
   );
 };
