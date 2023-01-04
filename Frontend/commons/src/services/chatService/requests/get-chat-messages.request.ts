@@ -11,7 +11,7 @@ export const getChatMessages = async (
   pageNumber?: number
 ): Promise<MessageResponseType[]> => {
   const result = await http<MessageFromServerResponseType[]>({
-    path: `chat/message/${recipentId}${
+    path: `/chat/message/${recipentId}${
       pageNumber ? `?pageNumber=${pageNumber}` : ""
     }`,
     method: "get",

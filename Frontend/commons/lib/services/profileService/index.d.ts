@@ -1,4 +1,4 @@
-export { ProfileRequestType, AuthorResponseType, ProfileResponseType, } from "./profileTypes";
+export { ProfileRequestType, AuthorResponseType, ProfileResponseType, BaseProfileType, BaseProfileChatType, } from "./profileTypes";
 export { ProfileCommentRequestType, ProfileCommentResponseType, ProfileCommentsSectionResponseType, } from "./profileCommentTypes";
 export { addProfileComment } from "./requests/add-profile-comment.request";
 export { deleteProfileComment } from "./requests/delete-profile-comment.request";

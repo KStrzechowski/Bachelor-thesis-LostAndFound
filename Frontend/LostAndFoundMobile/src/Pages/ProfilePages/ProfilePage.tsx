@@ -253,12 +253,14 @@ export const ProfilePage = (props: any) => {
           </View>
           <SecondaryButton
             label={'Rozpocznij czat'}
-            onPress={() =>
-              props.navigation.navigate('Home', {
-                screen: 'Chat',
-                params: { username: profile?.username },
-              })
-            }></SecondaryButton>
+            onPress={() => {
+              if (profile) {
+                props.navigation.push('Chat', {
+                  chatRecipentId: profile?.userId,
+                  chatRecipentUsername: profile?.username,
+                });
+              }
+            }}></SecondaryButton>
         </View>
       </View>
       <Text>{profile?.description}</Text>

@@ -2,6 +2,8 @@ export {
   ProfileRequestType,
   AuthorResponseType,
   ProfileResponseType,
+  BaseProfileType,
+  BaseProfileChatType,
 } from "./profileTypes";
 export {
   ProfileCommentRequestType,

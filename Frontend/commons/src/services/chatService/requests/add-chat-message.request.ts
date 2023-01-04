@@ -12,7 +12,7 @@ export const addChatMessage = async (
   accessToken: string
 ): Promise<MessageResponseType | undefined> => {
   const result = await http<MessageFromServerResponseType, MessageRequestType>({
-    path: `chat/message/${recipentId}`,
+    path: `/chat/message/${recipentId}`,
     body: message,
     method: "post",
     accessToken,

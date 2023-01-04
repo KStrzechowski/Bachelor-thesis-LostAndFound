@@ -1,10 +1,10 @@
 import { http } from "../../../http";
-import { AuthorResponseType } from "../profileTypes";
+import { AuthorResponseType, BaseProfileType } from "../profileTypes";
 
 export const getBaseProfiles = async (
   userIds: string[],
   accessToken: string
-): Promise<AuthorResponseType[]> => {
+): Promise<BaseProfileType[]> => {
   if (userIds.length < 0) {
     return [];
   }
@@ -13,7 +13,7 @@ export const getBaseProfiles = async (
     path += `userIds=${userId}`;
   }
 
-  const result = await http<AuthorResponseType[]>({
+  const result = await http<BaseProfileType[]>({
     path,
     method: "get",
     accessToken,
