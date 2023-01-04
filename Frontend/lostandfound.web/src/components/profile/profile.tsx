@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { userContext } from "userContext";
 import ProfileComments from "./profileComments";
+import { FiEdit, FiStar } from "react-icons/fi";
 
 export default function Profile() {
 	const usrCtx = useContext(userContext);
@@ -77,6 +78,7 @@ export function ProfileInner({ profile }: { profile: UserProfile }) {
 					className="img-fluid "
 					style={{ width: "350px" }}
 					src={profile.pictureUrl}
+					alt="profileImage"
 				></img>
 
 				<div className="col text-start p-2">
@@ -87,18 +89,28 @@ export function ProfileInner({ profile }: { profile: UserProfile }) {
 								className="text-dark btn float-end"
 								to="/profile/edit"
 							>
-								⚙
+								<FiEdit size="38" />
 							</Link>
 						)}
-						<h3 className="align-self-center ms-auto me-4">
-							{profile.averageProfileRating}
-						</h3>
+						<div className="align-self-center ms-auto me-4 d-flex align-items-center">
+							<span>{profile.averageProfileRating}</span>
+							<FiStar
+								className="ms-2 mt-1"
+								fill="#ffc107"
+								color="#ffc107"
+							/>
+						</div>
 					</div>
 					<div className="p-2">
+						<strong className="row">Imie i nazwisko: </strong>
 						{profile.name} {profile.surname}
 					</div>
-					<span className="p-2 fst-italic">{profile.city}</span>
-					<div className="p-2 pt-4 fst-italic">
+					<div className="p-2">
+						<strong className="row">Miasto: </strong>
+						<span className="p-2 fst-italic">{profile.city}</span>
+					</div>
+					<div className="p-2 pt-3 fst-italic">
+						<strong className="row">Opis: </strong>
 						{profile.description}
 					</div>
 				</div>
