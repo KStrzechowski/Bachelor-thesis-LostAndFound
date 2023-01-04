@@ -8,6 +8,7 @@ import {
   ProfileCommentRequestType,
   editProfileComment,
   deleteProfileComment,
+  BaseProfileType,
 } from 'commons';
 import React, { Dispatch, SetStateAction } from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
@@ -203,10 +204,6 @@ export const ProfilePage = (props: any) => {
     }
   }, [profile, width]);
 
-  React.useEffect(() => {
-    console.log(profileComments);
-  }, [profileComments]);
-
   return (
     <MainContainer>
       <MainTitle>{profile?.username}</MainTitle>
@@ -218,9 +215,7 @@ export const ProfilePage = (props: any) => {
           marginBottom: 10,
         }}
         onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-        <View
-          onLayout={event => setWidth(event.nativeEvent.layout.width)}
-          style={{ alignContent: 'center' }}>
+        <View style={{ alignContent: 'center', marginRight: 10 }}>
           {profile?.pictureUrl ? (
             <Image
               source={{ uri: profile.pictureUrl }}
@@ -236,8 +231,7 @@ export const ProfilePage = (props: any) => {
         <View
           style={{
             alignSelf: 'flex-end',
-            width: (width * 5) / 8,
-            paddingBottom: 10,
+            width: (width * 5) / 8 - 10,
           }}>
           <View
             style={{
@@ -255,9 +249,16 @@ export const ProfilePage = (props: any) => {
             label={'Rozpocznij czat'}
             onPress={() => {
               if (profile) {
-                props.navigation.push('Chat', {
-                  chatRecipentId: profile?.userId,
-                  chatRecipentUsername: profile?.username,
+                const chatRecipent: BaseProfileType = {
+                  userId: profile.userId,
+                  username: profile.username,
+                  pictureUrl: profile.pictureUrl,
+                };
+                props.navigation.push('Home', {
+                  screen: 'Chat',
+                  params: {
+                    chatRecipent,
+                  },
                 });
               }
             }}></SecondaryButton>

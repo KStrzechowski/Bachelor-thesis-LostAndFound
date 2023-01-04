@@ -3,6 +3,7 @@ import React from 'react';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import {
   FlatList,
+  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -12,7 +13,7 @@ import {
 import { MainContainer, MainTitle } from '../../Components';
 import {
   addChatMessage,
-  BaseProfileChatType,
+  BaseProfileType,
   getChatMessages,
   MessageRequestType,
   MessageResponseType,
@@ -32,13 +33,13 @@ const SendMessage = async (
 ) => await addChatMessage(recipentId, message, accessToken);
 
 const MessageItem = (props: any) => {
-  const currentUserId: string = props.userId;
+  const currentUserId: string = props.currentUserId;
   const message: MessageResponseType = props.item;
   return (
     <View
       style={[
         styles.message,
-        String(message.authorId) === String(currentUserId)
+        String(message.authorId) !== String(currentUserId)
           ? styles.messageLeft
           : styles.messageRight,
       ]}>
@@ -48,14 +49,18 @@ const MessageItem = (props: any) => {
 };
 
 export const ChatPage = (props: any) => {
-  const chatRecipentId: string = props.route.params.chatRecipentId;
-  const chatRecipentUsername: string = props.route.params.chatRecipentUsername;
+  const chatRecipent: BaseProfileType = props.route.params?.chatRecipent;
   const [width, setWidth] = React.useState<number>(10);
   const [messageContent, setMessageContent] = React.useState<string>('');
   const [currentUserId, setCurrentUserId] = React.useState<string | null>();
   const [messagesData, setMessagesData] = React.useState<MessageResponseType[]>(
     [],
   );
+  const [imageProfileDisplayedSize, setImageProfileDisplayedSize] =
+    React.useState<{
+      width: number;
+      height: number;
+    }>();
   const [update, setUpdate] = React.useState<boolean>(false);
 
   React.useEffect(() => {
@@ -69,12 +74,31 @@ export const ChatPage = (props: any) => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setMessagesData(await GetMessages(chatRecipentId, accessToken));
+        setMessagesData(
+          (await GetMessages(chatRecipent?.userId, accessToken)).reverse(),
+        );
       }
     };
 
     getData();
   }, [update]);
+
+  React.useEffect(() => {
+    if (chatRecipent.pictureUrl) {
+      let imageSize = { width: width / 5, height: width / 5 };
+      Image.getSize(
+        chatRecipent.pictureUrl,
+        (width, height) => (imageSize = { width, height }),
+      );
+      const displayedWidth = width / 5;
+      const displayedHeight =
+        (imageSize.height * displayedWidth) / imageSize.width;
+      setImageProfileDisplayedSize({
+        width: displayedWidth,
+        height: displayedHeight,
+      });
+    }
+  }, [chatRecipent, width]);
 
   return (
     <MainContainer>
@@ -83,13 +107,27 @@ export const ChatPage = (props: any) => {
           ListHeaderComponent={
             <View
               onLayout={event => setWidth(event.nativeEvent.layout.width)}
-              style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <IoniconsIcon
-                name="person"
-                size={width / 6}
-                style={{ marginRight: 20 }}
-              />
-              <MainTitle>{chatRecipentUsername}</MainTitle>
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              {chatRecipent?.pictureUrl ? (
+                <Image
+                  source={{ uri: chatRecipent.pictureUrl }}
+                  style={{
+                    width: imageProfileDisplayedSize?.width,
+                    height: imageProfileDisplayedSize?.height,
+                    marginRight: 10,
+                  }}
+                />
+              ) : (
+                <IoniconsIcon
+                  name="person"
+                  size={width / 6}
+                  style={{ marginRight: 10 }}
+                />
+              )}
+              <MainTitle>{chatRecipent?.username}</MainTitle>
             </View>
           }
           ListHeaderComponentStyle={{
@@ -97,7 +135,7 @@ export const ChatPage = (props: any) => {
             backgroundColor: DefaultTheme.colors.background,
           }}
           stickyHeaderIndices={[0]}
-          data={messagesData.reverse()}
+          data={messagesData}
           renderItem={({ item }) => (
             <MessageItem item={item} currentUserId={currentUserId} />
           )}
@@ -134,7 +172,11 @@ export const ChatPage = (props: any) => {
                     const message: MessageRequestType = {
                       content: messageContent,
                     };
-                    await SendMessage(chatRecipentId, message, accessToken);
+                    await SendMessage(
+                      chatRecipent?.userId,
+                      message,
+                      accessToken,
+                    );
                     setUpdate(!update);
                     setMessageContent('');
                   }
