@@ -188,9 +188,14 @@ export const PostPage = (props: any) => {
           ) : (
             <SecondaryButton
               label={'Rozpocznij czat'}
-              onPress={() =>
-                props.navigation.push('Chat', { username: profile?.username })
-              }
+              onPress={() => {
+                if (profile) {
+                  props.navigation.push('Chat', {
+                    chatRecipentId: profile?.userId,
+                    chatRecipentUsername: profile?.username,
+                  });
+                }
+              }}
             />
           )}
           <Text

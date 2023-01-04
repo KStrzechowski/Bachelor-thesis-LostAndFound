@@ -1,6 +1,6 @@
 import { http } from "../../../http";
 
-export const editPublicationState = async (
+export const readChat = async (
   chatMemberId: string,
   accessToken: string
 ): Promise<Boolean> => {

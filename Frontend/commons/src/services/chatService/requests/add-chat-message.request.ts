@@ -6,13 +6,13 @@ import {
   MessageResponseType,
 } from "../messageTypes";
 
-export const getChatMessages = async (
+export const addChatMessage = async (
   recipentId: string,
   message: MessageRequestType,
   accessToken: string
 ): Promise<MessageResponseType | undefined> => {
   const result = await http<MessageFromServerResponseType, MessageRequestType>({
-    path: `chat/message/${recipentId}`,
+    path: `/chat/message/${recipentId}`,
     body: message,
     method: "post",
     accessToken,

@@ -1,32 +1,102 @@
 import { format } from 'date-fns';
 import React from 'react';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { BaseProfileChatType, getBaseProfiles, getChats } from 'commons/';
 import { MainContainer, MainTitle, Subtitle } from '../../Components';
-import { Chat, GetChats } from '../../Data/Chat';
+import { getAccessToken } from '../../SecureStorage';
 
-export const ChatItem = (props: any) => {
-  const item: Chat = props.item;
+const GetChats = async (
+  accessToken: string,
+): Promise<BaseProfileChatType[]> => {
+  const chatsData = await getChats(accessToken);
+  const userIds = chatsData.map(chatData => chatData.chatMember.id);
+  const profilesData = await getBaseProfiles(userIds, accessToken);
+  const chats: BaseProfileChatType[] = chatsData.map(chatData => ({
+    userId: chatData.chatMember.id,
+    ...chatData,
+    ...profilesData.find(
+      profileData => profileData.userId === chatData.chatMember.id,
+    ),
+  }));
+  return chats;
+};
+
+const ChatItem = (props: any) => {
+  const item: BaseProfileChatType = props.item;
   const [width, setWidth] = React.useState<number>(10);
-  const date = format(item.lastMessage.sentDateTime, 'dd.MM.yyyy');
+  const [date, setDate] = React.useState<any>('');
+  const [imageProfileDisplayedSize, setImageProfileDisplayedSize] =
+    React.useState<{
+      width: number;
+      height: number;
+    }>();
+
+  React.useEffect(() => {
+    setDate(item.lastMessage.creationTime);
+    if (item.pictureUrl) {
+      let imageSize = { width: width / 4, height: width / 4 };
+      Image.getSize(
+        item.pictureUrl,
+        (width, height) => (imageSize = { width, height }),
+      );
+      const displayedWidth = width / 4;
+      const displayedHeight =
+        (imageSize.height * displayedWidth) / imageSize.width;
+      setImageProfileDisplayedSize({
+        width: displayedWidth,
+        height: displayedHeight,
+      });
+    }
+  }, []);
 
   return (
     <Pressable
       onLayout={event => setWidth(event.nativeEvent.layout.width)}
       onPress={props.onPress}
       style={styles.chatItem}>
-      <IoniconsIcon name="person" size={width / 4} />
+      {item?.pictureUrl ? (
+        <Image
+          source={{ uri: item.pictureUrl }}
+          style={{
+            width: imageProfileDisplayedSize?.width,
+            height: imageProfileDisplayedSize?.height,
+          }}
+        />
+      ) : (
+        <IoniconsIcon name="person" size={width / 4} />
+      )}
       <View style={{ width: (width * 3) / 4, paddingRight: 15 }}>
-        <Text style={{ fontSize: 18, fontWeight: '500' }}>{item.username}</Text>
+        <Text style={{ fontSize: 18, fontWeight: '500' }}>
+          {item?.username}
+        </Text>
         <Subtitle>{date}</Subtitle>
-        <Text numberOfLines={3}>{item.lastMessage.content}</Text>
+        <Text numberOfLines={3}>{item?.lastMessage.content}</Text>
       </View>
     </Pressable>
   );
 };
 
 export const ChatsPage = (props: any) => {
-  const chatsData = GetChats();
+  const [chatsData, setChatsData] = React.useState<BaseProfileChatType[]>([]);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      const accessToken = await getAccessToken();
+      if (accessToken) {
+        setChatsData(await GetChats(accessToken));
+      }
+    };
+
+    getData();
+  }, []);
 
   return (
     <MainContainer>
@@ -34,14 +104,17 @@ export const ChatsPage = (props: any) => {
       <FlatList
         data={chatsData}
         contentContainerStyle={{ paddingBottom: 20 }}
-        keyExtractor={item => item._id.toString()}
+        keyExtractor={item => item.userId}
         renderItem={({ item }) => (
           <ChatItem
             item={item}
             onPress={() =>
               props.navigation.push('Home', {
                 screen: 'Chat',
-                params: { username: item.username },
+                params: {
+                  chatRecipentId: item.userId,
+                  chatRecipentUsername: item.username,
+                },
               })
             }
           />

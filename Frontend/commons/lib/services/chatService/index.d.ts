@@ -1,8 +1,4 @@
-export {
-  ChatBaseResponseType,
-  ChatNotificationResponseType,
-  ChatUserType,
-} from "./chatTypes";
+export { ChatBaseResponseType, ChatNotificationResponseType, ChatUserType, } from "./chatTypes";
 export { MessageRequestType, MessageResponseType } from "./messageTypes";
 export { addChatMessage } from "./requests/add-chat-message.request";
 export { getChatMessages } from "./requests/get-chat-messages.request";

@@ -1,7 +1,7 @@
 import { http } from "../../../http";
 import { ChatNotificationResponseType } from "../chatTypes";
 
-export const getChatMessages = async (
+export const getUnreadNotifications = async (
   accessToken: string
 ): Promise<ChatNotificationResponseType[]> => {
   const result = await http<ChatNotificationResponseType[]>({

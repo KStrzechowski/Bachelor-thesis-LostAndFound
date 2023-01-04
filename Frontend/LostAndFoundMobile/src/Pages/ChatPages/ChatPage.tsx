@@ -10,15 +10,37 @@ import {
   View,
 } from 'react-native';
 import { MainContainer, MainTitle } from '../../Components';
-import { GetMessages, Message } from '../../Data/Chat';
+import {
+  addChatMessage,
+  BaseProfileChatType,
+  getChatMessages,
+  MessageRequestType,
+  MessageResponseType,
+} from 'commons';
+import { getAccessToken, getUserId } from '../../SecureStorage';
+
+const GetMessages = async (
+  recipentId: string,
+  accessToken: string,
+): Promise<MessageResponseType[]> =>
+  await getChatMessages(recipentId, accessToken);
+
+const SendMessage = async (
+  recipentId: string,
+  message: MessageRequestType,
+  accessToken: string,
+) => await addChatMessage(recipentId, message, accessToken);
 
 const MessageItem = (props: any) => {
-  const message: Message = props.item;
+  const currentUserId: string = props.userId;
+  const message: MessageResponseType = props.item;
   return (
     <View
       style={[
         styles.message,
-        message.userId === '1' ? styles.messageLeft : styles.messageRight,
+        String(message.authorId) === String(currentUserId)
+          ? styles.messageLeft
+          : styles.messageRight,
       ]}>
       <Text style={[styles.messageText]}>{message.content}</Text>
     </View>
@@ -26,9 +48,33 @@ const MessageItem = (props: any) => {
 };
 
 export const ChatPage = (props: any) => {
-  const username = props.route.params.username;
+  const chatRecipentId: string = props.route.params.chatRecipentId;
+  const chatRecipentUsername: string = props.route.params.chatRecipentUsername;
   const [width, setWidth] = React.useState<number>(10);
-  const messagesData = GetMessages();
+  const [messageContent, setMessageContent] = React.useState<string>('');
+  const [currentUserId, setCurrentUserId] = React.useState<string | null>();
+  const [messagesData, setMessagesData] = React.useState<MessageResponseType[]>(
+    [],
+  );
+  const [update, setUpdate] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      setCurrentUserId(await getUserId());
+    };
+    getData();
+  }, []);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      const accessToken = await getAccessToken();
+      if (accessToken) {
+        setMessagesData(await GetMessages(chatRecipentId, accessToken));
+      }
+    };
+
+    getData();
+  }, [update]);
 
   return (
     <MainContainer>
@@ -43,7 +89,7 @@ export const ChatPage = (props: any) => {
                 size={width / 6}
                 style={{ marginRight: 20 }}
               />
-              <MainTitle>{username}</MainTitle>
+              <MainTitle>{chatRecipentUsername}</MainTitle>
             </View>
           }
           ListHeaderComponentStyle={{
@@ -51,8 +97,10 @@ export const ChatPage = (props: any) => {
             backgroundColor: DefaultTheme.colors.background,
           }}
           stickyHeaderIndices={[0]}
-          data={messagesData}
-          renderItem={({ item }) => <MessageItem item={item} />}
+          data={messagesData.reverse()}
+          renderItem={({ item }) => (
+            <MessageItem item={item} currentUserId={currentUserId} />
+          )}
           ListFooterComponentStyle={{ marginTop: 10 }}
           ListFooterComponent={
             <View
@@ -61,15 +109,16 @@ export const ChatPage = (props: any) => {
                 justifyContent: 'space-between',
               }}>
               <TextInput
+                onChangeText={setMessageContent}
+                value={messageContent}
+                placeholder="Podaj tytuł"
                 style={{
                   borderRadius: 20,
                   borderWidth: 1,
                   flex: 4,
                   marginRight: 10,
-                }}>
-                Nowa Wiadomość
-              </TextInput>
-
+                }}
+              />
               <Pressable
                 style={{
                   borderRadius: 20,
@@ -79,7 +128,17 @@ export const ChatPage = (props: any) => {
                   padding: 10,
                   flex: 1,
                 }}
-                onPress={undefined}>
+                onPress={async () => {
+                  const accessToken = await getAccessToken();
+                  if (accessToken && messageContent.length > 0) {
+                    const message: MessageRequestType = {
+                      content: messageContent,
+                    };
+                    await SendMessage(chatRecipentId, message, accessToken);
+                    setUpdate(!update);
+                    setMessageContent('');
+                  }
+                }}>
                 <Text
                   style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>
                   Wyślij

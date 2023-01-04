@@ -18,5 +18,5 @@ export const mapMessageFromServer = (
   message: MessageFromServerResponseType
 ): MessageResponseType => ({
   ...message,
-  creationTime: new Date(message?.creationTime),
+  creationTime: new Date(message.creationTime),
 });
