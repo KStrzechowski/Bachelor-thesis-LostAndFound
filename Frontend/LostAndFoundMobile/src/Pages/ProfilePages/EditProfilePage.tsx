@@ -21,6 +21,8 @@ import {
   removeUserPhotoUrl,
   saveUserPhotoUrl,
 } from '../../SecureStorage';
+import { MainScrollContainer } from '../../Components/MainComponents';
+import { Appbar } from 'react-native-paper';
 
 const editProfileDetails = async (profile: ProfileRequestType) => {
   const accessToken = await getAccessToken();
@@ -61,46 +63,23 @@ export const EditProfilePage = (props: any) => {
 
   return (
     <MainContainer>
-      <View style={{ alignSelf: 'center', marginBottom: 10 }}>
-        <MainTitle>Edytuj Profil</MainTitle>
-      </View>
-      <DocumentSelector
-        fileResponse={fileResponse}
-        setFileResponse={setFileResponse}
-        label="Ustaw zdjęcie profilowe"
-      />
-      <InputSection title="Imię">
-        <CustomTextInput
-          onChangeText={setName}
-          keyboardType={'default'}
-          value={name}
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
         />
-      </InputSection>
-      <InputSection title="Nazwisko">
-        <CustomTextInput
-          onChangeText={setSurname}
-          keyboardType={'default'}
-          value={surname}
+        <Appbar.Content
+          title="Edytuj Profil"
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
         />
-      </InputSection>
-
-      <InputSection title="Miasto">
-        <CustomTextInput
-          onChangeText={setCity}
-          keyboardType={'default'}
-          value={city}
-        />
-      </InputSection>
-      <InputSection title="Opis">
-        <TextInput
-          onChangeText={setDescription}
-          keyboardType={'default'}
-          value={description}
-        />
-      </InputSection>
-      <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
-        <SecondaryButton
-          label="Zapisz zmiany"
+        <Appbar.Action
+          size={30}
+          icon="content-save"
+          color="#2e1c00"
           onPress={async () => {
             const profile: ProfileRequestType = {
               name,
@@ -129,7 +108,43 @@ export const EditProfilePage = (props: any) => {
             }
           }}
         />
-      </View>
+      </Appbar.Header>
+      <MainScrollContainer>
+        <DocumentSelector
+          fileResponse={fileResponse}
+          setFileResponse={setFileResponse}
+          label="Ustaw zdjęcie profilowe"
+        />
+        <InputSection title="Imię">
+          <CustomTextInput
+            onChangeText={setName}
+            keyboardType={'default'}
+            value={name}
+          />
+        </InputSection>
+        <InputSection title="Nazwisko">
+          <CustomTextInput
+            onChangeText={setSurname}
+            keyboardType={'default'}
+            value={surname}
+          />
+        </InputSection>
+
+        <InputSection title="Miasto">
+          <CustomTextInput
+            onChangeText={setCity}
+            keyboardType={'default'}
+            value={city}
+          />
+        </InputSection>
+        <InputSection title="Opis">
+          <CustomTextInput
+            onChangeText={setDescription}
+            keyboardType={'default'}
+            value={description}
+          />
+        </InputSection>
+      </MainScrollContainer>
     </MainContainer>
   );
 };

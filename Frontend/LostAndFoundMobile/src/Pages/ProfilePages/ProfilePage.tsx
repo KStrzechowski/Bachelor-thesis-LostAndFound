@@ -23,6 +23,7 @@ import {
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { TextInput } from 'react-native-gesture-handler';
+import { Appbar } from 'react-native-paper';
 
 const CommentItem = (props: any) => {
   const item: ProfileCommentResponseType = props.item;
@@ -206,13 +207,47 @@ export const ProfilePage = (props: any) => {
 
   return (
     <MainContainer>
-      <MainTitle>{profile?.username}</MainTitle>
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title={profile?.username}
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+        <Appbar.Action
+          size={30}
+          icon="chat"
+          color="#2e1c00"
+          onPress={() => {
+            if (profile) {
+              const chatRecipent: BaseProfileType = {
+                userId: profile.userId,
+                username: profile.username,
+                pictureUrl: profile.pictureUrl,
+              };
+              props.navigation.push('Home', {
+                screen: 'Chat',
+                params: {
+                  chatRecipent,
+                },
+              });
+            }
+          }}
+        />
+      </Appbar.Header>
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
           marginTop: 10,
           marginBottom: 10,
+          padding: 30,
         }}
         onLayout={event => setWidth(event.nativeEvent.layout.width)}>
         <View style={{ alignContent: 'center', marginRight: 10 }}>
@@ -245,23 +280,6 @@ export const ProfilePage = (props: any) => {
             </Text>
             <ScoreView score={profile?.averageProfileRating} />
           </View>
-          <SecondaryButton
-            label={'Rozpocznij czat'}
-            onPress={() => {
-              if (profile) {
-                const chatRecipent: BaseProfileType = {
-                  userId: profile.userId,
-                  username: profile.username,
-                  pictureUrl: profile.pictureUrl,
-                };
-                props.navigation.push('Home', {
-                  screen: 'Chat',
-                  params: {
-                    chatRecipent,
-                  },
-                });
-              }
-            }}></SecondaryButton>
         </View>
       </View>
       <Text>{profile?.description}</Text>

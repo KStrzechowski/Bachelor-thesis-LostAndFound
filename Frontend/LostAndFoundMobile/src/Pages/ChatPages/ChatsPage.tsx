@@ -17,6 +17,7 @@ import {
 } from 'commons/';
 import { MainContainer, MainTitle, Subtitle } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
+import { Appbar } from 'react-native-paper';
 
 const GetChats = async (
   accessToken: string,
@@ -113,8 +114,22 @@ export const ChatsPage = (props: any) => {
 
   return (
     <MainContainer>
-      <MainTitle>Czaty</MainTitle>
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title="Czaty"
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+      </Appbar.Header>
       <FlatList
+        style={{ padding: 30 }}
         data={chatsData}
         contentContainerStyle={{ paddingBottom: 20 }}
         keyExtractor={item => item.userId}

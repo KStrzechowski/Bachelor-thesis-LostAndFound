@@ -25,6 +25,8 @@ import {
 import { getAccessToken } from '../../SecureStorage';
 import { ScrollView } from 'react-native-gesture-handler';
 import { DocumentPickerResponse } from 'react-native-document-picker';
+import { Appbar } from 'react-native-paper';
+import { MainScrollContainer } from '../../Components/MainComponents';
 
 const editPost = async (
   publicationId: string,
@@ -136,11 +138,51 @@ export const EditPostPage = (props: any) => {
   };
 
   return (
-    <ScrollView>
-      <MainContainer>
-        <View style={{ alignSelf: 'center', marginBottom: 10 }}>
-          <MainTitle>Edytuj Ogłoszenie</MainTitle>
-        </View>
+    <MainContainer>
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title="Edytuj Ogłoszenie"
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+        <Appbar.Action
+          size={30}
+          icon="content-save"
+          color="#2e1c00"
+          onPress={async () => {
+            const newPostData: PublicationRequestType = {
+              title,
+              description,
+              incidentAddress,
+              incidentDate,
+              subjectCategoryId: category?.id,
+              publicationType,
+              publicationState,
+            };
+
+            const response = await editPost(
+              postData.publicationId,
+              newPostData,
+            );
+            if (response) {
+              if (fileResponse.length > 0)
+                await updatePostPhoto(postData.publicationId, fileResponse[0]);
+              props.navigation.push('Home', {
+                screen: 'Post',
+                params: { publicationId: response?.publicationId },
+              });
+            }
+          }}
+        />
+      </Appbar.Header>
+      <MainScrollContainer>
         <InputSection title="Tytuł Ogłoszenia">
           <CustomTextInput
             testID="titlePlaceholder"
@@ -215,39 +257,7 @@ export const EditPostPage = (props: any) => {
           setFileResponse={setFileResponse}
           label={postData?.subjectPhotoUrl ? 'Edytuj zdjęcie' : 'Dodaj zdjęcie'}
         />
-        <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
-          <SecondaryButton
-            label="Zapisz zmiany"
-            onPress={async () => {
-              const newPostData: PublicationRequestType = {
-                title,
-                description,
-                incidentAddress,
-                incidentDate,
-                subjectCategoryId: category?.id,
-                publicationType,
-                publicationState,
-              };
-
-              const response = await editPost(
-                postData.publicationId,
-                newPostData,
-              );
-              if (response) {
-                if (fileResponse.length > 0)
-                  await updatePostPhoto(
-                    postData.publicationId,
-                    fileResponse[0],
-                  );
-                props.navigation.push('Home', {
-                  screen: 'Post',
-                  params: { publicationId: response?.publicationId },
-                });
-              }
-            }}
-          />
-        </View>
-      </MainContainer>
-    </ScrollView>
+      </MainScrollContainer>
+    </MainContainer>
   );
 };

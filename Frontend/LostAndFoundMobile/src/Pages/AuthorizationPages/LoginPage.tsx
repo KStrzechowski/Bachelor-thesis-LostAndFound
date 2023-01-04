@@ -1,12 +1,14 @@
 import { LoginRequestType, getProfile, login } from 'commons';
 import React from 'react';
 import { Image, ScrollView, Text, View } from 'react-native';
+import { Appbar } from 'react-native-paper';
 import { AuthContext } from '../../../Config';
 import {
   CustomTextInput,
   InputSection,
   MainButton,
   MainContainer,
+  MainScrollContainer,
   MainTitle,
   PressableText,
   Subtitle,
@@ -56,13 +58,22 @@ export const LoginPage = (props: { navigation: string[] }) => {
   };
 
   return (
-    <ScrollView>
-      <MainContainer>
+    <MainContainer>
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.Content
+          title="Zaloguj się"
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+      </Appbar.Header>
+      <MainScrollContainer>
         <Image
           source={Logo}
           style={{ width: '100%', resizeMode: 'stretch', marginBottom: 20 }}
         />
-        <MainTitle>Zaloguj się</MainTitle>
         <Subtitle>Hej! Dobrze cię znowu widzieć</Subtitle>
         <InputSection title="E-mail">
           <CustomTextInput
@@ -97,7 +108,7 @@ export const LoginPage = (props: { navigation: string[] }) => {
             onPress={() => props.navigation.push('Registration')}
           />
         </View>
-      </MainContainer>
-    </ScrollView>
+      </MainScrollContainer>
+    </MainContainer>
   );
 };

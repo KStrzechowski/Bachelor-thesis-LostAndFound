@@ -20,6 +20,8 @@ import {
 import { getAccessToken } from '../../SecureStorage';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { PublicationSearchRequestType } from 'commons';
+import { Appbar } from 'react-native-paper';
+import { MainScrollContainer } from '../../Components/MainComponents';
 
 export const SearchPostsPage = (props: any) => {
   const [show1, setShow1] = React.useState<boolean>(false);
@@ -30,7 +32,7 @@ export const SearchPostsPage = (props: any) => {
   const [incidentAddress, setIncidentAddress] = React.useState<
     string | undefined
   >();
-  const [distance, setDistance] = React.useState<number>(1000);
+  const [distance, setDistance] = React.useState<number>(5);
   const [incidentFromDate, setIncidentFromDate] = React.useState<Date>(
     new Date(),
   );
@@ -85,11 +87,57 @@ export const SearchPostsPage = (props: any) => {
   };
 
   return (
-    <ScrollView>
-      <MainContainer>
-        <View style={{ alignSelf: 'center', marginBottom: 10 }}>
-          <MainTitle>Szukaj Ogłoszeń</MainTitle>
-        </View>
+    <MainContainer>
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title="Szukaj Ogłoszeń"
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+        <Appbar.Action
+          size={30}
+          icon="content-save"
+          color="#2e1c00"
+          onPress={() => {
+            const searchPublication: PublicationSearchRequestType = {
+              title: title,
+              incidentAddress: incidentAddress,
+              incidentDistance: distance,
+              incidentFromDate: incidentFromDate,
+              incidentToDate: incidentToDate,
+              subjectCategoryId: subjectCategory?.id,
+              publicationType: publicationType,
+              publicationState: publicationState,
+            };
+            const firstSort: PublicationSortType | undefined = firstArgumentSort
+              ? { type: firstArgumentSort, order: firstArgumentSortOrder }
+              : undefined;
+            const secondSort: PublicationSortType | undefined =
+              secondArgumentSort
+                ? { type: secondArgumentSort, order: secondArgumentSortOrder }
+                : undefined;
+
+            props.navigation.navigate('Home', {
+              screen: 'Posts',
+              params: {
+                publication: searchPublication,
+                orderBy: {
+                  firstArgumentSort: firstSort,
+                  secondArgumentSort: secondSort,
+                },
+              },
+            });
+          }}
+        />
+      </Appbar.Header>
+      <MainScrollContainer>
         <InputSection title="Tytuł">
           <CustomTextInput
             onChangeText={setTitle}
@@ -108,10 +156,11 @@ export const SearchPostsPage = (props: any) => {
           <Picker
             selectedValue={distance}
             onValueChange={itemValue => setDistance(itemValue)}>
-            <Picker.Item label="500 m" value={500} />
-            <Picker.Item label="1 km" value={1000} />
-            <Picker.Item label="2 km" value={2000} />
-            <Picker.Item label="5 km" value={5000} />
+            <Picker.Item label="1 km" value={1} />
+            <Picker.Item label="2 km" value={2} />
+            <Picker.Item label="5 km" value={5} />
+            <Picker.Item label="10 km" value={10} />
+            <Picker.Item label="20 km" value={20} />
           </Picker>
         </InputSection>
         <InputSection title="Data od">
@@ -205,63 +254,27 @@ export const SearchPostsPage = (props: any) => {
             <Picker.Item label="Malejąco" value={Order.Descending} />
           </Picker>
         </InputSection>
-        <InputSection title="Sortuj po 2 wartości">
-          <Picker
-            selectedValue={secondArgumentSort}
-            onValueChange={itemValue => setSecondArgumentSort(itemValue)}>
-            <Picker.Item label="Brak" value={undefined} />
-            <Picker.Item label="Tytuł" value={'Title'} />
-            <Picker.Item label="Kategoria" value={'SubjectCategoryId'} />
-            <Picker.Item label="Data zdarzenia" value={'IncidentDate'} />
-            <Picker.Item label="Średnia ocena" value={'AggregateRating'} />
-            <Picker.Item label="Stan ogłoszenia" value={'PublicationState'} />
-            <Picker.Item label="Typ ogłoszenia" value={'PublicationType'} />
-          </Picker>
-          <Picker
-            selectedValue={secondArgumentSortOrder}
-            onValueChange={itemValue => setSecondArgumentSortOrder(itemValue)}>
-            <Picker.Item label="Rosnąco" value={Order.Ascending} />
-            <Picker.Item label="Malejąco" value={Order.Descending} />
-          </Picker>
-        </InputSection>
-        <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
-          <SecondaryButton
-            label="Szukaj"
-            onPress={() => {
-              const searchPublication: PublicationSearchRequestType = {
-                title: title,
-                incidentAddress: incidentAddress,
-                incidentDistance: distance,
-                incidentFromDate: incidentFromDate,
-                incidentToDate: incidentToDate,
-                subjectCategoryId: subjectCategory?.id,
-                publicationType: publicationType,
-                publicationState: publicationState,
-              };
-              const firstSort: PublicationSortType | undefined =
-                firstArgumentSort
-                  ? { type: firstArgumentSort, order: firstArgumentSortOrder }
-                  : undefined;
-              const secondSort: PublicationSortType | undefined =
-                secondArgumentSort
-                  ? { type: secondArgumentSort, order: secondArgumentSortOrder }
-                  : undefined;
-
-              props.navigation.navigate('Home', {
-                screen: 'Posts',
-                params: {
-                  publication: searchPublication,
-                  orderBy: {
-                    firstArgumentSort: firstSort,
-                    secondArgumentSort: secondSort,
-                  },
-                },
-              });
-            }}
-          />
-        </View>
-      </MainContainer>
-    </ScrollView>
+          <InputSection title="Sortuj po 2 wartości">
+            <Picker
+              selectedValue={secondArgumentSort}
+              onValueChange={itemValue => setSecondArgumentSort(itemValue)}>
+              <Picker.Item label="Brak" value={undefined} />
+              <Picker.Item label="Tytuł" value={'Title'} />
+              <Picker.Item label="Kategoria" value={'SubjectCategoryId'} />
+              <Picker.Item label="Data zdarzenia" value={'IncidentDate'} />
+              <Picker.Item label="Średnia ocena" value={'AggregateRating'} />
+              <Picker.Item label="Stan ogłoszenia" value={'PublicationState'} />
+              <Picker.Item label="Typ ogłoszenia" value={'PublicationType'} />
+            </Picker>
+            <Picker
+              selectedValue={secondArgumentSortOrder}
+              onValueChange={itemValue => setSecondArgumentSortOrder(itemValue)}>
+              <Picker.Item label="Rosnąco" value={Order.Ascending} />
+              <Picker.Item label="Malejąco" value={Order.Descending} />
+            </Picker>
+          </InputSection>
+      </MainScrollContainer>
+    </MainContainer>
   );
 };
 
