@@ -9,7 +9,12 @@ import {
   Text,
   View,
 } from 'react-native';
-import { BaseProfileChatType, getBaseProfiles, getChats } from 'commons/';
+import {
+  BaseProfileChatType,
+  BaseProfileType,
+  getBaseProfiles,
+  getChats,
+} from 'commons/';
 import { MainContainer, MainTitle, Subtitle } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 
@@ -40,8 +45,11 @@ const ChatItem = (props: any) => {
     }>();
 
   React.useEffect(() => {
-    setDate(item.lastMessage.creationTime);
-    if (item.pictureUrl) {
+    if (item?.lastMessage?.creationTime)
+      setDate(
+        format(new Date(item.lastMessage.creationTime), 'dd.MM.yyyy HH:mm'),
+      );
+    if (item?.pictureUrl) {
       let imageSize = { width: width / 4, height: width / 4 };
       Image.getSize(
         item.pictureUrl,
@@ -55,7 +63,7 @@ const ChatItem = (props: any) => {
         height: displayedHeight,
       });
     }
-  }, []);
+  }, [item, width]);
 
   return (
     <Pressable
@@ -68,17 +76,22 @@ const ChatItem = (props: any) => {
           style={{
             width: imageProfileDisplayedSize?.width,
             height: imageProfileDisplayedSize?.height,
+            marginRight: 10,
           }}
         />
       ) : (
-        <IoniconsIcon name="person" size={width / 4} />
+        <IoniconsIcon
+          name="person"
+          size={width / 4}
+          style={{ marginRight: 10 }}
+        />
       )}
-      <View style={{ width: (width * 3) / 4, paddingRight: 15 }}>
+      <View style={{ width: (width * 3) / 4 - 10, paddingRight: 15 }}>
         <Text style={{ fontSize: 18, fontWeight: '500' }}>
           {item?.username}
         </Text>
         <Subtitle>{date}</Subtitle>
-        <Text numberOfLines={3}>{item?.lastMessage.content}</Text>
+        <Text numberOfLines={2}>{item?.lastMessage.content}</Text>
       </View>
     </Pressable>
   );
@@ -108,15 +121,19 @@ export const ChatsPage = (props: any) => {
         renderItem={({ item }) => (
           <ChatItem
             item={item}
-            onPress={() =>
+            onPress={() => {
+              const chatRecipent: BaseProfileType = {
+                userId: item.userId,
+                username: item.username,
+                pictureUrl: item.pictureUrl,
+              };
               props.navigation.push('Home', {
                 screen: 'Chat',
                 params: {
-                  chatRecipentId: item.userId,
-                  chatRecipentUsername: item.username,
+                  chatRecipent,
                 },
-              })
-            }
+              });
+            }}
           />
         )}
       />

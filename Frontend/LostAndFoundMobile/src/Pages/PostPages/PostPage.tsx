@@ -19,6 +19,7 @@ import {
   DeleteButton,
 } from '../../Components';
 import {
+  BaseProfileType,
   CategoryType,
   deletePublication,
   deletePublicationPhoto,
@@ -190,9 +191,16 @@ export const PostPage = (props: any) => {
               label={'Rozpocznij czat'}
               onPress={() => {
                 if (profile) {
-                  props.navigation.push('Chat', {
-                    chatRecipentId: profile?.userId,
-                    chatRecipentUsername: profile?.username,
+                  const chatRecipent: BaseProfileType = {
+                    userId: profile.userId,
+                    username: profile.username,
+                    pictureUrl: profile.pictureUrl,
+                  };
+                  props.navigation.push('Home', {
+                    screen: 'Chat',
+                    params: {
+                      chatRecipent,
+                    },
                   });
                 }
               }}
