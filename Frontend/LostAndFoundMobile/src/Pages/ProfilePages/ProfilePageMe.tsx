@@ -8,6 +8,7 @@ import {
 } from 'commons';
 import React from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
+import { Appbar } from 'react-native-paper';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import { ProfileContext } from '../../../Config';
 import {
@@ -17,6 +18,7 @@ import {
   ScoreView,
   SecondaryButton,
 } from '../../Components';
+import { MainScrollContainer } from '../../Components/MainComponents';
 import { getAccessToken, removeUserPhotoUrl } from '../../SecureStorage';
 
 const deleteImage = async () => {
@@ -110,13 +112,38 @@ export const ProfilePageMe = (props: any) => {
 
   return (
     <MainContainer>
-      <MainTitle>{profile?.username}</MainTitle>
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title={profile?.username}
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+        <Appbar.Action
+          size={30}
+          icon="file-document-edit-outline"
+          color="#2e1c00"
+          onPress={() =>
+            props.navigation.navigate('Home', {
+              screen: 'EditProfile',
+              params: { user: profile },
+            })
+          }
+        />
+      </Appbar.Header>
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
           marginTop: 10,
           marginBottom: 10,
+          padding: 30,
         }}
         onLayout={event => setWidth(event.nativeEvent.layout.width)}>
         {profile?.pictureUrl ? (
@@ -168,14 +195,6 @@ export const ProfilePageMe = (props: any) => {
             </Text>
             <ScoreView score={profile?.averageProfileRating} />
           </View>
-          <SecondaryButton
-            label={'Edytuj profil'}
-            onPress={() =>
-              props.navigation.navigate('Home', {
-                screen: 'EditProfile',
-                params: { user: profile },
-              })
-            }></SecondaryButton>
         </View>
       </View>
       <Text>{profile?.description}</Text>

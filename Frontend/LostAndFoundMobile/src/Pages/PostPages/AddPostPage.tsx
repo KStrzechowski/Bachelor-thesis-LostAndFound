@@ -24,6 +24,8 @@ import {
 import { getAccessToken } from '../../SecureStorage';
 import { ScrollView } from 'react-native-gesture-handler';
 import { DocumentPickerResponse } from 'react-native-document-picker';
+import { Appbar } from 'react-native-paper';
+import { MainScrollContainer } from '../../Components/MainComponents';
 
 const addNewPost = async (
   publication: PublicationRequestType,
@@ -91,11 +93,56 @@ export const AddPostPage = (props: any) => {
   };
 
   return (
-    <ScrollView>
-      <MainContainer>
-        <View style={{ alignSelf: 'center', marginBottom: 10 }}>
-          <MainTitle>Stwórz Ogłoszenie</MainTitle>
-        </View>
+    <MainContainer>
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title="Stwórz Ogłoszenie"
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+        <Appbar.Action
+          size={30}
+          icon="content-save"
+          color="#2e1c00"
+          onPress={async () => {
+            const publication: PublicationRequestType = {
+              title,
+              description,
+              incidentAddress,
+              incidentDate,
+              subjectCategoryId: subjectCategory?.id,
+              publicationType,
+            };
+            console.log(publication);
+
+            const response = await addNewPost(
+              publication,
+              fileResponse.length > 0 ? fileResponse[0] : undefined,
+            );
+            if (response) {
+              console.log(response);
+              props.navigation.push('Home', {
+                screen: 'Post',
+                params: { publicationId: response?.publicationId },
+              });
+            }
+          }}
+        />
+      </Appbar.Header>
+      <MainScrollContainer>
+        <DocumentSelector
+          fileResponse={fileResponse}
+          setFileResponse={setFileResponse}
+          label="Dodaj zdjęcie"
+        />
+
         <InputSection title="Tytuł Ogłoszenia">
           <CustomTextInput
             testID="titlePlaceholder"
@@ -153,46 +200,14 @@ export const AddPostPage = (props: any) => {
           </Picker>
         </InputSection>
         <InputSection title="Opis">
-          <TextInput
+          <CustomTextInput
             onChangeText={setDescription}
             keyboardType={'default'}
             value={description}
           />
         </InputSection>
-        <DocumentSelector
-          fileResponse={fileResponse}
-          setFileResponse={setFileResponse}
-          label="Dodaj zdjęcie"
-        />
-        <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
-          <SecondaryButton
-            label="Zapisz zmiany"
-            onPress={async () => {
-              const publication: PublicationRequestType = {
-                title,
-                description,
-                incidentAddress,
-                incidentDate,
-                subjectCategoryId: subjectCategory?.id,
-                publicationType,
-              };
-              console.log(publication);
-
-              const response = await addNewPost(
-                publication,
-                fileResponse.length > 0 ? fileResponse[0] : undefined,
-              );
-              if (response) {
-                console.log(response);
-                props.navigation.push('Home', {
-                  screen: 'Post',
-                  params: { publicationId: response?.publicationId },
-                });
-              }
-            }}
-          />
-        </View>
-      </MainContainer>
-    </ScrollView>
+        <InputSection title=""></InputSection>
+      </MainScrollContainer>
+    </MainContainer>
   );
 };

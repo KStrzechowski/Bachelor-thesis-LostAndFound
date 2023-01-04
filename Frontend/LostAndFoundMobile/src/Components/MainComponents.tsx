@@ -11,11 +11,22 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export const MainContainer: React.FC<PropsWithChildren> = ({ children }) => {
   return <SafeAreaView style={styles.pageContainer}>{children}</SafeAreaView>;
+};
+
+export const MainScrollContainer: React.FC<PropsWithChildren> = ({
+  children,
+}) => {
+  return (
+    <ScrollView contentInset={{ bottom: 80 }} style={styles.scrollContainer}>
+      <View style={{ marginBottom: 60 }}>{children}</View>
+    </ScrollView>
+  );
 };
 
 export const MainTitle: React.FC<TextProps> = ({ children }) => {
@@ -129,8 +140,10 @@ export const ScoreView = (props: { testID?: string; score?: number }) => {
 
 export const styles = StyleSheet.create({
   pageContainer: {
+    flex: 1,
+  },
+  scrollContainer: {
     padding: 30,
-    paddingTop: 30,
     flex: 1,
   },
   mainTitle: {

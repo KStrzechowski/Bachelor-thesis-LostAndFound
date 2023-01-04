@@ -34,6 +34,8 @@ import {
   SinglePublicationVote,
 } from 'commons';
 import { getAccessToken, getUserId } from '../../SecureStorage';
+import { Appbar } from 'react-native-paper';
+import { MainScrollContainer } from '../../Components/MainComponents';
 
 const deletePost = async (publicationId: string) => {
   let isDeleted: boolean = false;
@@ -160,8 +162,51 @@ export const PostPage = (props: any) => {
   }, [profile]);
 
   return (
-    <ScrollView>
-      <MainContainer>
+    <MainContainer>
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title="Ogłoszenie"
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+        {myUserId === profile?.userId ? (
+          <Appbar.Action
+            size={30}
+            icon="file-document-edit-outline"
+            color="#2e1c00"
+            onPress={() => props.navigation.push('EditPost', { postData })}
+          />
+        ) : (
+          <Appbar.Action
+            size={30}
+            icon="chat"
+            color="#2e1c00"
+            onPress={() => {
+              if (profile) {
+                const chatRecipent: BaseProfileType = {
+                  userId: profile.userId,
+                  username: profile.username,
+                  pictureUrl: profile.pictureUrl,
+                };
+                props.navigation.push('Home', {
+                  screen: 'Chat',
+                  params: {
+                    chatRecipent,
+                  },
+                });
+              }
+            }}
+          />
+        )}
+      </Appbar.Header>
+      <MainScrollContainer>
         <View style={{ alignSelf: 'center', marginBottom: 10 }}>
           {postData?.publicationState === PublicationState.Closed ? (
             <MainTitle>Ogłoszenie zamknięte</MainTitle>
@@ -181,31 +226,6 @@ export const PostPage = (props: any) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          {myUserId === profile?.userId ? (
-            <SecondaryButton
-              label={'Edytuj Ogłoszenie'}
-              onPress={() => props.navigation.push('EditPost', { postData })}
-            />
-          ) : (
-            <SecondaryButton
-              label={'Rozpocznij czat'}
-              onPress={() => {
-                if (profile) {
-                  const chatRecipent: BaseProfileType = {
-                    userId: profile.userId,
-                    username: profile.username,
-                    pictureUrl: profile.pictureUrl,
-                  };
-                  props.navigation.push('Home', {
-                    screen: 'Chat',
-                    params: {
-                      chatRecipent,
-                    },
-                  });
-                }
-              }}
-            />
-          )}
           <Text
             style={
               postData && postData.aggregateRating >= 0
@@ -367,8 +387,8 @@ export const PostPage = (props: any) => {
         ) : (
           <></>
         )}
-      </MainContainer>
-    </ScrollView>
+      </MainScrollContainer>
+    </MainContainer>
   );
 };
 

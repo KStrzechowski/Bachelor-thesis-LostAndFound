@@ -1,10 +1,13 @@
 import React from 'react';
 import {
+  Dimensions,
   FlatList,
   Image,
   Pressable,
+  SafeAreaView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
@@ -14,6 +17,8 @@ import { MainContainer, MainTitle, SecondaryButton } from '../../Components';
 import { getPublications, PublicationResponseType } from 'commons';
 import { getAccessToken } from '../../SecureStorage';
 import { PublicationSearchRequestType } from 'commons';
+import IoniconsIcon from 'react-native-vector-icons/Ionicons';
+import { Appbar } from 'react-native-paper';
 
 const PostItem = (props: any) => {
   const item: PublicationResponseType = props.item;
@@ -115,30 +120,47 @@ export const PostsPage = (props: any) => {
     getData();
   }, [searchPublication, orderBy]);
 
+  const win = Dimensions.get('window');
+  const buttonStyles = StyleSheet.create({
+    circle: {
+      backgroundColor: '#c4d68d',
+      width: 70,
+      height: 70,
+      position: 'absolute',
+      bottom: 40,
+      right: 0.5 * win.width - 35,
+      borderRadius: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
+
   return (
     <MainContainer>
-      <View style={styles.titleSection}>
-        <MainTitle>Ogłoszenia</MainTitle>
-        <AntDesignIcon
-          name="search1"
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title="Ogłoszenia"
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+        <Appbar.Action
           size={30}
+          icon="archive-search-outline"
+          color="#2e1c00"
           onPress={() =>
             props.navigation.navigate('Home', { screen: 'SearchPosts' })
           }
         />
-      </View>
-      <View style={{ alignSelf: 'center', width: '80%', marginVertical: 10 }}>
-        <SecondaryButton
-          testID="AddPostButton"
-          label="Dodaj ogłoszenie"
-          onPress={() => {
-            props.navigation.push('Home', {
-              screen: 'AddPost',
-            });
-          }}
-        />
-      </View>
+      </Appbar.Header>
       <FlatList
+        style={{ padding: 30 }}
         data={postsData}
         numColumns={2}
         columnWrapperStyle={{
@@ -159,11 +181,25 @@ export const PostsPage = (props: any) => {
           />
         )}
       />
+      <TouchableOpacity
+        activeOpacity={0.7}
+        style={buttonStyles.circle}
+        testID="AddPostButton"
+        onPress={() => {
+          props.navigation.push('Home', {
+            screen: 'AddPost',
+          });
+        }}>
+        <IoniconsIcon name="add" size={55} color="#FFFF" />
+      </TouchableOpacity>
     </MainContainer>
   );
 };
 
 const styles = StyleSheet.create({
+  pageContainer: {
+    flex: 1,
+  },
   titleSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',

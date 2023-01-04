@@ -1,11 +1,13 @@
 import { register, RegisterRequestType } from 'commons';
 import React from 'react';
 import { Text, View, ScrollView } from 'react-native';
+import { Appbar } from 'react-native-paper';
 import {
   CustomTextInput,
   InputSection,
   MainButton,
   MainContainer,
+  MainScrollContainer,
   MainTitle,
   PressableText,
 } from '../../Components/MainComponents';
@@ -55,9 +57,18 @@ export const RegistrationPage = (props: { navigation: string[] }) => {
   };
 
   return (
-    <ScrollView>
-      <MainContainer>
-        <MainTitle>Zarejestruj się</MainTitle>
+    <MainContainer>
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.Content
+          title="Zarejestruj się"
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
+          }}
+        />
+      </Appbar.Header>
+      <MainScrollContainer>
         <InputSection title="E-mail">
           <CustomTextInput
             testID="emailPlaceholder"
@@ -115,7 +126,7 @@ export const RegistrationPage = (props: { navigation: string[] }) => {
             onPress={() => props.navigation.push('Login')}
           />
         </View>
-      </MainContainer>
-    </ScrollView>
+      </MainScrollContainer>
+    </MainContainer>
   );
 };

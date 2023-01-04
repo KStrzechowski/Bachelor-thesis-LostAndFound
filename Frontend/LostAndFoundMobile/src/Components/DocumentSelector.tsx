@@ -5,10 +5,10 @@ import DocumentPicker, {
   types,
 } from 'react-native-document-picker';
 import {
-  Button,
-  Pressable,
+  Image,
+  Dimensions,
   SafeAreaView,
-  StatusBar,
+  TouchableOpacity,
   StyleSheet,
   Text,
   View,
@@ -32,43 +32,69 @@ export const DocumentSelector = (props: {
     }
   }, []);
 
+  const win = Dimensions.get('window');
+  const styles2 = StyleSheet.create({
+    image: {
+      flex: 1,
+      alignSelf: 'stretch',
+      width: 0.9 * win.width,
+      height: 0.2 * win.height,
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      <Pressable onPress={handleDocumentSelection} style={styles.button}>
-        <Text style={styles.buttonText}>
-          {props.label ? props.label : 'Dodaj zdjęcie'}
-        </Text>
-        <IoniconsIcon style={{ color: Colors.white }} size={20} name="person" />
-      </Pressable>
-      <StatusBar barStyle={'dark-content'} />
       {props.fileResponse.map((file, index) => (
-        <View
-          key={index.toString()}
-          style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Text
-            style={styles.fileNameText}
-            numberOfLines={1}
-            ellipsizeMode={'middle'}>
-            {file?.name}
-          </Text>
-          {file?.name ? (
-            <Button
-              title="Usuń dodane zdjęcie"
-              color="red"
-              onPress={() => props.setFileResponse([])}
-            />
+        <View key={index.toString()}>
+          {(file?.size && file.size > 0) ? (
+            <View style={styles.photoContainer}>
+              <Image
+                source={{ uri: file.uri }}
+                style={styles2.image}
+                resizeMode={'contain'}
+              />
+            </View>
           ) : (
-            <></>
+            <View style={styles.containerForPhoto}>
+              <Text style={styles.textInPhotoBox}>Nie dodano zdjęcia</Text>
+            </View>
           )}
         </View>
       ))}
+      <View style={styles.containerWithButtons}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={handleDocumentSelection}>
+          <IoniconsIcon name="attach-outline" size={25} />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
+    margin: 5,
+  },
+  containerWithButtons: {
+    paddingRight: 16,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  iconButton: {
+    width: 20,
+  },
+  textInPhotoBox: {
+    fontSize: 16,
+    color: 'darkbrown',
+    marginTop: 16,
+  },
+  photoContainer: {
+    alignItems: 'center',
+    paddingTop: 10,
+  },
+  containerForPhoto: {
+    height: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },

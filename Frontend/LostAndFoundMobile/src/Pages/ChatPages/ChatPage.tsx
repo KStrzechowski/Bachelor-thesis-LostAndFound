@@ -19,6 +19,7 @@ import {
   MessageResponseType,
 } from 'commons';
 import { getAccessToken, getUserId } from '../../SecureStorage';
+import { Appbar } from 'react-native-paper';
 
 const GetMessages = async (
   recipentId: string,
@@ -102,94 +103,75 @@ export const ChatPage = (props: any) => {
 
   return (
     <MainContainer>
-      <View>
-        <FlatList
-          ListHeaderComponent={
-            <View
-              onLayout={event => setWidth(event.nativeEvent.layout.width)}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              {chatRecipent?.pictureUrl ? (
-                <Image
-                  source={{ uri: chatRecipent.pictureUrl }}
-                  style={{
-                    width: imageProfileDisplayedSize?.width,
-                    height: imageProfileDisplayedSize?.height,
-                    marginRight: 10,
-                  }}
-                />
-              ) : (
-                <IoniconsIcon
-                  name="person"
-                  size={width / 6}
-                  style={{ marginRight: 10 }}
-                />
-              )}
-              <MainTitle>{chatRecipent?.username}</MainTitle>
-            </View>
-          }
-          ListHeaderComponentStyle={{
-            marginBottom: 10,
-            backgroundColor: DefaultTheme.colors.background,
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title={<Text>{chatRecipent?.username}</Text>}
+          titleStyle={{
+            textAlign: 'center',
+            color: '#2e1c00',
+            fontWeight: 'bold',
           }}
-          stickyHeaderIndices={[0]}
+        />
+      </Appbar.Header>
+        <FlatList
+          style={{ padding: 30, marginBottom: 70, flex: 1}}
           data={messagesData}
           renderItem={({ item }) => (
             <MessageItem item={item} currentUserId={currentUserId} />
           )}
-          ListFooterComponentStyle={{ marginTop: 10 }}
-          ListFooterComponent={
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <TextInput
-                onChangeText={setMessageContent}
-                value={messageContent}
-                placeholder="Podaj tytuł"
-                style={{
-                  borderRadius: 20,
-                  borderWidth: 1,
-                  flex: 4,
-                  marginRight: 10,
-                }}
-              />
-              <Pressable
-                style={{
-                  borderRadius: 20,
-                  backgroundColor: 'orange',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: 10,
-                  flex: 1,
-                }}
-                onPress={async () => {
-                  const accessToken = await getAccessToken();
-                  if (accessToken && messageContent.length > 0) {
-                    const message: MessageRequestType = {
-                      content: messageContent,
-                    };
-                    await SendMessage(
-                      chatRecipent?.userId,
-                      message,
-                      accessToken,
-                    );
-                    setUpdate(!update);
-                    setMessageContent('');
-                  }
-                }}>
-                <Text
-                  style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>
-                  Wyślij
-                </Text>
-              </Pressable>
-            </View>
-          }
         />
-      </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            position: 'absolute',
+            bottom: 0,
+            backgroundColor: '#abd699',
+            padding: 10,
+          }}>
+          <TextInput
+            onChangeText={setMessageContent}
+            value={messageContent}
+            placeholder="Podaj tytuł"
+            style={{
+              borderRadius: 20,
+              borderWidth: 1,
+              flex: 4,
+              marginRight: 10,
+              paddingLeft: 4,
+              backgroundColor: 'white'
+            }}
+          />
+
+          <Pressable
+            style={{
+              borderRadius: 20,
+              backgroundColor: '#2e1c00',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: 10,
+              flex: 1,
+            }}
+            onPress={async () => {
+              const accessToken = await getAccessToken();
+              if (accessToken && messageContent.length > 0) {
+                const message: MessageRequestType = {
+                  content: messageContent,
+                };
+                await SendMessage(chatRecipent?.userId, message, accessToken);
+                setUpdate(!update);
+                setMessageContent('');
+              }
+            }}>
+            <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>
+              Wyślij
+            </Text>
+          </Pressable>
+        </View>
     </MainContainer>
   );
 };
