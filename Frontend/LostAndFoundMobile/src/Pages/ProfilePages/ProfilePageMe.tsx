@@ -11,14 +11,7 @@ import { FlatList, Image, Text, View } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import { ProfileContext } from '../../../Config';
-import {
-  DeleteButton,
-  MainContainer,
-  MainTitle,
-  ScoreView,
-  SecondaryButton,
-} from '../../Components';
-import { MainScrollContainer } from '../../Components/MainComponents';
+import { DeleteButton, MainContainer, ScoreView } from '../../Components';
 import { getAccessToken, removeUserPhotoUrl } from '../../SecureStorage';
 
 const deleteImage = async () => {
@@ -137,83 +130,84 @@ export const ProfilePageMe = (props: any) => {
           }
         />
       </Appbar.Header>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginTop: 10,
-          marginBottom: 10,
-          padding: 30,
-        }}
-        onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-        {profile?.pictureUrl ? (
-          <View
-            style={{
-              alignContent: 'flex-start',
-              alignItems: 'flex-start',
-              alignSelf: 'flex-start',
-            }}>
-            <Image
-              source={{ uri: profile.pictureUrl }}
-              style={{
-                height: imageDisplayedSize?.width,
-                width: imageDisplayedSize?.height,
-                marginBottom: 10,
-              }}
-            />
-            <DeleteButton
-              label="Usuń zdjęcie"
-              onPress={async () => {
-                const isDeleted = await deleteImage();
-                if (isDeleted) {
-                  await removeUserPhotoUrl();
-                  await updatePhotoUrl();
-                  setUpdate(!update);
-                }
-              }}
-              style={{ alignSelf: 'center' }}
-            />
-          </View>
-        ) : (
-          <IoniconsIcon name="person" size={(width * 3) / 8} />
-        )}
+      <View style={{ flex: 1, padding: 30 }}>
         <View
           style={{
-            alignSelf: 'flex-end',
-            width: (width * 5) / 9,
-            paddingBottom: 10,
-          }}>
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 10,
+            marginBottom: 10,
+          }}
+          onLayout={event => setWidth(event.nativeEvent.layout.width)}>
+          {profile?.pictureUrl ? (
+            <View
+              style={{
+                alignContent: 'flex-start',
+                alignItems: 'flex-start',
+                alignSelf: 'flex-start',
+              }}>
+              <Image
+                source={{ uri: profile.pictureUrl }}
+                style={{
+                  height: imageDisplayedSize?.width,
+                  width: imageDisplayedSize?.height,
+                  marginBottom: 10,
+                }}
+              />
+              <DeleteButton
+                label="Usuń zdjęcie"
+                onPress={async () => {
+                  const isDeleted = await deleteImage();
+                  if (isDeleted) {
+                    await removeUserPhotoUrl();
+                    await updatePhotoUrl();
+                    setUpdate(!update);
+                  }
+                }}
+                style={{ alignSelf: 'center' }}
+              />
+            </View>
+          ) : (
+            <IoniconsIcon name="person" size={(width * 3) / 8} />
+          )}
           <View
             style={{
-              flex: 1,
-              padding: 20,
-              flexDirection: 'row',
-              alignItems: 'flex-end',
+              alignSelf: 'flex-end',
+              width: (width * 5) / 9,
+              paddingBottom: 10,
             }}>
-            <Text numberOfLines={3} style={{ fontSize: 18, flex: 3 }}>
-              {profile?.city}
-            </Text>
-            <ScoreView score={profile?.averageProfileRating} />
+            <View
+              style={{
+                flex: 1,
+                padding: 20,
+                flexDirection: 'row',
+                alignItems: 'flex-end',
+              }}>
+              <Text numberOfLines={3} style={{ fontSize: 18, flex: 3 }}>
+                {profile?.city}
+              </Text>
+              <ScoreView score={profile?.averageProfileRating} />
+            </View>
           </View>
         </View>
+        <Text>{profile?.description}</Text>
+        <View
+          style={{
+            marginTop: 30,
+            marginBottom: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+          }}>
+          <Text style={{ fontSize: 20, fontWeight: '600' }}>Komentarze</Text>
+        </View>
+        <FlatList
+          contentContainerStyle={{ paddingBottom: 20 }}
+          data={profileComments?.comments}
+          keyExtractor={item => item.author.id.toString()}
+          renderItem={({ item }) => <CommentItem item={item} />}
+        />
       </View>
-      <Text>{profile?.description}</Text>
-      <View
-        style={{
-          marginTop: 30,
-          marginBottom: 10,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-        }}>
-        <Text style={{ fontSize: 20, fontWeight: '600' }}>Komentarze</Text>
-      </View>
-      <FlatList
-        contentContainerStyle={{ paddingBottom: 20 }}
-        data={profileComments?.comments}
-        keyExtractor={item => item.author.id.toString()}
-        renderItem={({ item }) => <CommentItem item={item} />}
-      />
     </MainContainer>
   );
 };

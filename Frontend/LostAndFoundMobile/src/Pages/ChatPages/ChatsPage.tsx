@@ -15,7 +15,7 @@ import {
   getBaseProfiles,
   getChats,
 } from 'commons/';
-import { MainContainer, MainTitle, Subtitle } from '../../Components';
+import { MainContainer, Subtitle } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { Appbar } from 'react-native-paper';
 

@@ -5,7 +5,7 @@ export const getBaseProfiles = async (userIds, accessToken) => {
     }
     let path = "/profile/list?";
     for (const userId of userIds) {
-        path += `userIds=${userId}`;
+        path += `&userIds=${userId}`;
     }
     const result = await http({
         path,

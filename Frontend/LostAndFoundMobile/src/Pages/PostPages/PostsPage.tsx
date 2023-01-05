@@ -127,7 +127,7 @@ export const PostsPage = (props: any) => {
       width: 70,
       height: 70,
       position: 'absolute',
-      bottom: 40,
+      bottom: 30,
       right: 0.5 * win.width - 35,
       borderRadius: 50,
       justifyContent: 'center',

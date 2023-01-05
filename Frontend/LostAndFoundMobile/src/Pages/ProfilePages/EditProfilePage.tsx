@@ -6,15 +6,12 @@ import {
 } from 'commons';
 import React from 'react';
 import { DocumentPickerResponse } from 'react-native-document-picker';
-import { TextInput, View } from 'react-native';
 import { ProfileContext } from '../../../Config';
 import {
   CustomTextInput,
   DocumentSelector,
   InputSection,
   MainContainer,
-  MainTitle,
-  SecondaryButton,
 } from '../../Components';
 import {
   getAccessToken,
