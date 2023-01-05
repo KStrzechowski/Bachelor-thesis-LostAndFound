@@ -4,16 +4,14 @@ import {
   FlatList,
   Image,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
 import { format } from 'date-fns';
-import { MainContainer, MainTitle, SecondaryButton } from '../../Components';
+import { MainContainer } from '../../Components';
 import { getPublications, PublicationResponseType } from 'commons';
 import { getAccessToken } from '../../SecureStorage';
 import { PublicationSearchRequestType } from 'commons';

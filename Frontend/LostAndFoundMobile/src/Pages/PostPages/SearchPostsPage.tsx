@@ -1,14 +1,8 @@
 import { format } from 'date-fns';
 import React from 'react';
 import { Picker } from '@react-native-picker/picker';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import {
-  SecondaryButton,
-  MainContainer,
-  MainTitle,
-  InputSection,
-  CustomTextInput,
-} from '../../Components';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { MainContainer, InputSection, CustomTextInput } from '../../Components';
 import {
   CategoryType,
   PublicationState,
@@ -254,25 +248,25 @@ export const SearchPostsPage = (props: any) => {
             <Picker.Item label="Malejąco" value={Order.Descending} />
           </Picker>
         </InputSection>
-          <InputSection title="Sortuj po 2 wartości">
-            <Picker
-              selectedValue={secondArgumentSort}
-              onValueChange={itemValue => setSecondArgumentSort(itemValue)}>
-              <Picker.Item label="Brak" value={undefined} />
-              <Picker.Item label="Tytuł" value={'Title'} />
-              <Picker.Item label="Kategoria" value={'SubjectCategoryId'} />
-              <Picker.Item label="Data zdarzenia" value={'IncidentDate'} />
-              <Picker.Item label="Średnia ocena" value={'AggregateRating'} />
-              <Picker.Item label="Stan ogłoszenia" value={'PublicationState'} />
-              <Picker.Item label="Typ ogłoszenia" value={'PublicationType'} />
-            </Picker>
-            <Picker
-              selectedValue={secondArgumentSortOrder}
-              onValueChange={itemValue => setSecondArgumentSortOrder(itemValue)}>
-              <Picker.Item label="Rosnąco" value={Order.Ascending} />
-              <Picker.Item label="Malejąco" value={Order.Descending} />
-            </Picker>
-          </InputSection>
+        <InputSection title="Sortuj po 2 wartości">
+          <Picker
+            selectedValue={secondArgumentSort}
+            onValueChange={itemValue => setSecondArgumentSort(itemValue)}>
+            <Picker.Item label="Brak" value={undefined} />
+            <Picker.Item label="Tytuł" value={'Title'} />
+            <Picker.Item label="Kategoria" value={'SubjectCategoryId'} />
+            <Picker.Item label="Data zdarzenia" value={'IncidentDate'} />
+            <Picker.Item label="Średnia ocena" value={'AggregateRating'} />
+            <Picker.Item label="Stan ogłoszenia" value={'PublicationState'} />
+            <Picker.Item label="Typ ogłoszenia" value={'PublicationType'} />
+          </Picker>
+          <Picker
+            selectedValue={secondArgumentSortOrder}
+            onValueChange={itemValue => setSecondArgumentSortOrder(itemValue)}>
+            <Picker.Item label="Rosnąco" value={Order.Ascending} />
+            <Picker.Item label="Malejąco" value={Order.Descending} />
+          </Picker>
+        </InputSection>
       </MainScrollContainer>
     </MainContainer>
   );

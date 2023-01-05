@@ -15,15 +15,11 @@ import React from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import {
   CustomTextInput,
-  DeleteButton,
   DocumentSelector,
   InputSection,
   MainContainer,
-  MainTitle,
-  SecondaryButton,
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
-import { ScrollView } from 'react-native-gesture-handler';
 import { DocumentPickerResponse } from 'react-native-document-picker';
 import { Appbar } from 'react-native-paper';
 import { MainScrollContainer } from '../../Components/MainComponents';

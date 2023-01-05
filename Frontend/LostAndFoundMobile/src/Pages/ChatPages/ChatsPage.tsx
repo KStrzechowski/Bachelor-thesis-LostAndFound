@@ -127,6 +127,7 @@ export const ChatsPage = (props: any) => {
             fontWeight: 'bold',
           }}
         />
+        <Appbar.Action icon="flask-empty" color="#abd699"></Appbar.Action>
       </Appbar.Header>
       <FlatList
         style={{ padding: 30 }}

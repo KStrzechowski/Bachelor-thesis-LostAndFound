@@ -1,6 +1,6 @@
 import { register, RegisterRequestType } from 'commons';
 import React from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import {
   CustomTextInput,
@@ -8,7 +8,6 @@ import {
   MainButton,
   MainContainer,
   MainScrollContainer,
-  MainTitle,
   PressableText,
 } from '../../Components/MainComponents';
 
