@@ -8,7 +8,7 @@ import {
 } from 'commons';
 import React from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
-import { Appbar } from 'react-native-paper';
+import { Appbar, Avatar } from 'react-native-paper';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import { ProfileContext } from '../../../Config';
 import { DeleteButton, MainContainer, ScoreView } from '../../Components';
@@ -146,13 +146,16 @@ export const ProfilePageMe = (props: any) => {
                 alignItems: 'flex-start',
                 alignSelf: 'flex-start',
               }}>
-              <Image
-                source={{ uri: profile.pictureUrl }}
-                style={{
-                  height: imageDisplayedSize?.width,
-                  width: imageDisplayedSize?.height,
-                  marginBottom: 10,
+              <Avatar.Image
+                source={{
+                  uri:
+                    profile?.pictureUrl ??
+                    'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
                 }}
+                style={{
+                  marginBottom: 20,
+                }}
+                size={150}
               />
               <DeleteButton
                 label="Usuń zdjęcie"

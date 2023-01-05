@@ -22,7 +22,7 @@ import {
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { TextInput } from 'react-native-gesture-handler';
-import { Appbar } from 'react-native-paper';
+import { Appbar, Avatar } from 'react-native-paper';
 
 const CommentItem = (props: any) => {
   const item: ProfileCommentResponseType = props.item;
@@ -250,17 +250,17 @@ export const ProfilePage = (props: any) => {
           }}
           onLayout={event => setWidth(event.nativeEvent.layout.width)}>
           <View style={{ alignContent: 'center', marginRight: 10 }}>
-            {profile?.pictureUrl ? (
-              <Image
-                source={{ uri: profile.pictureUrl }}
-                style={{
-                  width: imageDisplayedSize?.width,
-                  height: imageDisplayedSize?.height,
-                }}
-              />
-            ) : (
-              <IoniconsIcon name="person" size={(width * 3) / 8} />
-            )}
+            <Avatar.Image
+              source={{
+                uri:
+                  profile?.pictureUrl ??
+                  'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+              }}
+              style={{
+                marginBottom: 20,
+              }}
+              size={150}
+            />
           </View>
           <View
             style={{

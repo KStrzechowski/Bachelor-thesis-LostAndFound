@@ -4,6 +4,7 @@ import { AuthContext, ProfileContext } from './Config';
 import { AuthScreenStack, HomeScreenStack } from './src/Navigation';
 import { getAccessToken } from './src/SecureStorage';
 import { clearStorage } from './src/SecureStorage/Authorization';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 const App = () => {
   const [updatePhotoUrlValue, setUpdatePhotoUrlValue] =
@@ -66,17 +67,19 @@ const App = () => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <ProfileContext.Provider
-        value={{
-          updatePhotoUrl: async () => {
-            setUpdatePhotoUrlValue(!updatePhotoUrlValue);
-          },
-          updatePhotoUrlValue,
-        }}>
-        <NavigationContainer>
-          {state.isSignedIn ? <HomeScreenStack /> : <AuthScreenStack />}
-        </NavigationContainer>
-      </ProfileContext.Provider>
+      <PaperProvider>
+        <ProfileContext.Provider
+          value={{
+            updatePhotoUrl: async () => {
+              setUpdatePhotoUrlValue(!updatePhotoUrlValue);
+            },
+            updatePhotoUrlValue,
+          }}>
+          <NavigationContainer>
+            {state.isSignedIn ? <HomeScreenStack /> : <AuthScreenStack />}
+          </NavigationContainer>
+        </ProfileContext.Provider>
+      </PaperProvider>
     </AuthContext.Provider>
   );
 };
