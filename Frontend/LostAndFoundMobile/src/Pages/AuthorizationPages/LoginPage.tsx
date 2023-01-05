@@ -1,6 +1,6 @@
 import { LoginRequestType, getProfile, login } from 'commons';
 import React from 'react';
-import { Image, ScrollView, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { AuthContext } from '../../../Config';
 import {
@@ -9,7 +9,6 @@ import {
   MainButton,
   MainContainer,
   MainScrollContainer,
-  MainTitle,
   PressableText,
   Subtitle,
 } from '../../Components/MainComponents';

@@ -4,10 +4,8 @@ import {
   addPublication,
   CategoryType,
   getCategories,
-  ProfileResponseType,
   PublicationRequestType,
   PublicationResponseType,
-  PublicationState,
   PublicationType,
 } from 'commons';
 import { format } from 'date-fns';
@@ -18,11 +16,8 @@ import {
   DocumentSelector,
   InputSection,
   MainContainer,
-  MainTitle,
-  SecondaryButton,
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
-import { ScrollView } from 'react-native-gesture-handler';
 import { DocumentPickerResponse } from 'react-native-document-picker';
 import { Appbar } from 'react-native-paper';
 import { MainScrollContainer } from '../../Components/MainComponents';

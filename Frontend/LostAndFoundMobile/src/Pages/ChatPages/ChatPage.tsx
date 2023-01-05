@@ -117,6 +117,7 @@ export const ChatPage = (props: any) => {
             fontWeight: 'bold',
           }}
         />
+       <Appbar.Action icon="flask-empty" color="#abd699"></Appbar.Action>
       </Appbar.Header>
       <KeyboardAwareFlatList
         style={{ padding: 30, marginBottom: 70, flex: 1 }}
