@@ -240,7 +240,7 @@ export const ProfilePage = (props: any) => {
           }}
         />
       </Appbar.Header>
-      <View style={{ padding: 30 }}>
+      <View style={{ flex: 1, padding: 30 }}>
         <View
           style={{
             flexDirection: 'row',
