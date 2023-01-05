@@ -66,8 +66,8 @@ const App = () => {
   }
 
   return (
-    <PaperProvider>
-      <AuthContext.Provider value={authContext}>
+    <AuthContext.Provider value={authContext}>
+      <PaperProvider>
         <ProfileContext.Provider
           value={{
             updatePhotoUrl: async () => {
@@ -79,8 +79,8 @@ const App = () => {
             {state.isSignedIn ? <HomeScreenStack /> : <AuthScreenStack />}
           </NavigationContainer>
         </ProfileContext.Provider>
-      </AuthContext.Provider>
-    </PaperProvider>
+      </PaperProvider>
+    </AuthContext.Provider>
   );
 };
 
