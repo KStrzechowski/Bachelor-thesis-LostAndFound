@@ -27,7 +27,7 @@ import {
   SinglePublicationVote,
 } from 'commons';
 import { getAccessToken, getUserId } from '../../SecureStorage';
-import { Appbar, Menu, Provider } from 'react-native-paper';
+import { Appbar, Menu } from 'react-native-paper';
 import { MainScrollContainer } from '../../Components/MainComponents';
 
 const deletePost = async (publicationId: string) => {
@@ -165,252 +165,245 @@ export const PostPage = (props: any) => {
 
   return (
     <MainContainer>
-      <Provider>
-        <Appbar.Header style={{ backgroundColor: '#abd699' }}>
-          <Appbar.BackAction
-            color="#2e1c00"
-            onPress={() => props.navigation.pop()}
+      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+        <Appbar.BackAction
+          color="#2e1c00"
+          onPress={() => props.navigation.pop()}
+        />
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 10,
+          }}>
+          <Appbar.Content
+            title="Ogłoszenie"
+            titleStyle={{ color: '#2e1c00', fontWeight: 'bold' }}
           />
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: 10,
-            }}>
-            <Appbar.Content
-              title="Ogłoszenie"
-              titleStyle={{ color: '#2e1c00', fontWeight: 'bold' }}
+          <Text style={{ margin: 1, color: '#2e1c00' }}>
+            {postData?.publicationType === PublicationType.FoundSubject
+              ? 'Znaleziono'
+              : 'Zgubiono'}
+          </Text>
+        </View>
+        <Menu
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          anchor={
+            <Appbar.Action
+              icon="dots-vertical"
+              onPress={() => setVisible(true)}
             />
-            <Text style={{ margin: 1, color: '#2e1c00' }}>
-              {postData?.publicationType === PublicationType.FoundSubject
-                ? 'Znaleziono'
-                : 'Zgubiono'}
-            </Text>
-          </View>
-          <Menu
-            visible={visible}
-            onDismiss={() => setVisible(false)}
-            anchor={
-              <Appbar.Action
-                icon="dots-vertical"
-                onPress={() => setVisible(true)}
+          }>
+          {myUserId === profile?.userId ? (
+            <>
+              <Menu.Item
+                title="Edytuj ogłoszenie"
+                onPress={() => props.navigation.push('EditPost', { postData })}
               />
-            }>
-            {myUserId === profile?.userId ? (
-              <>
-                <Menu.Item
-                  title="Edytuj ogłoszenie"
-                  onPress={() =>
-                    props.navigation.push('EditPost', { postData })
+              <Menu.Item
+                onPress={async () => {
+                  const isDeleted = await deletePost(publicationId);
+                  if (isDeleted) {
+                    props.navigation.push('Home', {
+                      screen: 'Posts',
+                    });
                   }
-                />
+                }}
+                title="Usuń ogłoszenie"
+              />
+              {postData && postData.subjectPhotoUrl ? (
                 <Menu.Item
+                  title="Usuń zdjęcie"
                   onPress={async () => {
-                    const isDeleted = await deletePost(publicationId);
+                    const isDeleted = await deleteImage(publicationId);
                     if (isDeleted) {
-                      props.navigation.push('Home', {
-                        screen: 'Posts',
-                      });
-                    }
-                  }}
-                  title="Usuń ogłoszenie"
-                />
-                {postData && postData.subjectPhotoUrl ? (
-                  <Menu.Item
-                    title="Usuń zdjęcie"
-                    onPress={async () => {
-                      const isDeleted = await deleteImage(publicationId);
-                      if (isDeleted) {
-                        setUpdate(!update);
-                      }
-                    }}
-                  />
-                ) : (
-                  <Menu.Item title="Dodaj zdjęcie" onPress={() => {}} />
-                )}
-              </>
-            ) : (
-              <>
-                <Menu.Item
-                  title="Rozpocznij czat"
-                  onPress={() => {
-                    if (profile) {
-                      const chatRecipent: BaseProfileType = {
-                        userId: profile.userId,
-                        username: profile.username,
-                        pictureUrl: profile.pictureUrl,
-                      };
-                      props.navigation.push('Home', {
-                        screen: 'Chat',
-                        params: {
-                          chatRecipent,
-                        },
-                      });
-                    }
-                  }}
-                />
-              </>
-            )}
-          </Menu>
-        </Appbar.Header>
-        <MainScrollContainer>
-          <View style={{ alignSelf: 'center', marginBottom: 10 }}>
-            {postData?.publicationState === PublicationState.Closed ? (
-              <MainTitle>Ogłoszenie zamknięte</MainTitle>
-            ) : (
-              <></>
-            )}
-          </View>
-          <MainTitle>{postData?.title}</MainTitle>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
-              style={
-                postData && postData.aggregateRating >= 0
-                  ? styles.positiveScore
-                  : styles.negativeScore
-              }>
-              {postData && postData.aggregateRating > 0
-                ? `+${postData?.aggregateRating}`
-                : postData?.aggregateRating}
-            </Text>
-          </View>
-          <View
-            onLayout={event => setWidth(event.nativeEvent.layout.width)}
-            style={{ alignContent: 'center' }}>
-            {postData && postData.subjectPhotoUrl ? (
-              <View>
-                <Image
-                  source={{ uri: postData.subjectPhotoUrl }}
-                  style={{
-                    alignSelf: 'center',
-                    marginVertical: 10,
-                    width: imageDisplayedSize?.width,
-                    height: imageDisplayedSize?.height,
-                  }}
-                />
-              </View>
-            ) : (
-              <></>
-            )}
-          </View>
-          <Text style={styles.infoContainer}>{postData?.incidentAddress}</Text>
-          <Text style={styles.infoContainer}>{incidentDate}</Text>
-          <Text style={styles.infoContainer}>{category?.displayName}</Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text style={{ fontSize: 20, fontWeight: '600', color: 'black' }}>
-              Opis
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-              }}>
-              <Pressable
-                onPress={() => {
-                  if (postData) {
-                    if (postData?.userVote !== SinglePublicationVote.Up) {
-                      giveVote(
-                        postData?.publicationId,
-                        SinglePublicationVote.Up,
-                      );
-                      setUpdate(!update);
-                    } else {
-                      giveVote(
-                        postData?.publicationId,
-                        SinglePublicationVote.NoVote,
-                      );
                       setUpdate(!update);
                     }
-                  }
-                }}>
-                <MaterialCommunityIcon
-                  style={{
-                    marginRight: 20,
-                    color:
-                      postData?.userVote === SinglePublicationVote.Up
-                        ? 'green'
-                        : 'grey',
-                  }}
-                  name="thumb-up"
-                  size={20}
-                />
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  if (postData) {
-                    if (postData?.userVote !== SinglePublicationVote.Down) {
-                      giveVote(
-                        postData?.publicationId,
-                        SinglePublicationVote.Down,
-                      );
-                      setUpdate(!update);
-                    } else {
-                      giveVote(
-                        postData?.publicationId,
-                        SinglePublicationVote.NoVote,
-                      );
-                      setUpdate(!update);
-                    }
-                  }
-                }}>
-                <MaterialCommunityIcon
-                  style={{
-                    color:
-                      postData?.userVote === SinglePublicationVote.Down
-                        ? 'red'
-                        : 'grey',
-                  }}
-                  name="thumb-down"
-                  size={20}
-                />
-              </Pressable>
-            </View>
-          </View>
-          <Text style={{ fontSize: 14 }}>{postData?.description}</Text>
-          <Pressable
-            style={styles.userContainer}
-            onPress={async () => {
-              if (myUserId === profile?.userId) {
-                props.navigation.push('Home', {
-                  screen: 'ProfileMe',
-                });
-              } else {
-                props.navigation.push('Home', {
-                  screen: 'Profile',
-                  params: { userId: profile?.userId },
-                });
-              }
-            }}>
-            <View
-              onLayout={event => setWidth(event.nativeEvent.layout.width)}
-              style={{ alignContent: 'center' }}>
-              {profile && profile.pictureUrl ? (
-                <Image
-                  source={{ uri: profile.pictureUrl }}
-                  style={{
-                    width: imageProfileDisplayedSize?.width,
-                    height: imageProfileDisplayedSize?.height,
                   }}
                 />
               ) : (
-                <IoniconsIcon name="person" size={25} />
+                <Menu.Item title="Dodaj zdjęcie" onPress={() => {}} />
               )}
-            </View>
+            </>
+          ) : (
+            <>
+              <Menu.Item
+                title="Rozpocznij czat"
+                onPress={() => {
+                  if (profile) {
+                    const chatRecipent: BaseProfileType = {
+                      userId: profile.userId,
+                      username: profile.username,
+                      pictureUrl: profile.pictureUrl,
+                    };
+                    props.navigation.push('Home', {
+                      screen: 'Chat',
+                      params: {
+                        chatRecipent,
+                      },
+                    });
+                  }
+                }}
+              />
+            </>
+          )}
+        </Menu>
+      </Appbar.Header>
+      <MainScrollContainer>
+        <View style={{ alignSelf: 'center', marginBottom: 10 }}>
+          {postData?.publicationState === PublicationState.Closed ? (
+            <MainTitle>Ogłoszenie zamknięte</MainTitle>
+          ) : (
+            <></>
+          )}
+        </View>
+        <MainTitle>{postData?.title}</MainTitle>
 
-            <Text style={{ fontSize: 18 }}>{profile?.username}</Text>
-            <ScoreView score={profile?.averageProfileRating} />
-          </Pressable>
-        </MainScrollContainer>
-      </Provider>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={
+              postData && postData.aggregateRating >= 0
+                ? styles.positiveScore
+                : styles.negativeScore
+            }>
+            {postData && postData.aggregateRating > 0
+              ? `+${postData?.aggregateRating}`
+              : postData?.aggregateRating}
+          </Text>
+        </View>
+        <View
+          onLayout={event => setWidth(event.nativeEvent.layout.width)}
+          style={{ alignContent: 'center' }}>
+          {postData && postData.subjectPhotoUrl ? (
+            <View>
+              <Image
+                source={{ uri: postData.subjectPhotoUrl }}
+                style={{
+                  alignSelf: 'center',
+                  marginVertical: 10,
+                  width: imageDisplayedSize?.width,
+                  height: imageDisplayedSize?.height,
+                }}
+              />
+            </View>
+          ) : (
+            <></>
+          )}
+        </View>
+        <Text style={styles.infoContainer}>{postData?.incidentAddress}</Text>
+        <Text style={styles.infoContainer}>{incidentDate}</Text>
+        <Text style={styles.infoContainer}>{category?.displayName}</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text style={{ fontSize: 20, fontWeight: '600', color: 'black' }}>
+            Opis
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+            }}>
+            <Pressable
+              onPress={() => {
+                if (postData) {
+                  if (postData?.userVote !== SinglePublicationVote.Up) {
+                    giveVote(postData?.publicationId, SinglePublicationVote.Up);
+                    setUpdate(!update);
+                  } else {
+                    giveVote(
+                      postData?.publicationId,
+                      SinglePublicationVote.NoVote,
+                    );
+                    setUpdate(!update);
+                  }
+                }
+              }}>
+              <MaterialCommunityIcon
+                style={{
+                  marginRight: 20,
+                  color:
+                    postData?.userVote === SinglePublicationVote.Up
+                      ? 'green'
+                      : 'grey',
+                }}
+                name="thumb-up"
+                size={20}
+              />
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                if (postData) {
+                  if (postData?.userVote !== SinglePublicationVote.Down) {
+                    giveVote(
+                      postData?.publicationId,
+                      SinglePublicationVote.Down,
+                    );
+                    setUpdate(!update);
+                  } else {
+                    giveVote(
+                      postData?.publicationId,
+                      SinglePublicationVote.NoVote,
+                    );
+                    setUpdate(!update);
+                  }
+                }
+              }}>
+              <MaterialCommunityIcon
+                style={{
+                  color:
+                    postData?.userVote === SinglePublicationVote.Down
+                      ? 'red'
+                      : 'grey',
+                }}
+                name="thumb-down"
+                size={20}
+              />
+            </Pressable>
+          </View>
+        </View>
+        <Text style={{ fontSize: 14 }}>{postData?.description}</Text>
+        <Pressable
+          style={styles.userContainer}
+          onPress={async () => {
+            if (myUserId === profile?.userId) {
+              props.navigation.push('Home', {
+                screen: 'ProfileMe',
+              });
+            } else {
+              props.navigation.push('Home', {
+                screen: 'Profile',
+                params: { userId: profile?.userId },
+              });
+            }
+          }}>
+          <View
+            onLayout={event => setWidth(event.nativeEvent.layout.width)}
+            style={{ alignContent: 'center' }}>
+            {profile && profile.pictureUrl ? (
+              <Image
+                source={{ uri: profile.pictureUrl }}
+                style={{
+                  width: imageProfileDisplayedSize?.width,
+                  height: imageProfileDisplayedSize?.height,
+                }}
+              />
+            ) : (
+              <IoniconsIcon name="person" size={25} />
+            )}
+          </View>
+
+          <Text style={{ fontSize: 18 }}>{profile?.username}</Text>
+          <ScoreView score={profile?.averageProfileRating} />
+        </Pressable>
+      </MainScrollContainer>
     </MainContainer>
   );
 };

@@ -4,8 +4,18 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 import React from 'react';
-import { Image, View } from 'react-native';
+import { Image, StyleSheet, Switch, Text, View } from 'react-native';
+import {
+  Avatar,
+  Button,
+  Caption,
+  Drawer,
+  Paragraph,
+  Title,
+  TouchableRipple,
+} from 'react-native-paper';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext, ProfileContext } from '../../Config';
 import { SecondaryButton } from '../Components';
 import {
@@ -55,52 +65,119 @@ const CustomDrawerContent = (props: any) => {
       });
     }
   }, [userPhotoUrl, width]);
+  const styles = StyleSheet.create({
+    drawerContent: {
+      flex: 1,
+    },
+    userInfoSection: {
+      paddingLeft: 20,
+    },
+    title: {
+      marginTop: 20,
+      fontWeight: 'bold',
+    },
+    caption: {
+      fontSize: 14,
+      lineHeight: 14,
+    },
+    row: {
+      marginTop: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    section: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: 15,
+    },
+    paragraph: {
+      fontWeight: 'bold',
+      marginRight: 3,
+    },
+    drawerSection: {
+      marginTop: 15,
+    },
+    preference: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+    },
+  });
 
   return (
-    <DrawerContentScrollView
-      {...props}
-      onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-      <View style={{ flex: 1 }}>
-        {userPhotoUrl ? (
-          <Image
-            source={{ uri: userPhotoUrl }}
-            style={{
-              alignSelf: 'center',
-              marginTop: 60,
-              marginBottom: 20,
-              height: imageDisplayedSize?.height,
-              width: imageDisplayedSize?.width,
+    <DrawerContentScrollView {...props}>
+      <View style={styles.drawerContent}>
+        <View style={styles.userInfoSection}>
+          <Avatar.Image
+            source={{
+              uri:
+                userPhotoUrl ??
+                'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
             }}
+            style={{ alignSelf: 'center', marginTop: 10, marginRight: 30 }}
+            size={70}
           />
-        ) : (
-          <IoniconsIcon
-            style={{
-              alignSelf: 'center',
-              marginTop: 60,
-              marginBottom: 20,
-            }}
-            name="person"
-            size={width / 3}
-          />
-        )}
-        <DrawerItem
-          label="Profil"
-          onPress={() => props.navigation.push('Home', { screen: 'ProfileMe' })}
-        />
-        <DrawerItem
-          label="Ogłoszenia"
-          onPress={() => props.navigation.push('Home', { screen: 'Posts' })}
-        />
-        <DrawerItem
-          label="Czaty"
-          onPress={() => props.navigation.push('Home', { screen: 'Chats' })}
-        />
-        <View style={{ alignItems: 'center', marginTop: 40 }}>
-          <SecondaryButton
-            label="Wyloguj się"
-            onPress={async () => await signOut()}
-          />
+          <Title style={styles.title}>Imie Nazwisko</Title>
+          <Caption style={styles.caption}>@username</Caption>
+          <View style={styles.row}>
+            <View style={styles.section}>
+              <Paragraph style={[styles.paragraph, styles.caption]}>
+                4
+              </Paragraph>
+              <Caption style={styles.caption}>Ocena</Caption>
+            </View>
+          </View>
         </View>
+        <Drawer.Section style={styles.drawerSection}>
+          <DrawerItem
+            icon={({ color, size }) => (
+              <MaterialCommunityIcons
+                name="account-outline"
+                color={color}
+                size={size}
+              />
+            )}
+            label="Profil"
+            onPress={() =>
+              props.navigation.push('Home', { screen: 'ProfileMe' })
+            }
+          />
+          <DrawerItem
+            icon={({ color, size }) => (
+              <MaterialCommunityIcons name="post" color={color} size={size} />
+            )}
+            label="Ogłoszenia"
+            onPress={() => props.navigation.push('Home', { screen: 'Posts' })}
+          />
+          <DrawerItem
+            icon={({ color, size }) => (
+              <MaterialCommunityIcons
+                name="post-outline"
+                color={color}
+                size={size}
+              />
+            )}
+            label="Moje ogłoszenia"
+            onPress={() => props.navigation.push('Home', { screen: 'Posts' })}
+          />
+          <DrawerItem
+            icon={({ color, size }) => (
+              <MaterialCommunityIcons name="chat" color={color} size={size} />
+            )}
+            label="Czaty"
+            onPress={() => props.navigation.push('Home', { screen: 'Chats' })}
+          />
+        </Drawer.Section>
+        <Drawer.Section title="Akcje" style={{ padding: 15 }}>
+          <Button
+            icon="logout"
+            mode="contained"
+            style={{ backgroundColor: '#2e1c00' }}
+            onPress={async () => await signOut()}>
+            Wyloguj się
+          </Button>
+        </Drawer.Section>
       </View>
     </DrawerContentScrollView>
   );
