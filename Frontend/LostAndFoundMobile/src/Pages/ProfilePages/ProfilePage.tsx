@@ -16,7 +16,6 @@ import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import {
   DeleteButton,
   MainContainer,
-  MainTitle,
   ScoreView,
   SecondaryButton,
   StarRating,
@@ -241,60 +240,61 @@ export const ProfilePage = (props: any) => {
           }}
         />
       </Appbar.Header>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginTop: 10,
-          marginBottom: 10,
-          padding: 30,
-        }}
-        onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-        <View style={{ alignContent: 'center', marginRight: 10 }}>
-          {profile?.pictureUrl ? (
-            <Image
-              source={{ uri: profile.pictureUrl }}
-              style={{
-                width: imageDisplayedSize?.width,
-                height: imageDisplayedSize?.height,
-              }}
-            />
-          ) : (
-            <IoniconsIcon name="person" size={(width * 3) / 8} />
-          )}
-        </View>
+      <View style={{ padding: 30 }}>
         <View
           style={{
-            alignSelf: 'flex-end',
-            width: (width * 5) / 8 - 10,
-          }}>
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 10,
+            marginBottom: 10,
+          }}
+          onLayout={event => setWidth(event.nativeEvent.layout.width)}>
+          <View style={{ alignContent: 'center', marginRight: 10 }}>
+            {profile?.pictureUrl ? (
+              <Image
+                source={{ uri: profile.pictureUrl }}
+                style={{
+                  width: imageDisplayedSize?.width,
+                  height: imageDisplayedSize?.height,
+                }}
+              />
+            ) : (
+              <IoniconsIcon name="person" size={(width * 3) / 8} />
+            )}
+          </View>
           <View
             style={{
-              flex: 1,
-              padding: 20,
-              flexDirection: 'row',
-              alignItems: 'flex-end',
+              alignSelf: 'flex-end',
+              width: (width * 5) / 8 - 10,
             }}>
-            <Text numberOfLines={3} style={{ fontSize: 18, flex: 3 }}>
-              {profile?.city}
-            </Text>
-            <ScoreView score={profile?.averageProfileRating} />
+            <View
+              style={{
+                flex: 1,
+                padding: 20,
+                flexDirection: 'row',
+                alignItems: 'flex-end',
+              }}>
+              <Text numberOfLines={3} style={{ fontSize: 18, flex: 3 }}>
+                {profile?.city}
+              </Text>
+              <ScoreView score={profile?.averageProfileRating} />
+            </View>
           </View>
         </View>
+        <Text>{profile?.description}</Text>
+        <MyComment
+          item={profileComments?.myComment}
+          userId={userId}
+          update={update}
+          updateHandler={setUpdate}
+        />
+        <FlatList
+          contentContainerStyle={{ paddingBottom: 20 }}
+          data={profileComments?.comments}
+          keyExtractor={item => item.author.id.toString()}
+          renderItem={({ item }) => <CommentItem item={item} />}
+        />
       </View>
-      <Text>{profile?.description}</Text>
-      <MyComment
-        item={profileComments?.myComment}
-        userId={userId}
-        update={update}
-        updateHandler={setUpdate}
-      />
-      <FlatList
-        contentContainerStyle={{ paddingBottom: 20 }}
-        data={profileComments?.comments}
-        keyExtractor={item => item.author.id.toString()}
-        renderItem={({ item }) => <CommentItem item={item} />}
-      />
     </MainContainer>
   );
 };

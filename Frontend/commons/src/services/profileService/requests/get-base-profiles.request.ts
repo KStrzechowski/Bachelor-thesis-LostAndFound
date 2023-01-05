@@ -1,5 +1,5 @@
 import { http } from "../../../http";
-import { AuthorResponseType, BaseProfileType } from "../profileTypes";
+import { BaseProfileType } from "../profileTypes";
 
 export const getBaseProfiles = async (
   userIds: string[],
@@ -10,7 +10,7 @@ export const getBaseProfiles = async (
   }
   let path: string = "/profile/list?";
   for (const userId of userIds) {
-    path += `userIds=${userId}`;
+    path += `&userIds=${userId}`;
   }
 
   const result = await http<BaseProfileType[]>({
