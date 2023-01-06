@@ -2,7 +2,7 @@
 {
     public class RabbitMQSettings
     {
-        private const string settingName = "RabitMQ";
+        private const string settingName = "RabbitMQ";
 
         public static string SettingName => settingName;
 

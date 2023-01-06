@@ -47,7 +47,7 @@ namespace LostAndFound.PublicationService.UnitTests.ServiceRegistrations
         }
 
         [Fact]
-        public void AddThirdPartyServices_Execute_BlobStorageSettingsAreConfiguredCorrectly()
+        public void AddThirdPartyServices_Execute_RabbitMQSettingsAreConfiguredCorrectly()
         {
             _services.AddThirdPartyServices(_configuration);
             var serviceProvider = _services.BuildServiceProvider();
