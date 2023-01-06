@@ -10,7 +10,15 @@ import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { Appbar, Avatar, Menu } from 'react-native-paper';
 import { ProfileContext } from '../../../Config';
-import { MainContainer, ScoreView } from '../../Components';
+import {
+  dark,
+  dark2,
+  light,
+  light3,
+  MainContainer,
+  ScoreView,
+  secondary,
+} from '../../Components';
 import { getAccessToken, removeUserPhotoUrl } from '../../SecureStorage';
 
 const deleteImage = async () => {
@@ -32,14 +40,15 @@ const CommentItem = (props: any) => {
         padding: 10,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: 'light-grey',
+        borderColor: dark2,
+        backgroundColor: light,
       }}>
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={{ fontSize: 18, fontWeight: '500', color: 'black' }}>
+        <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
           {item.author.username ? item.author.username : 'Anonim'}
         </Text>
         <ScoreView score={item.profileRating} />
@@ -83,16 +92,16 @@ export const ProfilePageMe = (props: any) => {
 
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title={profile?.username}
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
@@ -101,6 +110,7 @@ export const ProfilePageMe = (props: any) => {
           onDismiss={() => setVisible(false)}
           anchor={
             <Appbar.Action
+              color={light}
               icon="dots-vertical"
               onPress={() => setVisible(true)}
             />
@@ -147,11 +157,11 @@ export const ProfilePageMe = (props: any) => {
           {profile?.pictureUrl ? (
             <Avatar.Image
               source={{
-                uri: profile?.pictureUrl,
+                uri: profile.pictureUrl,
               }}
               style={{
                 marginBottom: 20,
-                backgroundColor: '#2e1c00',
+                backgroundColor: light3,
               }}
               size={(width * 4) / 9}
             />
@@ -163,30 +173,32 @@ export const ProfilePageMe = (props: any) => {
                 alignSelf: 'center',
                 marginTop: 10,
                 marginRight: 30,
-                backgroundColor: '#2e1c00',
+                backgroundColor: light3,
               }}
             />
           )}
           <View
             style={{
-              alignSelf: 'flex-end',
+              flex: 1,
               width: (width * 5) / 9,
-              paddingBottom: 10,
+              paddingLeft: 20,
             }}>
             <View
               style={{
-                flex: 1,
-                padding: 20,
+                flex: 2,
                 flexDirection: 'row',
-                alignItems: 'flex-end',
+                marginBottom: 10,
               }}>
-              <Text numberOfLines={3} style={{ fontSize: 18, flex: 3 }}>
-                {profile?.city}
-              </Text>
+              <Text style={{ fontSize: 18, flex: 3 }}>{`${
+                profile?.name ? `${profile.name} ` : ''
+              }${profile?.surname ? profile.surname : ''}`}</Text>
               <ScoreView score={profile?.averageProfileRating} />
             </View>
           </View>
         </View>
+        <Text numberOfLines={3} style={{ fontSize: 18 }}>
+          {profile?.city}
+        </Text>
         <Text>{profile?.description}</Text>
         <View
           style={{

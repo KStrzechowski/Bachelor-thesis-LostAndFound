@@ -17,13 +17,16 @@ import {
   CustomTextInput,
   DocumentSelector,
   InputSection,
+  light,
   MainContainer,
+  secondary,
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { DocumentPickerResponse } from 'react-native-document-picker';
 import { Appbar } from 'react-native-paper';
 import {
   MainScrollContainer,
+  mainStyles,
   SecondaryButton,
 } from '../../Components/MainComponents';
 
@@ -160,23 +163,23 @@ export const EditPostPage = (props: any) => {
 
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title="Edytuj Ogłoszenie"
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
         <Appbar.Action
           size={30}
           icon="content-save"
-          color="#2e1c00"
+          color={light}
           onPress={async () => await SaveChanges()}
         />
       </Appbar.Header>
@@ -220,28 +223,37 @@ export const EditPostPage = (props: any) => {
           </Pressable>
         </InputSection>
         <InputSection title="Kategoria">
-          <Picker selectedValue={category} onValueChange={setCategory}>
-            {mapCategories}
-          </Picker>
+          <View style={mainStyles.pickerStyle}>
+            <Picker selectedValue={category} onValueChange={setCategory}>
+              {mapCategories}
+            </Picker>
+          </View>
         </InputSection>
         <InputSection title="Typ ogłoszenia">
-          <Picker
-            selectedValue={publicationType}
-            onValueChange={setPublicationType}>
-            <Picker.Item label="Zgubione" value={PublicationType.LostSubject} />
-            <Picker.Item
-              label="Znalezione"
-              value={PublicationType.FoundSubject}
-            />
-          </Picker>
+          <View style={mainStyles.pickerStyle}>
+            <Picker
+              selectedValue={publicationType}
+              onValueChange={setPublicationType}>
+              <Picker.Item
+                label="Zgubione"
+                value={PublicationType.LostSubject}
+              />
+              <Picker.Item
+                label="Znalezione"
+                value={PublicationType.FoundSubject}
+              />
+            </Picker>
+          </View>
         </InputSection>
         <InputSection title="Status ogłoszenia">
-          <Picker
-            selectedValue={publicationState}
-            onValueChange={setPublicationState}>
-            <Picker.Item label="Otwarte" value={PublicationState.Open} />
-            <Picker.Item label="Zamknięte" value={PublicationState.Closed} />
-          </Picker>
+          <View style={mainStyles.pickerStyle}>
+            <Picker
+              selectedValue={publicationState}
+              onValueChange={setPublicationState}>
+              <Picker.Item label="Otwarte" value={PublicationState.Open} />
+              <Picker.Item label="Zamknięte" value={PublicationState.Closed} />
+            </Picker>
+          </View>
         </InputSection>
         <InputSection title="Opis">
           <TextInput

@@ -14,9 +14,14 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import {
+  dark,
+  dark2,
   DeleteButton,
+  light,
+  light3,
   MainContainer,
   ScoreView,
+  secondary,
   SecondaryButton,
   StarRating,
 } from '../../Components';
@@ -34,14 +39,15 @@ const CommentItem = (props: any) => {
         padding: 10,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: 'light-grey',
+        borderColor: dark2,
+        backgroundColor: light,
       }}>
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={{ fontSize: 18, fontWeight: '500', color: 'black' }}>
+        <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
           {item.author.username}
         </Text>
         <ScoreView score={item.profileRating} />
@@ -76,7 +82,8 @@ const MyComment = (props: {
         padding: 10,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: 'light-grey',
+        borderColor: dark2,
+        backgroundColor: light,
       }}>
       <View
         style={{
@@ -185,23 +192,23 @@ export const ProfilePage = (props: any) => {
 
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title={profile?.username}
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
         <Appbar.Action
           size={30}
           icon="chat"
-          color="#2e1c00"
+          color={light}
           onPress={() => {
             if (profile) {
               const chatRecipent: BaseProfileType = {
@@ -231,11 +238,11 @@ export const ProfilePage = (props: any) => {
           {profile?.pictureUrl ? (
             <Avatar.Image
               source={{
-                uri: profile?.pictureUrl,
+                uri: profile.pictureUrl,
               }}
               style={{
                 marginBottom: 20,
-                backgroundColor: '#2e1c00',
+                backgroundColor: light3,
               }}
               size={(width * 4) / 9}
             />
@@ -247,7 +254,7 @@ export const ProfilePage = (props: any) => {
                 alignSelf: 'center',
                 marginTop: 10,
                 marginRight: 30,
-                backgroundColor: '#2e1c00',
+                backgroundColor: light3,
               }}
             />
           )}

@@ -1,6 +1,8 @@
 import { register, RegisterRequestType } from 'commons';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { Appbar } from 'react-native-paper';
+import { light, secondary } from '../../Components';
 import {
   CustomTextInput,
   InputSection,
@@ -56,6 +58,21 @@ export const RegistrationPage = (props: { navigation: string[] }) => {
 
   return (
     <MainContainer>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
+        <Appbar.BackAction
+          color={light}
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title="Zarejestruj się"
+          titleStyle={{
+            textAlign: 'center',
+            color: light,
+            fontWeight: 'bold',
+          }}
+        />
+        <Appbar.Action icon="flask-empty" color={secondary}></Appbar.Action>
+      </Appbar.Header>
       <MainScrollContainer>
         <InputSection title="E-mail">
           <CustomTextInput

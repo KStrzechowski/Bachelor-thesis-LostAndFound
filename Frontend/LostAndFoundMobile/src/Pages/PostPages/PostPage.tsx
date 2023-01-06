@@ -2,15 +2,19 @@ import { format } from 'date-fns';
 import React from 'react';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import {
-  Dimensions,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { MainContainer, MainTitle, ScoreView } from '../../Components';
+  danger,
+  dark,
+  dark2,
+  light,
+  light3,
+  MainContainer,
+  MainTitle,
+  ScoreView,
+  secondary,
+  success,
+} from '../../Components';
 import {
   BaseProfileType,
   CategoryType,
@@ -27,7 +31,7 @@ import {
   SinglePublicationVote,
 } from 'commons';
 import { getAccessToken, getUserId } from '../../SecureStorage';
-import { Appbar, Menu } from 'react-native-paper';
+import { Appbar, Avatar, Menu } from 'react-native-paper';
 import { MainScrollContainer } from '../../Components/MainComponents';
 
 const deletePost = async (publicationId: string) => {
@@ -158,9 +162,9 @@ export const PostPage = (props: any) => {
 
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <View
@@ -172,9 +176,9 @@ export const PostPage = (props: any) => {
           }}>
           <Appbar.Content
             title="Ogłoszenie"
-            titleStyle={{ color: '#2e1c00', fontWeight: 'bold' }}
+            titleStyle={{ color: light, fontWeight: 'bold' }}
           />
-          <Text style={{ margin: 1, color: '#2e1c00' }}>
+          <Text style={{ margin: 1, color: light }}>
             {postData?.publicationType === PublicationType.FoundSubject
               ? 'Znaleziono'
               : 'Zgubiono'}
@@ -185,6 +189,7 @@ export const PostPage = (props: any) => {
           onDismiss={() => setVisible(false)}
           anchor={
             <Appbar.Action
+              color={light}
               icon="dots-vertical"
               onPress={() => setVisible(true)}
             />
@@ -321,7 +326,7 @@ export const PostPage = (props: any) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <Text style={{ fontSize: 20, fontWeight: '600', color: 'black' }}>
+          <Text style={{ fontSize: 20, fontWeight: '600', color: dark }}>
             Opis
           </Text>
           <View
@@ -348,7 +353,7 @@ export const PostPage = (props: any) => {
                   marginRight: 20,
                   color:
                     postData?.userVote === SinglePublicationVote.Up
-                      ? 'green'
+                      ? success
                       : 'grey',
                 }}
                 name="thumb-up"
@@ -377,7 +382,7 @@ export const PostPage = (props: any) => {
                 style={{
                   color:
                     postData?.userVote === SinglePublicationVote.Down
-                      ? 'red'
+                      ? danger
                       : 'grey',
                 }}
                 name="thumb-down"
@@ -404,16 +409,25 @@ export const PostPage = (props: any) => {
           <View
             onLayout={event => setWidth(event.nativeEvent.layout.width)}
             style={{ alignContent: 'center' }}>
-            {profile && profile.pictureUrl ? (
-              <Image
-                source={{ uri: profile.pictureUrl }}
-                style={{
-                  width: imageProfileDisplayedSize?.width,
-                  height: imageProfileDisplayedSize?.height,
+            {profile?.pictureUrl ? (
+              <Avatar.Image
+                source={{
+                  uri: profile.pictureUrl,
                 }}
+                style={{
+                  backgroundColor: light3,
+                }}
+                size={40}
               />
             ) : (
-              <IoniconsIcon name="person" size={25} />
+              <Avatar.Icon
+                icon={'account'}
+                size={40}
+                style={{
+                  alignSelf: 'center',
+                  backgroundColor: light3,
+                }}
+              />
             )}
           </View>
 
@@ -430,30 +444,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderBottomColor: 'light-grey',
+    borderBottomColor: dark2,
     padding: 10,
     marginBottom: 10,
   },
   positiveScore: {
     fontSize: 24,
-    color: 'green',
+    color: success,
   },
   negativeScore: {
     fontSize: 24,
-    color: 'red',
+    color: danger,
   },
   infoContainer: {
     fontSize: 20,
     borderBottomWidth: 1,
-    borderBottomColor: 'light-grey',
+    borderBottomColor: dark2,
     marginBottom: 15,
   },
   userContainer: {
     marginVertical: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: light,
     borderWidth: 1,
-    borderColor: 'light-grey',
+    borderColor: dark2,
     borderRadius: 10,
     padding: 10,
     paddingVertical: 15,

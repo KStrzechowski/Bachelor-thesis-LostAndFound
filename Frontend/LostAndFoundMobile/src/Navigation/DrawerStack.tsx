@@ -16,6 +16,7 @@ import {
 } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext, ProfileContext } from '../../Config';
+import { light3, mainStyles, primary } from '../Components';
 import {
   ChatPage,
   ChatsPage,
@@ -69,7 +70,7 @@ const CustomDrawerContent = (props: any) => {
                 alignSelf: 'center',
                 marginTop: 10,
                 marginRight: 30,
-                backgroundColor: '#2e1c00',
+                backgroundColor: light3,
               }}
               size={70}
             />
@@ -80,7 +81,7 @@ const CustomDrawerContent = (props: any) => {
                 alignSelf: 'center',
                 marginTop: 10,
                 marginRight: 30,
-                backgroundColor: '#2e1c00',
+                backgroundColor: light3,
               }}
             />
           )}
@@ -107,7 +108,7 @@ const CustomDrawerContent = (props: any) => {
             icon={({ color, size }) => (
               <MaterialCommunityIcons
                 name="account-outline"
-                color={color}
+                color={primary}
                 size={size}
               />
             )}
@@ -118,7 +119,7 @@ const CustomDrawerContent = (props: any) => {
           />
           <DrawerItem
             icon={({ color, size }) => (
-              <MaterialCommunityIcons name="post" color={color} size={size} />
+              <MaterialCommunityIcons name="post" color={primary} size={size} />
             )}
             label="Ogłoszenia"
             onPress={() => props.navigation.push('Home', { screen: 'Posts' })}
@@ -127,7 +128,7 @@ const CustomDrawerContent = (props: any) => {
             icon={({ color, size }) => (
               <MaterialCommunityIcons
                 name="post-outline"
-                color={color}
+                color={primary}
                 size={size}
               />
             )}
@@ -144,7 +145,7 @@ const CustomDrawerContent = (props: any) => {
           />
           <DrawerItem
             icon={({ color, size }) => (
-              <MaterialCommunityIcons name="chat" color={color} size={size} />
+              <MaterialCommunityIcons name="chat" color={primary} size={size} />
             )}
             label="Czaty"
             onPress={() => props.navigation.push('Home', { screen: 'Chats' })}
@@ -154,7 +155,7 @@ const CustomDrawerContent = (props: any) => {
           <Button
             icon="logout"
             mode="contained"
-            style={{ backgroundColor: '#2e1c00' }}
+            style={[mainStyles.secondaryButton, { paddingVertical: 5 }]}
             onPress={async () => await signOut()}>
             Wyloguj się
           </Button>

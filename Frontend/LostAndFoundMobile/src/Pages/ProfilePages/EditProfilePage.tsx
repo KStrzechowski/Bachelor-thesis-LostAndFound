@@ -11,7 +11,9 @@ import {
   CustomTextInput,
   DocumentSelector,
   InputSection,
+  light,
   MainContainer,
+  secondary,
 } from '../../Components';
 import {
   getAccessToken,
@@ -108,23 +110,23 @@ export const EditProfilePage = (props: any) => {
 
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title="Edytuj Profil"
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
         <Appbar.Action
           size={30}
           icon="content-save"
-          color="#2e1c00"
+          color={light}
           onPress={async () => await SaveChanges()}
         />
       </Appbar.Header>

@@ -1,14 +1,15 @@
 import React from 'react';
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
-import { MainContainer } from '../../Components';
+import {
+  dark,
+  dark2,
+  light,
+  light3,
+  MainContainer,
+  primary,
+  secondary,
+} from '../../Components';
 import {
   addChatMessage,
   BaseProfileType,
@@ -42,24 +43,27 @@ const MessageItem = (props: any) => {
           ? styles.messageLeft
           : styles.messageRight,
       ]}>
-      <Text style={[styles.messageText]}>{message.content}</Text>
+      <Text
+        style={[
+          styles.messageText,
+          String(message.authorId) !== String(currentUserId)
+            ? styles.messageTextLeft
+            : styles.messageTextRight,
+        ]}>
+        {message.content}
+      </Text>
     </View>
   );
 };
 
 export const ChatPage = (props: any) => {
   const chatRecipent: BaseProfileType = props.route.params?.chatRecipent;
-  const [width, setWidth] = React.useState<number>(10);
   const [messageContent, setMessageContent] = React.useState<string>('');
   const [currentUserId, setCurrentUserId] = React.useState<string | null>();
   const [messagesData, setMessagesData] = React.useState<MessageResponseType[]>(
     [],
   );
-  const [imageProfileDisplayedSize, setImageProfileDisplayedSize] =
-    React.useState<{
-      width: number;
-      height: number;
-    }>();
+
   const [update, setUpdate] = React.useState<boolean>(false);
   const [flatListRef, setFlatListRef] =
     React.useState<KeyboardAwareFlatList | null>(null);
@@ -85,35 +89,18 @@ export const ChatPage = (props: any) => {
     getData();
   }, [update]);
 
-  React.useEffect(() => {
-    if (chatRecipent.pictureUrl) {
-      let imageSize = { width: width / 5, height: width / 5 };
-      Image.getSize(
-        chatRecipent.pictureUrl,
-        (width, height) => (imageSize = { width, height }),
-      );
-      const displayedWidth = width / 5;
-      const displayedHeight =
-        (imageSize.height * displayedWidth) / imageSize.width;
-      setImageProfileDisplayedSize({
-        width: displayedWidth,
-        height: displayedHeight,
-      });
-    }
-  }, [chatRecipent, width]);
-
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title={<Text>{chatRecipent?.username}</Text>}
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
@@ -131,9 +118,8 @@ export const ChatPage = (props: any) => {
               }}
               style={{
                 alignSelf: 'center',
-                marginTop: 10,
                 marginRight: 30,
-                backgroundColor: '#2e1c00',
+                backgroundColor: light3,
               }}
               size={40}
             />
@@ -143,9 +129,8 @@ export const ChatPage = (props: any) => {
               size={40}
               style={{
                 alignSelf: 'center',
-                marginTop: 10,
                 marginRight: 30,
-                backgroundColor: '#2e1c00',
+                backgroundColor: light3,
               }}
             />
           )}
@@ -186,7 +171,7 @@ export const ChatPage = (props: any) => {
               setMessageContent('');
             }
           }}>
-          <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>
+          <Text style={{ color: light, fontWeight: '600', fontSize: 18 }}>
             Wyślij
           </Text>
         </Pressable>
@@ -201,7 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     position: 'absolute',
     bottom: 0,
-    backgroundColor: '#abd699',
+    backgroundColor: secondary,
     padding: 10,
   },
   inputMessage: {
@@ -210,30 +195,38 @@ const styles = StyleSheet.create({
     flex: 4,
     marginRight: 10,
     paddingLeft: 4,
-    backgroundColor: 'white',
+    backgroundColor: light,
   },
   sendButton: {
     borderRadius: 20,
-    backgroundColor: '#2e1c00',
+    backgroundColor: primary,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
     flex: 1,
   },
-  messageText: {},
   message: {
     borderWidth: 1,
     borderRadius: 20,
-    borderColor: 'light-grey',
+    borderColor: dark2,
     padding: 10,
     marginBottom: 10,
     maxWidth: '70%',
   },
   messageLeft: {
     alignSelf: 'flex-start',
+    backgroundColor: light,
   },
   messageRight: {
     alignSelf: 'flex-end',
+    backgroundColor: secondary,
+  },
+  messageText: {},
+  messageTextLeft: {
+    color: dark,
+  },
+  messageTextRight: {
+    color: light,
   },
 });
 

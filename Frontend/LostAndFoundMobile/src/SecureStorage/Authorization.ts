@@ -22,12 +22,12 @@ export async function saveAccessToken(token: string, expirationDate: Date) {
   // save access token
   await EncryptedStorage.setItem(ACCESS_TOKEN, token);
 
-  // save expiration date minus 30 seconds
+  // save expiration date minus 10 seconds
   // we don't want to use access token in the moment it expires
-  expirationDate.setSeconds(expirationDate.getSeconds() - 30);
+  expirationDate.setSeconds(expirationDate.getSeconds() - 10);
   await EncryptedStorage.setItem(
     TOKEN_EXPIRATION_DATE,
-    expirationDate.toLocaleString(),
+    expirationDate.toString(),
   );
 }
 
@@ -43,6 +43,7 @@ export async function getAccessToken(): Promise<string | null> {
     if (data) {
       // save new access token with expiration date
       await saveAccessToken(data.accessToken, data.accessTokenExpirationTime);
+      await saveRefreshToken(data.refreshToken);
     } else {
       await clearStorage();
       return null;

@@ -9,7 +9,7 @@ export const refreshToken = async (
   token: string
 ): Promise<LoginResponseType | undefined> => {
   const result = await http<LoginFromServerType, { refreshToken: string }>({
-    path: "/account/login",
+    path: "/account/refresh",
     method: "post",
     body: {
       refreshToken: token,
