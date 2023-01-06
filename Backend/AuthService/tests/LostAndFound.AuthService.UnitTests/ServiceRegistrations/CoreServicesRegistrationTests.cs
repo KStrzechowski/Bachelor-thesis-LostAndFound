@@ -1,4 +1,5 @@
-﻿using LostAndFound.AuthService.Core;
+﻿using AutoMapper;
+using LostAndFound.AuthService.Core;
 using LostAndFound.AuthService.Core.AccountServices;
 using LostAndFound.AuthService.Core.DateTimeProviders;
 using LostAndFound.AuthService.Core.TokenGenerators;
@@ -57,6 +58,16 @@ namespace LostAndFound.AuthService.UnitTests.ServiceRegistrations
             var serviceProvider = _services.BuildServiceProvider();
 
             Assert.NotNull(serviceProvider.GetService(typeof(IAccountService)));
+        }
+
+        [Fact]
+        public void AddApplicationBusinessLogicServices_Execute_AutoMapperServiceIsRegistered()
+        {
+
+            _services.AddCoreServices();
+            var serviceProvider = _services.BuildServiceProvider();
+
+            Assert.NotNull(serviceProvider.GetService<IMapper>());
         }
     }
 }
