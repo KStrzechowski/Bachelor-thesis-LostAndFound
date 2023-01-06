@@ -6,6 +6,10 @@ import {
   TOKEN_EXPIRATION_DATE,
 } from '../../Config';
 
+export async function clearStorage() {
+  await EncryptedStorage.clear();
+}
+
 export async function saveRefreshToken(token: string) {
   await EncryptedStorage.setItem(REFRESH_TOKEN, token);
 }
@@ -25,10 +29,6 @@ export async function saveAccessToken(token: string, expirationDate: Date) {
     TOKEN_EXPIRATION_DATE,
     expirationDate.toLocaleString(),
   );
-}
-
-export async function clearStorage() {
-  await EncryptedStorage.clear();
 }
 
 export async function getAccessToken(): Promise<string | null> {

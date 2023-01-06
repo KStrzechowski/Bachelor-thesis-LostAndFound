@@ -153,10 +153,6 @@ export const ProfilePage = (props: any) => {
   const [profileComments, setProfileComments] =
     React.useState<ProfileCommentsSectionResponseType>();
   const [update, setUpdate] = React.useState<boolean>(false);
-  const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
-    width: number;
-    height: number;
-  }>();
 
   React.useEffect(() => {
     const getData = async () => {
@@ -186,23 +182,6 @@ export const ProfilePage = (props: any) => {
 
     getData();
   }, [profile]);
-
-  React.useEffect(() => {
-    if (profile?.pictureUrl) {
-      let imageSize = { width: 100, height: 100 };
-      Image.getSize(
-        profile?.pictureUrl,
-        (width, height) => (imageSize = { width, height }),
-      );
-      const displayedWidth = (width * 3.5) / 9;
-      const displayedHeight =
-        (imageSize.height * displayedWidth) / imageSize.width;
-      setImageDisplayedSize({
-        width: displayedWidth,
-        height: displayedHeight,
-      });
-    }
-  }, [profile, width]);
 
   return (
     <MainContainer>
@@ -249,19 +228,29 @@ export const ProfilePage = (props: any) => {
             marginBottom: 10,
           }}
           onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-          <View style={{ alignContent: 'center', marginRight: 10 }}>
+          {profile?.pictureUrl ? (
             <Avatar.Image
               source={{
-                uri:
-                  profile?.pictureUrl ??
-                  'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+                uri: profile?.pictureUrl,
               }}
               style={{
                 marginBottom: 20,
+                backgroundColor: '#2e1c00',
               }}
-              size={150}
+              size={(width * 4) / 9}
             />
-          </View>
+          ) : (
+            <Avatar.Icon
+              icon={'account'}
+              size={(width * 4) / 9}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                marginRight: 30,
+                backgroundColor: '#2e1c00',
+              }}
+            />
+          )}
           <View
             style={{
               alignSelf: 'flex-end',

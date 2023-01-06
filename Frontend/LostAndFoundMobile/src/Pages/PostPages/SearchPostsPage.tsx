@@ -15,9 +15,14 @@ import { getAccessToken } from '../../SecureStorage';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { PublicationSearchRequestType } from 'commons';
 import { Appbar } from 'react-native-paper';
-import { MainScrollContainer } from '../../Components/MainComponents';
+import {
+  MainScrollContainer,
+  SecondaryButton,
+} from '../../Components/MainComponents';
 
 export const SearchPostsPage = (props: any) => {
+  const onlyUserPublications: boolean =
+    props.route.params?.onlyUserPublications;
   const [show1, setShow1] = React.useState<boolean>(false);
   const [show2, setShow2] = React.useState<boolean>(false);
   const [categories, setCategories] = React.useState<CategoryType[]>([]);
@@ -80,6 +85,37 @@ export const SearchPostsPage = (props: any) => {
     setIncidentToDate(currentDate);
   };
 
+  function Search() {
+    const searchPublication: PublicationSearchRequestType = {
+      title: title,
+      incidentAddress,
+      incidentDistance: distance,
+      incidentFromDate,
+      incidentToDate,
+      subjectCategoryId: subjectCategory?.id,
+      publicationType,
+      publicationState,
+      onlyUserPublications,
+    };
+    const firstSort: PublicationSortType | undefined = firstArgumentSort
+      ? { type: firstArgumentSort, order: firstArgumentSortOrder }
+      : undefined;
+    const secondSort: PublicationSortType | undefined = secondArgumentSort
+      ? { type: secondArgumentSort, order: secondArgumentSortOrder }
+      : undefined;
+
+    props.navigation.navigate('Home', {
+      screen: 'Posts',
+      params: {
+        searchPublication: searchPublication,
+        orderBy: {
+          firstArgumentSort: firstSort,
+          secondArgumentSort: secondSort,
+        },
+      },
+    });
+  }
+
   return (
     <MainContainer>
       <Appbar.Header style={{ backgroundColor: '#abd699' }}>
@@ -97,38 +133,9 @@ export const SearchPostsPage = (props: any) => {
         />
         <Appbar.Action
           size={30}
-          icon="content-save"
+          icon="magnify"
           color="#2e1c00"
-          onPress={() => {
-            const searchPublication: PublicationSearchRequestType = {
-              title: title,
-              incidentAddress: incidentAddress,
-              incidentDistance: distance,
-              incidentFromDate: incidentFromDate,
-              incidentToDate: incidentToDate,
-              subjectCategoryId: subjectCategory?.id,
-              publicationType: publicationType,
-              publicationState: publicationState,
-            };
-            const firstSort: PublicationSortType | undefined = firstArgumentSort
-              ? { type: firstArgumentSort, order: firstArgumentSortOrder }
-              : undefined;
-            const secondSort: PublicationSortType | undefined =
-              secondArgumentSort
-                ? { type: secondArgumentSort, order: secondArgumentSortOrder }
-                : undefined;
-
-            props.navigation.navigate('Home', {
-              screen: 'Posts',
-              params: {
-                publication: searchPublication,
-                orderBy: {
-                  firstArgumentSort: firstSort,
-                  secondArgumentSort: secondSort,
-                },
-              },
-            });
-          }}
+          onPress={() => Search()}
         />
       </Appbar.Header>
       <MainScrollContainer>
@@ -267,6 +274,9 @@ export const SearchPostsPage = (props: any) => {
             <Picker.Item label="Malejąco" value={Order.Descending} />
           </Picker>
         </InputSection>
+        <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
+          <SecondaryButton label="Szukaj" onPress={() => Search()} />
+        </View>
       </MainScrollContainer>
     </MainContainer>
   );

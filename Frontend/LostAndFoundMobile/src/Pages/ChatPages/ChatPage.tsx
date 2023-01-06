@@ -17,7 +17,7 @@ import {
   MessageResponseType,
 } from 'commons';
 import { getAccessToken, getUserId } from '../../SecureStorage';
-import { Appbar } from 'react-native-paper';
+import { Appbar, Avatar } from 'react-native-paper';
 
 const GetMessages = async (
   recipentId: string,
@@ -117,7 +117,39 @@ export const ChatPage = (props: any) => {
             fontWeight: 'bold',
           }}
         />
-       <Appbar.Action icon="flask-empty" color="#abd699"></Appbar.Action>
+        <Pressable
+          onPress={() => {
+            props.navigation.push('Home', {
+              screen: 'Profile',
+              params: { userId: chatRecipent?.userId },
+            });
+          }}>
+          {chatRecipent?.pictureUrl ? (
+            <Avatar.Image
+              source={{
+                uri: chatRecipent?.pictureUrl,
+              }}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                marginRight: 30,
+                backgroundColor: '#2e1c00',
+              }}
+              size={40}
+            />
+          ) : (
+            <Avatar.Icon
+              icon={'account'}
+              size={40}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                marginRight: 30,
+                backgroundColor: '#2e1c00',
+              }}
+            />
+          )}
+        </Pressable>
       </Appbar.Header>
       <KeyboardAwareFlatList
         style={{ padding: 30, marginBottom: 70, flex: 1 }}
@@ -133,38 +165,16 @@ export const ChatPage = (props: any) => {
           }, 10);
         }}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          position: 'absolute',
-          bottom: 0,
-          backgroundColor: '#abd699',
-          padding: 10,
-        }}>
+      <View style={styles.sendMessageContainer}>
         <TextInput
           onChangeText={setMessageContent}
           value={messageContent}
           placeholder="Podaj tytuł"
-          style={{
-            borderRadius: 20,
-            borderWidth: 1,
-            flex: 4,
-            marginRight: 10,
-            paddingLeft: 4,
-            backgroundColor: 'white',
-          }}
+          style={styles.inputMessage}
         />
 
         <Pressable
-          style={{
-            borderRadius: 20,
-            backgroundColor: '#2e1c00',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: 10,
-            flex: 1,
-          }}
+          style={styles.sendButton}
           onPress={async () => {
             const accessToken = await getAccessToken();
             if (accessToken && messageContent.length > 0) {
@@ -186,6 +196,30 @@ export const ChatPage = (props: any) => {
 };
 
 const styles = StyleSheet.create({
+  sendMessageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: '#abd699',
+    padding: 10,
+  },
+  inputMessage: {
+    borderRadius: 20,
+    borderWidth: 1,
+    flex: 4,
+    marginRight: 10,
+    paddingLeft: 4,
+    backgroundColor: 'white',
+  },
+  sendButton: {
+    borderRadius: 20,
+    backgroundColor: '#2e1c00',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    flex: 1,
+  },
   messageText: {},
   message: {
     borderWidth: 1,

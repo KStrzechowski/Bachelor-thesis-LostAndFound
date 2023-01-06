@@ -8,7 +8,7 @@ import {
 } from 'commons';
 import React from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
-import { Appbar, Avatar } from 'react-native-paper';
+import { Appbar, Avatar, Menu } from 'react-native-paper';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import { ProfileContext } from '../../../Config';
 import { DeleteButton, MainContainer, ScoreView } from '../../Components';
@@ -57,10 +57,7 @@ export const ProfilePageMe = (props: any) => {
   const [profileComments, setProfileComments] =
     React.useState<ProfileCommentsSectionResponseType>();
   const [update, setUpdate] = React.useState<boolean>(false);
-  const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
-    width: number;
-    height: number;
-  }>();
+  const [visible, setVisible] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -86,23 +83,6 @@ export const ProfilePageMe = (props: any) => {
     getData();
   }, [profile]);
 
-  React.useEffect(() => {
-    if (profile?.pictureUrl) {
-      let imageSize = { width: 100, height: 100 };
-      Image.getSize(
-        profile?.pictureUrl,
-        (width, height) => (imageSize = { width, height }),
-      );
-      const displayedWidth = (width * 3.5) / 9;
-      const displayedHeight =
-        (imageSize.height * displayedWidth) / imageSize.width;
-      setImageDisplayedSize({
-        width: displayedWidth,
-        height: displayedHeight,
-      });
-    }
-  }, [profile, width]);
-
   return (
     <MainContainer>
       <Appbar.Header style={{ backgroundColor: '#abd699' }}>
@@ -118,17 +98,44 @@ export const ProfilePageMe = (props: any) => {
             fontWeight: 'bold',
           }}
         />
-        <Appbar.Action
-          size={30}
-          icon="file-document-edit-outline"
-          color="#2e1c00"
-          onPress={() =>
-            props.navigation.navigate('Home', {
-              screen: 'EditProfile',
-              params: { user: profile },
-            })
-          }
-        />
+        <Menu
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          anchor={
+            <Appbar.Action
+              icon="dots-vertical"
+              onPress={() => setVisible(true)}
+            />
+          }>
+          <>
+            <Menu.Item
+              title="Edytuj profil"
+              onPress={() => {
+                setVisible(false);
+                props.navigation.navigate('Home', {
+                  screen: 'EditProfile',
+                  params: { user: profile },
+                });
+              }}
+            />
+            {profile?.pictureUrl ? (
+              <Menu.Item
+                title="Usuń zdjęcie"
+                onPress={async () => {
+                  setVisible(false);
+                  const isDeleted = await deleteImage();
+                  if (isDeleted) {
+                    await removeUserPhotoUrl();
+                    await updatePhotoUrl();
+                    setUpdate(!update);
+                  }
+                }}
+              />
+            ) : (
+              <></>
+            )}
+          </>
+        </Menu>
       </Appbar.Header>
       <View style={{ flex: 1, padding: 30 }}>
         <View
@@ -140,38 +147,27 @@ export const ProfilePageMe = (props: any) => {
           }}
           onLayout={event => setWidth(event.nativeEvent.layout.width)}>
           {profile?.pictureUrl ? (
-            <View
+            <Avatar.Image
+              source={{
+                uri: profile?.pictureUrl,
+              }}
               style={{
-                alignContent: 'flex-start',
-                alignItems: 'flex-start',
-                alignSelf: 'flex-start',
-              }}>
-              <Avatar.Image
-                source={{
-                  uri:
-                    profile?.pictureUrl ??
-                    'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-                }}
-                style={{
-                  marginBottom: 20,
-                }}
-                size={150}
-              />
-              <DeleteButton
-                label="Usuń zdjęcie"
-                onPress={async () => {
-                  const isDeleted = await deleteImage();
-                  if (isDeleted) {
-                    await removeUserPhotoUrl();
-                    await updatePhotoUrl();
-                    setUpdate(!update);
-                  }
-                }}
-                style={{ alignSelf: 'center' }}
-              />
-            </View>
+                marginBottom: 20,
+                backgroundColor: '#2e1c00',
+              }}
+              size={(width * 4) / 9}
+            />
           ) : (
-            <IoniconsIcon name="person" size={(width * 3) / 8} />
+            <Avatar.Icon
+              icon={'account'}
+              size={(width * 4) / 9}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                marginRight: 30,
+                backgroundColor: '#2e1c00',
+              }}
+            />
           )}
           <View
             style={{

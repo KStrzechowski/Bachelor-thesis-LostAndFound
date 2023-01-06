@@ -49,6 +49,11 @@ export const getPublications = async (
     if (publication.subjectCategoryId) {
       path = path.concat(`&SubjectCategoryId=${publication.subjectCategoryId}`);
     }
+    if (publication.onlyUserPublications) {
+      path = path.concat(
+        `&OnlyUserPublications=${publication.onlyUserPublications}`
+      );
+    }
   }
 
   if (orderBy && orderBy.firstArgumentSort) {

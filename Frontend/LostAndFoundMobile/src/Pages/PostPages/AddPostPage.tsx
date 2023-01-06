@@ -10,7 +10,7 @@ import {
 } from 'commons';
 import { format } from 'date-fns';
 import React from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import {
   CustomTextInput,
   DocumentSelector,

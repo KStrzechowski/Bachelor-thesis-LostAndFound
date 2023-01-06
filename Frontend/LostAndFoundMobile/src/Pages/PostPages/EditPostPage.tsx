@@ -22,7 +22,10 @@ import {
 import { getAccessToken } from '../../SecureStorage';
 import { DocumentPickerResponse } from 'react-native-document-picker';
 import { Appbar } from 'react-native-paper';
-import { MainScrollContainer } from '../../Components/MainComponents';
+import {
+  MainScrollContainer,
+  SecondaryButton,
+} from '../../Components/MainComponents';
 
 const editPost = async (
   publicationId: string,
@@ -133,6 +136,28 @@ export const EditPostPage = (props: any) => {
     setIncidentDate(currentDate);
   };
 
+  async function SaveChanges() {
+    const newPostData: PublicationRequestType = {
+      title,
+      description,
+      incidentAddress,
+      incidentDate,
+      subjectCategoryId: category?.id,
+      publicationType,
+      publicationState,
+    };
+
+    const response = await editPost(postData.publicationId, newPostData);
+    if (response) {
+      if (fileResponse.length > 0)
+        await updatePostPhoto(postData.publicationId, fileResponse[0]);
+      props.navigation.push('Home', {
+        screen: 'Post',
+        params: { publicationId: response?.publicationId },
+      });
+    }
+  }
+
   return (
     <MainContainer>
       <Appbar.Header style={{ backgroundColor: '#abd699' }}>
@@ -152,30 +177,7 @@ export const EditPostPage = (props: any) => {
           size={30}
           icon="content-save"
           color="#2e1c00"
-          onPress={async () => {
-            const newPostData: PublicationRequestType = {
-              title,
-              description,
-              incidentAddress,
-              incidentDate,
-              subjectCategoryId: category?.id,
-              publicationType,
-              publicationState,
-            };
-
-            const response = await editPost(
-              postData.publicationId,
-              newPostData,
-            );
-            if (response) {
-              if (fileResponse.length > 0)
-                await updatePostPhoto(postData.publicationId, fileResponse[0]);
-              props.navigation.push('Home', {
-                screen: 'Post',
-                params: { publicationId: response?.publicationId },
-              });
-            }
-          }}
+          onPress={async () => await SaveChanges()}
         />
       </Appbar.Header>
       <MainScrollContainer>
@@ -253,6 +255,12 @@ export const EditPostPage = (props: any) => {
           setFileResponse={setFileResponse}
           label={postData?.subjectPhotoUrl ? 'Edytuj zdjęcie' : 'Dodaj zdjęcie'}
         />
+        <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
+          <SecondaryButton
+            label="Zapisz zmiany"
+            onPress={async () => await SaveChanges()}
+          />
+        </View>
       </MainScrollContainer>
     </MainContainer>
   );

@@ -99,7 +99,7 @@ const PostItem = (props: any) => {
 
 export const PostsPage = (props: any) => {
   const searchPublication: PublicationSearchRequestType =
-    props.route.params?.publication;
+    props.route.params?.searchPublication;
   const orderBy = props.route.params?.orderBy;
   const [postsData, setPostsData] = React.useState<PublicationResponseType[]>(
     [],
@@ -108,6 +108,7 @@ export const PostsPage = (props: any) => {
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
+      console.log(searchPublication);
       if (accessToken) {
         setPostsData(
           await getPublications(1, accessToken, searchPublication, orderBy),
@@ -141,7 +142,11 @@ export const PostsPage = (props: any) => {
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
-          title="Ogłoszenia"
+          title={
+            searchPublication?.onlyUserPublications
+              ? 'Moje Ogłoszenia'
+              : 'Ogłoszenia'
+          }
           titleStyle={{
             textAlign: 'center',
             color: '#2e1c00',
@@ -153,7 +158,12 @@ export const PostsPage = (props: any) => {
           icon="archive-search-outline"
           color="#2e1c00"
           onPress={() =>
-            props.navigation.navigate('Home', { screen: 'SearchPosts' })
+            props.navigation.navigate('Home', {
+              screen: 'SearchPosts',
+              params: {
+                onlyUserPublications: searchPublication?.onlyUserPublications,
+              },
+            })
           }
         />
       </Appbar.Header>

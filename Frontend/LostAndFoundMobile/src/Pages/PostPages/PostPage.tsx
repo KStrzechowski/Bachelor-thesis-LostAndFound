@@ -70,13 +70,9 @@ export const PostPage = (props: any) => {
   >();
   const [categories, setCategories] = React.useState<CategoryType[]>([]);
   const [category, setCategory] = React.useState<CategoryType | undefined>();
+
   const [update, setUpdate] = React.useState<boolean>(false);
-
-  const [visible, setVisible] = React.useState(false);
-
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
-
+  const [visible, setVisible] = React.useState<boolean>(false);
   const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
     width: number;
     height: number;
@@ -160,9 +156,6 @@ export const PostPage = (props: any) => {
     }
   }, [profile]);
 
-  const win = Dimensions.get('window');
-  const windowWidth = win.width;
-
   return (
     <MainContainer>
       <Appbar.Header style={{ backgroundColor: '#abd699' }}>
@@ -175,7 +168,7 @@ export const PostPage = (props: any) => {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            padding: 10,
+            padding: 5,
           }}>
           <Appbar.Content
             title="Ogłoszenie"
@@ -200,10 +193,28 @@ export const PostPage = (props: any) => {
             <>
               <Menu.Item
                 title="Edytuj ogłoszenie"
-                onPress={() => props.navigation.push('EditPost', { postData })}
+                onPress={() => {
+                  setVisible(false);
+                  props.navigation.push('EditPost', { postData });
+                }}
               />
+              {postData && postData.subjectPhotoUrl ? (
+                <Menu.Item
+                  title="Usuń zdjęcie"
+                  onPress={async () => {
+                    setVisible(false);
+                    const isDeleted = await deleteImage(publicationId);
+                    if (isDeleted) {
+                      setUpdate(!update);
+                    }
+                  }}
+                />
+              ) : (
+                <></>
+              )}
               <Menu.Item
                 onPress={async () => {
+                  setVisible(false);
                   const isDeleted = await deletePost(publicationId);
                   if (isDeleted) {
                     props.navigation.push('Home', {
@@ -213,19 +224,6 @@ export const PostPage = (props: any) => {
                 }}
                 title="Usuń ogłoszenie"
               />
-              {postData && postData.subjectPhotoUrl ? (
-                <Menu.Item
-                  title="Usuń zdjęcie"
-                  onPress={async () => {
-                    const isDeleted = await deleteImage(publicationId);
-                    if (isDeleted) {
-                      setUpdate(!update);
-                    }
-                  }}
-                />
-              ) : (
-                <Menu.Item title="Dodaj zdjęcie" onPress={() => {}} />
-              )}
             </>
           ) : (
             <>
@@ -233,6 +231,7 @@ export const PostPage = (props: any) => {
                 title="Rozpocznij czat"
                 onPress={() => {
                   if (profile) {
+                    setVisible(false);
                     const chatRecipent: BaseProfileType = {
                       userId: profile.userId,
                       username: profile.username,
@@ -243,6 +242,22 @@ export const PostPage = (props: any) => {
                       params: {
                         chatRecipent,
                       },
+                    });
+                  }
+                }}
+              />
+              <Menu.Item
+                title="Zobacz profil"
+                onPress={() => {
+                  setVisible(false);
+                  if (myUserId === profile?.userId) {
+                    props.navigation.push('Home', {
+                      screen: 'ProfileMe',
+                    });
+                  } else {
+                    props.navigation.push('Home', {
+                      screen: 'Profile',
+                      params: { userId: profile?.userId },
                     });
                   }
                 }}
@@ -259,13 +274,15 @@ export const PostPage = (props: any) => {
             <></>
           )}
         </View>
-        <MainTitle>{postData?.title}</MainTitle>
-
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
+            marginBottom: 10,
           }}>
+          <View style={{ maxWidth: (width * 3) / 4 }}>
+            <MainTitle>{postData?.title}</MainTitle>
+          </View>
           <Text
             style={
               postData && postData.aggregateRating >= 0

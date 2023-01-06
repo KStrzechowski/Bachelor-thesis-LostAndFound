@@ -175,7 +175,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
     padding: 20,
-    backgroundColor: 'orange',
+    backgroundColor: '#2e1c00',
     borderRadius: 8,
   },
   mainButtonText: {
@@ -186,7 +186,7 @@ export const styles = StyleSheet.create({
   secondaryButton: {
     alignItems: 'center',
     padding: 8,
-    backgroundColor: 'orange',
+    backgroundColor: '#2e1c00',
     borderRadius: 5,
   },
   secondaryButtonText: {
@@ -207,6 +207,6 @@ export const styles = StyleSheet.create({
     color: Colors.white,
   },
   pressableText: {
-    color: 'orange',
+    color: '#2e1c00',
   },
 });
