@@ -40,8 +40,8 @@ namespace LostAndFound.ProfileService.IntegrationTests
                 {
                     Username = "guest",
                     Password = "guest",
-                    Port = Random.Shared.Next() % 10000,
                 })
+                .WithExposedPort(Random.Shared.Next() % 10000)
                 .Build();
         }
 
@@ -65,8 +65,8 @@ namespace LostAndFound.ProfileService.IntegrationTests
                 var rabbitSetting = new RabbitMQSettings()
                 {
                     HostName = _rabbitMqContainer.Hostname,
-                    QueueName = "accounts",
-                    Port = _rabbitMqContainer.GetMappedPublicPort(5672),
+                    QueueName = $"accounts{Random.Shared.NextInt64()}",
+                    Port = _rabbitMqContainer.GetMappedPublicPort(5672)
                 };
                 services.AddSingleton(rabbitSetting);
                 services.AddHostedService<RabbitMQBackgroundConsumerService>();

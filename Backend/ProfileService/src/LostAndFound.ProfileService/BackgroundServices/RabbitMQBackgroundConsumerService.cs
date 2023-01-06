@@ -83,7 +83,8 @@ namespace LostAndFound.ProfileService.BackgroundServices
         {
             await base.StopAsync(cancellationToken);
 
-            _connection?.Close();
+            if (_connection.IsOpen)
+                _connection.Close();
         }
     }
 }
