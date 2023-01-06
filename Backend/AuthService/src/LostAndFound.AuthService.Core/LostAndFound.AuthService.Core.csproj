@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="FluentValidation" Version="11.4.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
@@ -19,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\LostAndFound.AuthService.CoreLibrary\LostAndFound.AuthService.CoreLibrary.csproj" />
     <ProjectReference Include="..\..\src\LostAndFound.AuthService.DataAccess\LostAndFound.AuthService.DataAccess.csproj" />
+    <ProjectReference Include="..\LostAndFound.AuthService.ThirdPartyServices\LostAndFound.AuthService.ThirdPartyServices.csproj" />
   </ItemGroup>
 	
 </Project>
