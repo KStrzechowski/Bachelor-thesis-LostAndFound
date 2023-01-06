@@ -14,15 +14,15 @@ services:
     restart: always
     command: 'azurite --loose --blobHost 0.0.0.0 --blobPort 10000 --location /workspace --debug /workspace/debug.log'
     ports:
-      - 10000:10000
+        - 10000:10000
     volumes:
-      - ./azurite:/workspace
+        - ./azurite:/workspace
 
   lostandfound.rabbitmq:
     image: rabbitmq:3-management
     ports:
-      - 15672:15672
-      - 4001:5672
+        - 15672:15672
+        - 4001:5672
     container_name: lostandfound-rabbitmq
 
   lostandfound.authservice:
@@ -66,7 +66,8 @@ services:
       dockerfile: ProfileService/src/LostAndFound.ProfileService/Dockerfile
     ports:
         - "5300:80"
-    depends_on:
+    restart: on-failure
+    depends_on:        
         - "lostandfound.mongodb"
         - "lostandfound.azurite"
         - "lostandfound.rabbitmq"
