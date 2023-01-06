@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -38,7 +39,8 @@ namespace LostAndFound.ProfileService.IntegrationTests
                 .WithMessageBroker(new RabbitMqTestcontainerConfiguration
                 {
                     Username = "guest",
-                    Password = "guest"
+                    Password = "guest",
+                    Port = Random.Shared.Next() % 10000,
                 })
                 .Build();
         }
