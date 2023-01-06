@@ -108,7 +108,6 @@ export const PostsPage = (props: any) => {
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
-      console.log(searchPublication);
       if (accessToken) {
         setPostsData(
           await getPublications(1, accessToken, searchPublication, orderBy),
@@ -137,10 +136,7 @@ export const PostsPage = (props: any) => {
   return (
     <MainContainer>
       <Appbar.Header style={{ backgroundColor: '#abd699' }}>
-        <Appbar.BackAction
-          color="#2e1c00"
-          onPress={() => props.navigation.pop()}
-        />
+        <Appbar.Action icon="flask-empty" color="#abd699"></Appbar.Action>
         <Appbar.Content
           title={
             searchPublication?.onlyUserPublications
@@ -158,7 +154,7 @@ export const PostsPage = (props: any) => {
           icon="archive-search-outline"
           color="#2e1c00"
           onPress={() =>
-            props.navigation.navigate('Home', {
+            props.navigation.push('Home', {
               screen: 'SearchPosts',
               params: {
                 onlyUserPublications: searchPublication?.onlyUserPublications,
@@ -181,7 +177,7 @@ export const PostsPage = (props: any) => {
           <PostItem
             item={item}
             onPress={() =>
-              props.navigation.navigate('Home', {
+              props.navigation.push('Home', {
                 screen: 'Post',
                 params: { publicationId: item.publicationId },
               })

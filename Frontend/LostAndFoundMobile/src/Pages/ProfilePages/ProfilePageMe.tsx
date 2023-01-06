@@ -7,11 +7,10 @@ import {
   ProfileResponseType,
 } from 'commons';
 import React from 'react';
-import { FlatList, Image, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { Appbar, Avatar, Menu } from 'react-native-paper';
-import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import { ProfileContext } from '../../../Config';
-import { DeleteButton, MainContainer, ScoreView } from '../../Components';
+import { MainContainer, ScoreView } from '../../Components';
 import { getAccessToken, removeUserPhotoUrl } from '../../SecureStorage';
 
 const deleteImage = async () => {
@@ -58,7 +57,6 @@ export const ProfilePageMe = (props: any) => {
     React.useState<ProfileCommentsSectionResponseType>();
   const [update, setUpdate] = React.useState<boolean>(false);
   const [visible, setVisible] = React.useState<boolean>(false);
-
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
@@ -112,7 +110,7 @@ export const ProfilePageMe = (props: any) => {
               title="Edytuj profil"
               onPress={() => {
                 setVisible(false);
-                props.navigation.navigate('Home', {
+                props.navigation.push('Home', {
                   screen: 'EditProfile',
                   params: { user: profile },
                 });

@@ -104,7 +104,7 @@ export const SearchPostsPage = (props: any) => {
       ? { type: secondArgumentSort, order: secondArgumentSortOrder }
       : undefined;
 
-    props.navigation.navigate('Home', {
+    props.navigation.push('Home', {
       screen: 'Posts',
       params: {
         searchPublication: searchPublication,
