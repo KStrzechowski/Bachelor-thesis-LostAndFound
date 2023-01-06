@@ -64,7 +64,8 @@ namespace LostAndFound.ProfileService.BackgroundServices
             var connectionFactory = new ConnectionFactory
             {
                 HostName = _rabbitMQSettings.HostName,
-                DispatchConsumersAsync = true
+                DispatchConsumersAsync = true,
+                Port = _rabbitMQSettings.Port,
             };
             _connection = connectionFactory.CreateConnection();
             _channel = _connection.CreateModel();
@@ -81,15 +82,8 @@ namespace LostAndFound.ProfileService.BackgroundServices
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
             await base.StopAsync(cancellationToken);
-            _channel.Close();
-            _connection.Close();
-        }
 
-        public override void Dispose()
-        {
-            _channel.Close();
-            _connection.Close();
-            GC.SuppressFinalize(this);
+            _connection?.Close();
         }
     }
 }

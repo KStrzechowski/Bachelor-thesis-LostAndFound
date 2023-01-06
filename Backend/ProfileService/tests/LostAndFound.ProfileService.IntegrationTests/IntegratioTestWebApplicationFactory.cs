@@ -1,6 +1,8 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
+using LostAndFound.ProfileService.BackgroundServices;
+using LostAndFound.ProfileService.CoreLibrary.Settings;
 using LostAndFound.ProfileService.DataAccess.Context;
 using LostAndFound.ProfileService.DataAccess.Context.Interfaces;
 using LostAndFound.ProfileService.DataAccess.Settings;
@@ -18,16 +20,25 @@ namespace LostAndFound.ProfileService.IntegrationTests
     public class IntegratioTestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>, IAsyncLifetime
         where TStartup : class
     {
-        private readonly TestcontainerDatabase _container;
+        private readonly TestcontainerDatabase _mongoContainer;
+        private readonly RabbitMqTestcontainer _rabbitMqContainer;
 
         public IntegratioTestWebApplicationFactory()
         {
-            _container = new TestcontainersBuilder<MongoDbTestcontainer>()
+            _mongoContainer = new TestcontainersBuilder<MongoDbTestcontainer>()
                 .WithDatabase(new MongoDbTestcontainerConfiguration
                 {
                     Database = "test_profile_db",
                     Username = "mongo",
                     Password = "mongo",
+                })
+                .Build();
+
+            _rabbitMqContainer = new TestcontainersBuilder<RabbitMqTestcontainer>()
+                .WithMessageBroker(new RabbitMqTestcontainerConfiguration
+                {
+                    Username = "guest",
+                    Password = "guest"
                 })
                 .Build();
         }
@@ -40,16 +51,36 @@ namespace LostAndFound.ProfileService.IntegrationTests
 
                 var options = Options.Create(new ProfileServiceDatabaseSettings()
                 {
-                    ConnectionString = _container.ConnectionString,
-                    DatabaseName = _container.Database
+                    ConnectionString = _mongoContainer.ConnectionString,
+                    DatabaseName = _mongoContainer.Database
                 });
                 services.AddSingleton<IMongoProfileServiceDbContext>(_ =>
                     new MongoProfileServiceDbContext(options));
+
+                services.RemoveAll<RabbitMQBackgroundConsumerService>();
+                services.RemoveAll<RabbitMQSettings>();
+
+                var rabbitSetting = new RabbitMQSettings()
+                {
+                    HostName = _rabbitMqContainer.Hostname,
+                    QueueName = "accounts",
+                    Port = _rabbitMqContainer.GetMappedPublicPort(5672),
+                };
+                services.AddSingleton(rabbitSetting);
+                services.AddHostedService<RabbitMQBackgroundConsumerService>();
             });
         }
 
-        public async Task InitializeAsync() => await _container.StartAsync();
+        public async Task InitializeAsync()
+        {
+            await _mongoContainer.StartAsync();
+            await _rabbitMqContainer.StartAsync();
+        }
 
-        public new async Task DisposeAsync() => await _container.DisposeAsync();
+        public new async Task DisposeAsync()
+        {
+            await _mongoContainer.DisposeAsync();
+            await _rabbitMqContainer.DisposeAsync();
+        }
     }
 }
