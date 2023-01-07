@@ -62,7 +62,7 @@ services:
       context: .
       dockerfile: Gateway/src/LostAndFound.Gateway/Dockerfile
     ports:
-        - "6000:80"
+        - "6500:80"
     depends_on:
         - "lostandfound.authservice"
         - "lostandfound.chatservice"

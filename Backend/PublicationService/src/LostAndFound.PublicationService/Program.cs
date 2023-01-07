@@ -129,12 +129,9 @@ app.Run();
 
 void SeedDbCollections()
 {
-    if (app.Environment.IsDevelopment())
-    {
-        using var scope = app.Services.CreateScope();
-        var dbSeeder = scope.ServiceProvider.GetRequiredService<IDbSeeder>();
-        dbSeeder?.SeedCategoriesCollection();
-    }
+    using var scope = app.Services.CreateScope();
+    var dbSeeder = scope.ServiceProvider.GetRequiredService<IDbSeeder>();
+    dbSeeder?.SeedCategoriesCollection();
 }
 
 // Make the implicit Program class public so test projects can access it
