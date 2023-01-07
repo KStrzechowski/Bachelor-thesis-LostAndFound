@@ -7,11 +7,18 @@ import {
   ProfileResponseType,
 } from 'commons';
 import React from 'react';
-import { FlatList, Image, Text, View } from 'react-native';
-import { Appbar, Avatar } from 'react-native-paper';
-import IoniconsIcon from 'react-native-vector-icons/Ionicons';
+import { FlatList, Text, View } from 'react-native';
+import { Appbar, Avatar, Menu } from 'react-native-paper';
 import { ProfileContext } from '../../../Config';
-import { DeleteButton, MainContainer, ScoreView } from '../../Components';
+import {
+  dark,
+  dark2,
+  light,
+  light3,
+  MainContainer,
+  ScoreView,
+  secondary,
+} from '../../Components';
 import { getAccessToken, removeUserPhotoUrl } from '../../SecureStorage';
 
 const deleteImage = async () => {
@@ -33,14 +40,15 @@ const CommentItem = (props: any) => {
         padding: 10,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: 'light-grey',
+        borderColor: dark2,
+        backgroundColor: light,
       }}>
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={{ fontSize: 18, fontWeight: '500', color: 'black' }}>
+        <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
           {item.author.username ? item.author.username : 'Anonim'}
         </Text>
         <ScoreView score={item.profileRating} />
@@ -57,11 +65,7 @@ export const ProfilePageMe = (props: any) => {
   const [profileComments, setProfileComments] =
     React.useState<ProfileCommentsSectionResponseType>();
   const [update, setUpdate] = React.useState<boolean>(false);
-  const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
-    width: number;
-    height: number;
-  }>();
-
+  const [visible, setVisible] = React.useState<boolean>(false);
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
@@ -86,49 +90,60 @@ export const ProfilePageMe = (props: any) => {
     getData();
   }, [profile]);
 
-  React.useEffect(() => {
-    if (profile?.pictureUrl) {
-      let imageSize = { width: 100, height: 100 };
-      Image.getSize(
-        profile?.pictureUrl,
-        (width, height) => (imageSize = { width, height }),
-      );
-      const displayedWidth = (width * 3.5) / 9;
-      const displayedHeight =
-        (imageSize.height * displayedWidth) / imageSize.width;
-      setImageDisplayedSize({
-        width: displayedWidth,
-        height: displayedHeight,
-      });
-    }
-  }, [profile, width]);
-
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title={profile?.username}
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
-        <Appbar.Action
-          size={30}
-          icon="file-document-edit-outline"
-          color="#2e1c00"
-          onPress={() =>
-            props.navigation.navigate('Home', {
-              screen: 'EditProfile',
-              params: { user: profile },
-            })
-          }
-        />
+        <Menu
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          anchor={
+            <Appbar.Action
+              color={light}
+              icon="dots-vertical"
+              onPress={() => setVisible(true)}
+            />
+          }>
+          <>
+            <Menu.Item
+              title="Edytuj profil"
+              onPress={() => {
+                setVisible(false);
+                props.navigation.push('Home', {
+                  screen: 'EditProfile',
+                  params: { user: profile },
+                });
+              }}
+            />
+            {profile?.pictureUrl ? (
+              <Menu.Item
+                title="Usuń zdjęcie"
+                onPress={async () => {
+                  setVisible(false);
+                  const isDeleted = await deleteImage();
+                  if (isDeleted) {
+                    await removeUserPhotoUrl();
+                    await updatePhotoUrl();
+                    setUpdate(!update);
+                  }
+                }}
+              />
+            ) : (
+              <></>
+            )}
+          </>
+        </Menu>
       </Appbar.Header>
       <View style={{ flex: 1, padding: 30 }}>
         <View
@@ -140,59 +155,50 @@ export const ProfilePageMe = (props: any) => {
           }}
           onLayout={event => setWidth(event.nativeEvent.layout.width)}>
           {profile?.pictureUrl ? (
-            <View
+            <Avatar.Image
+              source={{
+                uri: profile.pictureUrl,
+              }}
               style={{
-                alignContent: 'flex-start',
-                alignItems: 'flex-start',
-                alignSelf: 'flex-start',
-              }}>
-              <Avatar.Image
-                source={{
-                  uri:
-                    profile?.pictureUrl ??
-                    'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-                }}
-                style={{
-                  marginBottom: 20,
-                }}
-                size={150}
-              />
-              <DeleteButton
-                label="Usuń zdjęcie"
-                onPress={async () => {
-                  const isDeleted = await deleteImage();
-                  if (isDeleted) {
-                    await removeUserPhotoUrl();
-                    await updatePhotoUrl();
-                    setUpdate(!update);
-                  }
-                }}
-                style={{ alignSelf: 'center' }}
-              />
-            </View>
+                marginBottom: 20,
+                backgroundColor: light3,
+              }}
+              size={(width * 4) / 9}
+            />
           ) : (
-            <IoniconsIcon name="person" size={(width * 3) / 8} />
+            <Avatar.Icon
+              icon={'account'}
+              size={(width * 4) / 9}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                marginRight: 30,
+                backgroundColor: light3,
+              }}
+            />
           )}
           <View
             style={{
-              alignSelf: 'flex-end',
+              flex: 1,
               width: (width * 5) / 9,
-              paddingBottom: 10,
+              paddingLeft: 20,
             }}>
             <View
               style={{
-                flex: 1,
-                padding: 20,
+                flex: 2,
                 flexDirection: 'row',
-                alignItems: 'flex-end',
+                marginBottom: 10,
               }}>
-              <Text numberOfLines={3} style={{ fontSize: 18, flex: 3 }}>
-                {profile?.city}
-              </Text>
+              <Text style={{ fontSize: 18, flex: 3 }}>{`${
+                profile?.name ? `${profile.name} ` : ''
+              }${profile?.surname ? profile.surname : ''}`}</Text>
               <ScoreView score={profile?.averageProfileRating} />
             </View>
           </View>
         </View>
+        <Text numberOfLines={3} style={{ fontSize: 18 }}>
+          {profile?.city}
+        </Text>
         <Text>{profile?.description}</Text>
         <View
           style={{

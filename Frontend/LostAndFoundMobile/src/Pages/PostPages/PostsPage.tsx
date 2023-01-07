@@ -11,7 +11,17 @@ import {
 } from 'react-native';
 import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
 import { format } from 'date-fns';
-import { MainContainer } from '../../Components';
+import {
+  danger,
+  dark,
+  dark2,
+  light,
+  light2,
+  MainContainer,
+  primary,
+  secondary,
+  success,
+} from '../../Components';
 import { getPublications, PublicationResponseType } from 'commons';
 import { getAccessToken } from '../../SecureStorage';
 import { PublicationSearchRequestType } from 'commons';
@@ -52,7 +62,7 @@ const PostItem = (props: any) => {
       onPress={props.onPress}
       style={styles.postItem}>
       <View>
-        <Text style={{ fontSize: 20, fontWeight: '600', color: 'black' }}>
+        <Text style={{ fontSize: 20, fontWeight: '600', color: dark }}>
           {item.title}
         </Text>
         <View
@@ -60,7 +70,7 @@ const PostItem = (props: any) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <Text style={{ fontSize: 16 }}>{incidentDate}</Text>
+          <Text style={{ fontSize: 16, color: dark2 }}>{incidentDate}</Text>
           <Text
             style={
               item.aggregateRating >= 0
@@ -72,7 +82,9 @@ const PostItem = (props: any) => {
               : item.aggregateRating}
           </Text>
         </View>
-        <Text numberOfLines={3}>{item.description}</Text>
+        <Text numberOfLines={3} style={{ color: dark2 }}>
+          {item.description}
+        </Text>
       </View>
       <View style={{}}>
         {item?.subjectPhotoUrl ? (
@@ -99,7 +111,7 @@ const PostItem = (props: any) => {
 
 export const PostsPage = (props: any) => {
   const searchPublication: PublicationSearchRequestType =
-    props.route.params?.publication;
+    props.route.params?.searchPublication;
   const orderBy = props.route.params?.orderBy;
   const [postsData, setPostsData] = React.useState<PublicationResponseType[]>(
     [],
@@ -121,7 +133,7 @@ export const PostsPage = (props: any) => {
   const win = Dimensions.get('window');
   const buttonStyles = StyleSheet.create({
     circle: {
-      backgroundColor: '#c4d68d',
+      backgroundColor: primary,
       width: 70,
       height: 70,
       position: 'absolute',
@@ -135,25 +147,31 @@ export const PostsPage = (props: any) => {
 
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
-        <Appbar.BackAction
-          color="#2e1c00"
-          onPress={() => props.navigation.pop()}
-        />
+      <Appbar.Header style={{ backgroundColor: secondary }}>
+        <Appbar.Action icon="flask-empty" color={secondary}></Appbar.Action>
         <Appbar.Content
-          title="Ogłoszenia"
+          title={
+            searchPublication?.onlyUserPublications
+              ? 'Moje Ogłoszenia'
+              : 'Ogłoszenia'
+          }
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
         <Appbar.Action
           size={30}
           icon="archive-search-outline"
-          color="#2e1c00"
+          color={light}
           onPress={() =>
-            props.navigation.navigate('Home', { screen: 'SearchPosts' })
+            props.navigation.push('Home', {
+              screen: 'SearchPosts',
+              params: {
+                onlyUserPublications: searchPublication?.onlyUserPublications,
+              },
+            })
           }
         />
       </Appbar.Header>
@@ -171,7 +189,7 @@ export const PostsPage = (props: any) => {
           <PostItem
             item={item}
             onPress={() =>
-              props.navigation.navigate('Home', {
+              props.navigation.push('Home', {
                 screen: 'Post',
                 params: { publicationId: item.publicationId },
               })
@@ -188,7 +206,7 @@ export const PostsPage = (props: any) => {
             screen: 'AddPost',
           });
         }}>
-        <IoniconsIcon name="add" size={55} color="#FFFF" />
+        <IoniconsIcon name="add" size={55} color={light} />
       </TouchableOpacity>
     </MainContainer>
   );
@@ -202,7 +220,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderBottomColor: 'light-grey',
+    borderBottomColor: light2,
     padding: 10,
     marginBottom: 10,
   },
@@ -216,7 +234,8 @@ const styles = StyleSheet.create({
     width: '49%',
     borderWidth: 1,
     borderRadius: 10,
-    borderColor: 'light-grey',
+    borderColor: dark,
+    backgroundColor: light,
     padding: 10,
     marginBottom: 10,
     alignContent: 'space-between',
@@ -225,10 +244,12 @@ const styles = StyleSheet.create({
   },
   positiveScore: {
     fontSize: 16,
-    color: 'green',
+    color: success,
+    fontWeight: '600',
   },
   negativeScore: {
     fontSize: 16,
-    color: 'red',
+    color: danger,
+    fontWeight: '600',
   },
 });

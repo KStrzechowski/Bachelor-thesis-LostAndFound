@@ -15,9 +15,17 @@ import {
   getBaseProfiles,
   getChats,
 } from 'commons/';
-import { MainContainer, Subtitle } from '../../Components';
+import {
+  dark,
+  dark2,
+  light,
+  light3,
+  MainContainer,
+  secondary,
+  Subtitle,
+} from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
-import { Appbar } from 'react-native-paper';
+import { Appbar, Avatar } from 'react-native-paper';
 
 const GetChats = async (
   accessToken: string,
@@ -39,30 +47,12 @@ const ChatItem = (props: any) => {
   const item: BaseProfileChatType = props.item;
   const [width, setWidth] = React.useState<number>(10);
   const [date, setDate] = React.useState<any>('');
-  const [imageProfileDisplayedSize, setImageProfileDisplayedSize] =
-    React.useState<{
-      width: number;
-      height: number;
-    }>();
 
   React.useEffect(() => {
-    if (item?.lastMessage?.creationTime)
+    if (item?.lastMessage?.creationTime) {
       setDate(
         format(new Date(item.lastMessage.creationTime), 'dd.MM.yyyy HH:mm'),
       );
-    if (item?.pictureUrl) {
-      let imageSize = { width: width / 4, height: width / 4 };
-      Image.getSize(
-        item.pictureUrl,
-        (width, height) => (imageSize = { width, height }),
-      );
-      const displayedWidth = width / 4;
-      const displayedHeight =
-        (imageSize.height * displayedWidth) / imageSize.width;
-      setImageProfileDisplayedSize({
-        width: displayedWidth,
-        height: displayedHeight,
-      });
     }
   }, [item, width]);
 
@@ -72,27 +62,35 @@ const ChatItem = (props: any) => {
       onPress={props.onPress}
       style={styles.chatItem}>
       {item?.pictureUrl ? (
-        <Image
-          source={{ uri: item.pictureUrl }}
-          style={{
-            width: imageProfileDisplayedSize?.width,
-            height: imageProfileDisplayedSize?.height,
-            marginRight: 10,
+        <Avatar.Image
+          source={{
+            uri: item.pictureUrl,
           }}
+          style={{
+            marginRight: 20,
+            backgroundColor: light3,
+          }}
+          size={width / 4}
         />
       ) : (
-        <IoniconsIcon
-          name="person"
+        <Avatar.Icon
+          icon={'account'}
           size={width / 4}
-          style={{ marginRight: 10 }}
+          style={{
+            alignSelf: 'center',
+            marginRight: 20,
+            backgroundColor: light3,
+          }}
         />
       )}
       <View style={{ width: (width * 3) / 4 - 10, paddingRight: 15 }}>
-        <Text style={{ fontSize: 18, fontWeight: '500' }}>
+        <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
           {item?.username}
         </Text>
         <Subtitle>{date}</Subtitle>
-        <Text numberOfLines={2}>{item?.lastMessage.content}</Text>
+        <Text numberOfLines={2} style={{ color: dark2 }}>
+          {item?.lastMessage.content}
+        </Text>
       </View>
     </Pressable>
   );
@@ -114,20 +112,20 @@ export const ChatsPage = (props: any) => {
 
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title="Czaty"
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
-        <Appbar.Action icon="flask-empty" color="#abd699"></Appbar.Action>
+        <Appbar.Action icon="flask-empty" color={secondary}></Appbar.Action>
       </Appbar.Header>
       <FlatList
         style={{ padding: 30 }}
@@ -161,10 +159,11 @@ const styles = StyleSheet.create({
   chatItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    backgroundColor: light,
     borderWidth: 1,
-    borderColor: 'light-grey',
+    borderColor: dark2,
     borderRadius: 20,
-    padding: 10,
+    padding: 15,
     marginTop: 20,
   },
 });

@@ -10,17 +10,24 @@ import {
 } from 'commons';
 import { format } from 'date-fns';
 import React from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import {
   CustomTextInput,
   DocumentSelector,
   InputSection,
+  light,
+  light2,
   MainContainer,
+  secondary,
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { DocumentPickerResponse } from 'react-native-document-picker';
 import { Appbar } from 'react-native-paper';
-import { MainScrollContainer } from '../../Components/MainComponents';
+import {
+  MainScrollContainer,
+  mainStyles,
+  SecondaryButton,
+} from '../../Components/MainComponents';
 
 const addNewPost = async (
   publication: PublicationRequestType,
@@ -87,48 +94,50 @@ export const AddPostPage = (props: any) => {
     setIncidentDate(currentDate);
   };
 
+  async function AddPost() {
+    const publication: PublicationRequestType = {
+      title,
+      description,
+      incidentAddress,
+      incidentDate,
+      subjectCategoryId: subjectCategory?.id,
+      publicationType,
+    };
+    console.log(publication);
+
+    const response = await addNewPost(
+      publication,
+      fileResponse.length > 0 ? fileResponse[0] : undefined,
+    );
+    if (response) {
+      console.log(response);
+      props.navigation.push('Home', {
+        screen: 'Post',
+        params: { publicationId: response?.publicationId },
+      });
+    }
+  }
+
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title="Stwórz Ogłoszenie"
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
         <Appbar.Action
           size={30}
           icon="content-save"
-          color="#2e1c00"
-          onPress={async () => {
-            const publication: PublicationRequestType = {
-              title,
-              description,
-              incidentAddress,
-              incidentDate,
-              subjectCategoryId: subjectCategory?.id,
-              publicationType,
-            };
-            console.log(publication);
-
-            const response = await addNewPost(
-              publication,
-              fileResponse.length > 0 ? fileResponse[0] : undefined,
-            );
-            if (response) {
-              console.log(response);
-              props.navigation.push('Home', {
-                screen: 'Post',
-                params: { publicationId: response?.publicationId },
-              });
-            }
-          }}
+          color={light}
+          onPress={async () => await AddPost()}
         />
       </Appbar.Header>
       <MainScrollContainer>
@@ -158,7 +167,7 @@ export const AddPostPage = (props: any) => {
             <Text
               style={{
                 borderBottomWidth: 1,
-                borderBottomColor: 'light-grey',
+                borderBottomColor: light2,
                 paddingVertical: 10,
               }}>
               {format(incidentDate, 'dd.MM.yyyy')}
@@ -177,22 +186,29 @@ export const AddPostPage = (props: any) => {
           </Pressable>
         </InputSection>
         <InputSection title="Kategoria">
-          <Picker
-            selectedValue={subjectCategory}
-            onValueChange={setSubjectCategory}>
-            {mapCategories}
-          </Picker>
+          <View style={mainStyles.pickerStyle}>
+            <Picker
+              selectedValue={subjectCategory}
+              onValueChange={setSubjectCategory}>
+              {mapCategories}
+            </Picker>
+          </View>
         </InputSection>
         <InputSection title="Typ ogłoszenia">
-          <Picker
-            selectedValue={publicationType}
-            onValueChange={itemValue => setPublicationType(itemValue)}>
-            <Picker.Item label="Zgubione" value={PublicationType.LostSubject} />
-            <Picker.Item
-              label="Znalezione"
-              value={PublicationType.FoundSubject}
-            />
-          </Picker>
+          <View style={mainStyles.pickerStyle}>
+            <Picker
+              selectedValue={publicationType}
+              onValueChange={itemValue => setPublicationType(itemValue)}>
+              <Picker.Item
+                label="Zgubione"
+                value={PublicationType.LostSubject}
+              />
+              <Picker.Item
+                label="Znalezione"
+                value={PublicationType.FoundSubject}
+              />
+            </Picker>
+          </View>
         </InputSection>
         <InputSection title="Opis">
           <CustomTextInput
@@ -201,7 +217,12 @@ export const AddPostPage = (props: any) => {
             value={description}
           />
         </InputSection>
-        <InputSection title=""></InputSection>
+        <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
+          <SecondaryButton
+            label="Dodaj ogłoszenie"
+            onPress={async () => await AddPost()}
+          />
+        </View>
       </MainScrollContainer>
     </MainContainer>
   );

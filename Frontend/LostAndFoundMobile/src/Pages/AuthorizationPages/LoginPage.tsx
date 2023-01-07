@@ -1,7 +1,6 @@
 import { LoginRequestType, getProfile, login } from 'commons';
 import React from 'react';
 import { Image, Text, View } from 'react-native';
-import { Appbar } from 'react-native-paper';
 import { AuthContext } from '../../../Config';
 import {
   CustomTextInput,
@@ -18,7 +17,13 @@ import {
   saveRefreshToken,
   saveUserId,
 } from '../../SecureStorage';
-import { saveUserPhotoUrl } from '../../SecureStorage/Profile';
+import {
+  saveName,
+  saveSurname,
+  saveUsername,
+  saveUserPhotoUrl,
+  saveUserRating,
+} from '../../SecureStorage/Profile';
 
 const loginUser = async (email: string, password: string) => {
   const loginRequest: LoginRequestType = {
@@ -35,10 +40,12 @@ const loginUser = async (email: string, password: string) => {
     await saveRefreshToken(loginResponse.refreshToken);
     const profile = await getProfile(loginResponse.accessToken);
     if (profile) {
-      await saveUserId(profile?.userId);
-      if (profile?.pictureUrl) {
-        await saveUserPhotoUrl(profile.pictureUrl);
-      }
+      await saveUserId(profile.userId);
+      await saveUserRating(profile.averageProfileRating.toString());
+      if (profile.username) await saveUsername(profile.username);
+      if (profile.name) await saveName(profile.name);
+      if (profile.surname) await saveSurname(profile.surname);
+      if (profile.pictureUrl) await saveUserPhotoUrl(profile.pictureUrl);
     }
   }
 };
@@ -58,16 +65,6 @@ export const LoginPage = (props: { navigation: string[] }) => {
 
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
-        <Appbar.Content
-          title="Zaloguj się"
-          titleStyle={{
-            textAlign: 'center',
-            color: '#2e1c00',
-            fontWeight: 'bold',
-          }}
-        />
-      </Appbar.Header>
       <MainScrollContainer>
         <Image
           source={Logo}

@@ -11,20 +11,44 @@ import {
   CustomTextInput,
   DocumentSelector,
   InputSection,
+  light,
   MainContainer,
+  secondary,
 } from '../../Components';
 import {
   getAccessToken,
+  getUserRating,
+  removeName,
+  removeSurname,
+  removeUsername,
   removeUserPhotoUrl,
+  saveName,
+  saveSurname,
+  saveUsername,
   saveUserPhotoUrl,
+  saveUserRating,
 } from '../../SecureStorage';
-import { MainScrollContainer } from '../../Components/MainComponents';
+import {
+  MainScrollContainer,
+  SecondaryButton,
+} from '../../Components/MainComponents';
 import { Appbar } from 'react-native-paper';
+import { View } from 'react-native';
 
 const editProfileDetails = async (profile: ProfileRequestType) => {
   const accessToken = await getAccessToken();
   if (accessToken) {
     const response = await editProfile(profile, accessToken);
+    console.log(response);
+    if (response) {
+      await saveUserRating(response.averageProfileRating.toString());
+      if (response?.username) await saveUsername(response.username);
+      else await removeUsername();
+      if (response?.name) await saveName(response.name);
+      else await removeName();
+      if (response?.surname) await saveSurname(response.surname);
+      else await removeSurname();
+    }
     return response;
   }
 };
@@ -58,52 +82,52 @@ export const EditProfilePage = (props: any) => {
     user.description,
   );
 
+  async function SaveChanges() {
+    const profile: ProfileRequestType = {
+      name,
+      surname,
+      city,
+      description,
+    };
+
+    if (fileResponse.length > 0) {
+      const updatePhotoResponse = await updateProfilePhoto(fileResponse[0]);
+      if (updatePhotoResponse) {
+        if (updatePhotoResponse.pictureUrl) {
+          await saveUserPhotoUrl(updatePhotoResponse.pictureUrl);
+        } else {
+          await removeUserPhotoUrl();
+        }
+        await updatePhotoUrl();
+      }
+    }
+
+    const response = await editProfileDetails(profile);
+    if (response) {
+      props.navigation.push('Home', { screen: 'ProfileMe' });
+    }
+  }
+
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title="Edytuj Profil"
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
         <Appbar.Action
           size={30}
           icon="content-save"
-          color="#2e1c00"
-          onPress={async () => {
-            const profile: ProfileRequestType = {
-              name,
-              surname,
-              city,
-              description,
-            };
-
-            if (fileResponse.length > 0) {
-              const updatePhotoResponse = await updateProfilePhoto(
-                fileResponse[0],
-              );
-              if (updatePhotoResponse) {
-                if (updatePhotoResponse.pictureUrl) {
-                  await saveUserPhotoUrl(updatePhotoResponse.pictureUrl);
-                } else {
-                  await removeUserPhotoUrl();
-                }
-                await updatePhotoUrl();
-              }
-            }
-
-            const response = await editProfileDetails(profile);
-            if (response) {
-              props.navigation.push('Home', { screen: 'ProfileMe' });
-            }
-          }}
+          color={light}
+          onPress={async () => await SaveChanges()}
         />
       </Appbar.Header>
       <MainScrollContainer>
@@ -141,6 +165,12 @@ export const EditProfilePage = (props: any) => {
             value={description}
           />
         </InputSection>
+        <View style={{ alignSelf: 'center', width: '80%', marginTop: 20 }}>
+          <SecondaryButton
+            label="Zapisz zmiany"
+            onPress={async () => await SaveChanges()}
+          />
+        </View>
       </MainScrollContainer>
     </MainContainer>
   );

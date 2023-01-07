@@ -1,14 +1,15 @@
 import React from 'react';
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
-import { MainContainer } from '../../Components';
+import {
+  dark,
+  dark2,
+  light,
+  light3,
+  MainContainer,
+  primary,
+  secondary,
+} from '../../Components';
 import {
   addChatMessage,
   BaseProfileType,
@@ -17,7 +18,7 @@ import {
   MessageResponseType,
 } from 'commons';
 import { getAccessToken, getUserId } from '../../SecureStorage';
-import { Appbar } from 'react-native-paper';
+import { Appbar, Avatar } from 'react-native-paper';
 
 const GetMessages = async (
   recipentId: string,
@@ -42,24 +43,27 @@ const MessageItem = (props: any) => {
           ? styles.messageLeft
           : styles.messageRight,
       ]}>
-      <Text style={[styles.messageText]}>{message.content}</Text>
+      <Text
+        style={[
+          styles.messageText,
+          String(message.authorId) !== String(currentUserId)
+            ? styles.messageTextLeft
+            : styles.messageTextRight,
+        ]}>
+        {message.content}
+      </Text>
     </View>
   );
 };
 
 export const ChatPage = (props: any) => {
   const chatRecipent: BaseProfileType = props.route.params?.chatRecipent;
-  const [width, setWidth] = React.useState<number>(10);
   const [messageContent, setMessageContent] = React.useState<string>('');
   const [currentUserId, setCurrentUserId] = React.useState<string | null>();
   const [messagesData, setMessagesData] = React.useState<MessageResponseType[]>(
     [],
   );
-  const [imageProfileDisplayedSize, setImageProfileDisplayedSize] =
-    React.useState<{
-      width: number;
-      height: number;
-    }>();
+
   const [update, setUpdate] = React.useState<boolean>(false);
   const [flatListRef, setFlatListRef] =
     React.useState<KeyboardAwareFlatList | null>(null);
@@ -85,39 +89,52 @@ export const ChatPage = (props: any) => {
     getData();
   }, [update]);
 
-  React.useEffect(() => {
-    if (chatRecipent.pictureUrl) {
-      let imageSize = { width: width / 5, height: width / 5 };
-      Image.getSize(
-        chatRecipent.pictureUrl,
-        (width, height) => (imageSize = { width, height }),
-      );
-      const displayedWidth = width / 5;
-      const displayedHeight =
-        (imageSize.height * displayedWidth) / imageSize.width;
-      setImageProfileDisplayedSize({
-        width: displayedWidth,
-        height: displayedHeight,
-      });
-    }
-  }, [chatRecipent, width]);
-
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title={<Text>{chatRecipent?.username}</Text>}
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
-       <Appbar.Action icon="flask-empty" color="#abd699"></Appbar.Action>
+        <Pressable
+          onPress={() => {
+            props.navigation.push('Home', {
+              screen: 'Profile',
+              params: { userId: chatRecipent?.userId },
+            });
+          }}>
+          {chatRecipent?.pictureUrl ? (
+            <Avatar.Image
+              source={{
+                uri: chatRecipent?.pictureUrl,
+              }}
+              style={{
+                alignSelf: 'center',
+                marginRight: 30,
+                backgroundColor: light3,
+              }}
+              size={40}
+            />
+          ) : (
+            <Avatar.Icon
+              icon={'account'}
+              size={40}
+              style={{
+                alignSelf: 'center',
+                marginRight: 30,
+                backgroundColor: light3,
+              }}
+            />
+          )}
+        </Pressable>
       </Appbar.Header>
       <KeyboardAwareFlatList
         style={{ padding: 30, marginBottom: 70, flex: 1 }}
@@ -133,38 +150,16 @@ export const ChatPage = (props: any) => {
           }, 10);
         }}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          position: 'absolute',
-          bottom: 0,
-          backgroundColor: '#abd699',
-          padding: 10,
-        }}>
+      <View style={styles.sendMessageContainer}>
         <TextInput
           onChangeText={setMessageContent}
           value={messageContent}
           placeholder="Podaj tytuł"
-          style={{
-            borderRadius: 20,
-            borderWidth: 1,
-            flex: 4,
-            marginRight: 10,
-            paddingLeft: 4,
-            backgroundColor: 'white',
-          }}
+          style={styles.inputMessage}
         />
 
         <Pressable
-          style={{
-            borderRadius: 20,
-            backgroundColor: '#2e1c00',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: 10,
-            flex: 1,
-          }}
+          style={styles.sendButton}
           onPress={async () => {
             const accessToken = await getAccessToken();
             if (accessToken && messageContent.length > 0) {
@@ -176,7 +171,7 @@ export const ChatPage = (props: any) => {
               setMessageContent('');
             }
           }}>
-          <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>
+          <Text style={{ color: light, fontWeight: '600', fontSize: 18 }}>
             Wyślij
           </Text>
         </Pressable>
@@ -186,20 +181,52 @@ export const ChatPage = (props: any) => {
 };
 
 const styles = StyleSheet.create({
-  messageText: {},
+  sendMessageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: secondary,
+    padding: 10,
+  },
+  inputMessage: {
+    borderRadius: 20,
+    borderWidth: 1,
+    flex: 4,
+    marginRight: 10,
+    paddingLeft: 4,
+    backgroundColor: light,
+  },
+  sendButton: {
+    borderRadius: 20,
+    backgroundColor: primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    flex: 1,
+  },
   message: {
     borderWidth: 1,
     borderRadius: 20,
-    borderColor: 'light-grey',
+    borderColor: dark2,
     padding: 10,
     marginBottom: 10,
     maxWidth: '70%',
   },
   messageLeft: {
     alignSelf: 'flex-start',
+    backgroundColor: light,
   },
   messageRight: {
     alignSelf: 'flex-end',
+    backgroundColor: secondary,
+  },
+  messageText: {},
+  messageTextLeft: {
+    color: dark,
+  },
+  messageTextRight: {
+    color: light,
   },
 });
 

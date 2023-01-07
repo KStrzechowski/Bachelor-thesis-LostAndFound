@@ -28,6 +28,9 @@ export const getPublications = async (pageNumber, accessToken, publication, orde
         if (publication.subjectCategoryId) {
             path = path.concat(`&SubjectCategoryId=${publication.subjectCategoryId}`);
         }
+        if (publication.onlyUserPublications) {
+            path = path.concat(`&OnlyUserPublications=${publication.onlyUserPublications}`);
+        }
     }
     if (orderBy && orderBy.firstArgumentSort) {
         const firstSortOrder = orderBy.firstArgumentSort.order === Order.Descending ? " desc" : "";

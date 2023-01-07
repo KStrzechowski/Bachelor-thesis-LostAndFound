@@ -13,28 +13,32 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { danger, dark, dark2, light, light2, primary } from './Colors';
 
 export const MainContainer: React.FC<PropsWithChildren> = ({ children }) => {
-  return <SafeAreaView style={styles.pageContainer}>{children}</SafeAreaView>;
+  return (
+    <SafeAreaView style={mainStyles.pageContainer}>{children}</SafeAreaView>
+  );
 };
 
 export const MainScrollContainer: React.FC<PropsWithChildren> = ({
   children,
 }) => {
   return (
-    <ScrollView contentInset={{ bottom: 80 }} style={styles.scrollContainer}>
+    <ScrollView
+      contentInset={{ bottom: 80 }}
+      style={mainStyles.scrollContainer}>
       <View style={{ marginBottom: 60 }}>{children}</View>
     </ScrollView>
   );
 };
 
 export const MainTitle: React.FC<TextProps> = ({ children }) => {
-  return <Text style={styles.mainTitle}>{children}</Text>;
+  return <Text style={mainStyles.mainTitle}>{children}</Text>;
 };
 
 export const Subtitle: React.FC<TextProps> = ({ children }) => {
-  return <Text style={styles.subtitle}>{children}</Text>;
+  return <Text style={mainStyles.subtitle}>{children}</Text>;
 };
 
 export const InputSection: React.FC<
@@ -44,8 +48,8 @@ export const InputSection: React.FC<
   }>
 > = ({ children, title, testID }) => {
   return (
-    <View style={styles.inputSectionContainer}>
-      <Text testID={testID} style={styles.inputSectionTitle}>
+    <View style={mainStyles.inputSectionContainer}>
+      <Text testID={testID} style={mainStyles.inputSectionTitle}>
         {title}
       </Text>
       {children}
@@ -55,7 +59,7 @@ export const InputSection: React.FC<
 
 export const CustomTextInput: React.FC<TextInputProps> = props => {
   return (
-    <View style={styles.inputContainer}>
+    <View style={mainStyles.inputContainer}>
       <TextInput {...props} />
     </View>
   );
@@ -69,8 +73,8 @@ export const MainButton: React.FC<
   }>
 > = ({ label, onPress, testID }) => {
   return (
-    <Pressable style={styles.mainButton} onPress={onPress} testID={testID}>
-      <Text style={styles.mainButtonText}>{label}</Text>
+    <Pressable style={mainStyles.mainButton} onPress={onPress} testID={testID}>
+      <Text style={mainStyles.mainButtonText}>{label}</Text>
     </Pressable>
   );
 };
@@ -83,8 +87,8 @@ export const SecondaryButton: React.FC<
   }>
 > = ({ label, onPress, testID }) => {
   return (
-    <Pressable style={styles.secondaryButton} onPress={onPress}>
-      <Text testID={testID} style={styles.secondaryButtonText}>
+    <Pressable style={mainStyles.secondaryButton} onPress={onPress}>
+      <Text testID={testID} style={mainStyles.secondaryButtonText}>
         {label}
       </Text>
     </Pressable>
@@ -100,8 +104,8 @@ export const DeleteButton: React.FC<
   }>
 > = ({ label, onPress, testID, style }) => {
   return (
-    <Pressable style={[styles.deleteButton, style]} onPress={onPress}>
-      <Text testID={testID} style={styles.deleteButtonText}>
+    <Pressable style={[mainStyles.deleteButton, style]} onPress={onPress}>
+      <Text testID={testID} style={mainStyles.deleteButtonText}>
         {label}
       </Text>
     </Pressable>
@@ -117,7 +121,7 @@ export const PressableText: React.FC<
 > = ({ text, onPress, testID }) => {
   return (
     <Pressable onPress={onPress} testID={testID}>
-      <Text style={styles.pressableText}>{text}</Text>
+      <Text style={mainStyles.pressableText}>{text}</Text>
     </Pressable>
   );
 };
@@ -138,9 +142,10 @@ export const ScoreView = (props: { testID?: string; score?: number }) => {
   );
 };
 
-export const styles = StyleSheet.create({
+export const mainStyles = StyleSheet.create({
   pageContainer: {
     flex: 1,
+    backgroundColor: light2,
   },
   scrollContainer: {
     padding: 30,
@@ -149,12 +154,12 @@ export const styles = StyleSheet.create({
   mainTitle: {
     fontSize: 24,
     fontWeight: '600',
-    color: 'black',
+    color: dark,
   },
   subtitle: {
     fontSize: 14,
     fontWeight: '400',
-    color: 'light-grey',
+    color: dark2,
   },
   inputSectionContainer: {
     paddingTop: 20,
@@ -162,11 +167,11 @@ export const styles = StyleSheet.create({
   inputSectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: 'black',
+    color: dark,
   },
   inputContainer: {
     borderBottomWidth: 1,
-    borderBottomColor: 'light-grey',
+    borderBottomColor: dark2,
   },
   highlight: {
     fontWeight: '700',
@@ -175,38 +180,45 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
     padding: 20,
-    backgroundColor: 'orange',
+    backgroundColor: primary,
     borderRadius: 8,
   },
   mainButtonText: {
     fontSize: 20,
     fontWeight: '600',
-    color: Colors.white,
+    color: light,
   },
   secondaryButton: {
     alignItems: 'center',
     padding: 8,
-    backgroundColor: 'orange',
+    backgroundColor: primary,
     borderRadius: 5,
   },
   secondaryButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.white,
+    color: light,
   },
   deleteButton: {
     alignSelf: 'flex-end',
     alignItems: 'flex-end',
     padding: 8,
-    backgroundColor: 'red',
+    backgroundColor: danger,
     borderRadius: 5,
   },
   deleteButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.white,
+    color: light,
   },
   pressableText: {
-    color: 'orange',
+    color: primary,
+  },
+  pickerStyle: {
+    backgroundColor: light,
+    borderColor: dark2,
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: 5,
   },
 });

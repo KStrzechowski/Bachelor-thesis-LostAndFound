@@ -14,9 +14,14 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import {
+  dark,
+  dark2,
   DeleteButton,
+  light,
+  light3,
   MainContainer,
   ScoreView,
+  secondary,
   SecondaryButton,
   StarRating,
 } from '../../Components';
@@ -34,14 +39,15 @@ const CommentItem = (props: any) => {
         padding: 10,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: 'light-grey',
+        borderColor: dark2,
+        backgroundColor: light,
       }}>
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={{ fontSize: 18, fontWeight: '500', color: 'black' }}>
+        <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
           {item.author.username}
         </Text>
         <ScoreView score={item.profileRating} />
@@ -76,7 +82,8 @@ const MyComment = (props: {
         padding: 10,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: 'light-grey',
+        borderColor: dark2,
+        backgroundColor: light,
       }}>
       <View
         style={{
@@ -153,10 +160,6 @@ export const ProfilePage = (props: any) => {
   const [profileComments, setProfileComments] =
     React.useState<ProfileCommentsSectionResponseType>();
   const [update, setUpdate] = React.useState<boolean>(false);
-  const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
-    width: number;
-    height: number;
-  }>();
 
   React.useEffect(() => {
     const getData = async () => {
@@ -187,42 +190,25 @@ export const ProfilePage = (props: any) => {
     getData();
   }, [profile]);
 
-  React.useEffect(() => {
-    if (profile?.pictureUrl) {
-      let imageSize = { width: 100, height: 100 };
-      Image.getSize(
-        profile?.pictureUrl,
-        (width, height) => (imageSize = { width, height }),
-      );
-      const displayedWidth = (width * 3.5) / 9;
-      const displayedHeight =
-        (imageSize.height * displayedWidth) / imageSize.width;
-      setImageDisplayedSize({
-        width: displayedWidth,
-        height: displayedHeight,
-      });
-    }
-  }, [profile, width]);
-
   return (
     <MainContainer>
-      <Appbar.Header style={{ backgroundColor: '#abd699' }}>
+      <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
-          color="#2e1c00"
+          color={light}
           onPress={() => props.navigation.pop()}
         />
         <Appbar.Content
           title={profile?.username}
           titleStyle={{
             textAlign: 'center',
-            color: '#2e1c00',
+            color: light,
             fontWeight: 'bold',
           }}
         />
         <Appbar.Action
           size={30}
           icon="chat"
-          color="#2e1c00"
+          color={light}
           onPress={() => {
             if (profile) {
               const chatRecipent: BaseProfileType = {
@@ -249,19 +235,29 @@ export const ProfilePage = (props: any) => {
             marginBottom: 10,
           }}
           onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-          <View style={{ alignContent: 'center', marginRight: 10 }}>
+          {profile?.pictureUrl ? (
             <Avatar.Image
               source={{
-                uri:
-                  profile?.pictureUrl ??
-                  'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+                uri: profile.pictureUrl,
               }}
               style={{
                 marginBottom: 20,
+                backgroundColor: light3,
               }}
-              size={150}
+              size={(width * 4) / 9}
             />
-          </View>
+          ) : (
+            <Avatar.Icon
+              icon={'account'}
+              size={(width * 4) / 9}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                marginRight: 30,
+                backgroundColor: light3,
+              }}
+            />
+          )}
           <View
             style={{
               alignSelf: 'flex-end',

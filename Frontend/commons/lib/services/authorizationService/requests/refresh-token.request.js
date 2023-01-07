@@ -2,7 +2,7 @@ import { http } from "../../../http";
 import { mapLoginFromServer, } from "../loginTypes";
 export const refreshToken = async (token) => {
     const result = await http({
-        path: "/account/login",
+        path: "/account/refresh",
         method: "post",
         body: {
             refreshToken: token,

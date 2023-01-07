@@ -3,8 +3,9 @@ import {
   DrawerContentScrollView,
   DrawerItem,
 } from '@react-navigation/drawer';
+import { PublicationSearchRequestType } from 'commons';
 import React from 'react';
-import { Image, StyleSheet, Switch, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
   Avatar,
   Button,
@@ -12,12 +13,10 @@ import {
   Drawer,
   Paragraph,
   Title,
-  TouchableRipple,
 } from 'react-native-paper';
-import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext, ProfileContext } from '../../Config';
-import { SecondaryButton } from '../Components';
+import { light3, mainStyles, primary } from '../Components';
 import {
   ChatPage,
   ChatsPage,
@@ -30,100 +29,75 @@ import {
   AddPostPage,
   EditPostPage,
 } from '../Pages';
-import { getUserPhotoUrl } from '../SecureStorage/Profile';
+import {
+  getName,
+  getSurname,
+  getUsername,
+  getUserPhotoUrl,
+  getUserRating,
+} from '../SecureStorage/Profile';
 
 const CustomDrawerContent = (props: any) => {
   const { signOut } = React.useContext(AuthContext);
   const { updatePhotoUrlValue } = React.useContext(ProfileContext);
+  const [username, setUsername] = React.useState<string | null>();
+  const [name, setName] = React.useState<string | null>();
+  const [surname, setSurname] = React.useState<string | null>();
+  const [userRating, setUserRating] = React.useState<string | null>();
   const [userPhotoUrl, setUserPhotoUrl] = React.useState<string | null>();
-  const [width, setWidth] = React.useState<number>(10);
-  const [imageDisplayedSize, setImageDisplayedSize] = React.useState<{
-    width: number;
-    height: number;
-  }>();
 
   React.useEffect(() => {
     const getData = async () => {
+      setUsername(await getUsername());
+      setName(await getName());
+      setSurname(await getSurname());
+      setUserRating(await getUserRating());
       setUserPhotoUrl(await getUserPhotoUrl());
     };
     getData();
   }, [updatePhotoUrlValue]);
 
-  React.useEffect(() => {
-    if (userPhotoUrl) {
-      let imageSize = { width: 100, height: 100 };
-      Image.getSize(
-        userPhotoUrl,
-        (width, height) => (imageSize = { width, height }),
-      );
-      const displayedWidth = width / 3;
-      const displayedHeight =
-        (imageSize.height * displayedWidth) / imageSize.width;
-      setImageDisplayedSize({
-        width: displayedWidth,
-        height: displayedHeight,
-      });
-    }
-  }, [userPhotoUrl, width]);
-  const styles = StyleSheet.create({
-    drawerContent: {
-      flex: 1,
-    },
-    userInfoSection: {
-      paddingLeft: 20,
-    },
-    title: {
-      marginTop: 20,
-      fontWeight: 'bold',
-    },
-    caption: {
-      fontSize: 14,
-      lineHeight: 14,
-    },
-    row: {
-      marginTop: 20,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    section: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginRight: 15,
-    },
-    paragraph: {
-      fontWeight: 'bold',
-      marginRight: 3,
-    },
-    drawerSection: {
-      marginTop: 15,
-    },
-    preference: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-    },
-  });
-
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerContent}>
         <View style={styles.userInfoSection}>
-          <Avatar.Image
-            source={{
-              uri:
-                userPhotoUrl ??
-                'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-            }}
-            style={{ alignSelf: 'center', marginTop: 10, marginRight: 30 }}
-            size={70}
-          />
-          <Title style={styles.title}>Imie Nazwisko</Title>
-          <Caption style={styles.caption}>@username</Caption>
+          {userPhotoUrl ? (
+            <Avatar.Image
+              source={{
+                uri: userPhotoUrl,
+              }}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                marginRight: 30,
+                backgroundColor: light3,
+              }}
+              size={70}
+            />
+          ) : (
+            <Avatar.Icon
+              icon={'account'}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                marginRight: 30,
+                backgroundColor: light3,
+              }}
+            />
+          )}
+
+          <Title style={styles.title}>{username}</Title>
+          {name || surname ? (
+            <Caption style={styles.caption}>{`${name ? `${name} ` : ''}${
+              surname ? surname : ''
+            }`}</Caption>
+          ) : (
+            <></>
+          )}
           <View style={styles.row}>
             <View style={styles.section}>
               <Paragraph style={[styles.paragraph, styles.caption]}>
-                4
+                {userRating}
               </Paragraph>
               <Caption style={styles.caption}>Ocena</Caption>
             </View>
@@ -134,7 +108,7 @@ const CustomDrawerContent = (props: any) => {
             icon={({ color, size }) => (
               <MaterialCommunityIcons
                 name="account-outline"
-                color={color}
+                color={primary}
                 size={size}
               />
             )}
@@ -145,7 +119,7 @@ const CustomDrawerContent = (props: any) => {
           />
           <DrawerItem
             icon={({ color, size }) => (
-              <MaterialCommunityIcons name="post" color={color} size={size} />
+              <MaterialCommunityIcons name="post" color={primary} size={size} />
             )}
             label="Ogłoszenia"
             onPress={() => props.navigation.push('Home', { screen: 'Posts' })}
@@ -154,26 +128,34 @@ const CustomDrawerContent = (props: any) => {
             icon={({ color, size }) => (
               <MaterialCommunityIcons
                 name="post-outline"
-                color={color}
+                color={primary}
                 size={size}
               />
             )}
             label="Moje ogłoszenia"
-            onPress={() => props.navigation.push('Home', { screen: 'Posts' })}
+            onPress={() => {
+              const searchPublication: PublicationSearchRequestType = {
+                onlyUserPublications: true,
+              };
+              props.navigation.push('Home', {
+                screen: 'Posts',
+                params: { searchPublication: searchPublication },
+              });
+            }}
           />
           <DrawerItem
             icon={({ color, size }) => (
-              <MaterialCommunityIcons name="chat" color={color} size={size} />
+              <MaterialCommunityIcons name="chat" color={primary} size={size} />
             )}
             label="Czaty"
             onPress={() => props.navigation.push('Home', { screen: 'Chats' })}
           />
         </Drawer.Section>
-        <Drawer.Section title="Akcje" style={{ padding: 15 }}>
+        <Drawer.Section style={{ padding: 15 }}>
           <Button
             icon="logout"
             mode="contained"
-            style={{ backgroundColor: '#2e1c00' }}
+            style={[mainStyles.secondaryButton, { paddingVertical: 5 }]}
             onPress={async () => await signOut()}>
             Wyloguj się
           </Button>
@@ -232,3 +214,43 @@ export const DrawerScreenStack = () => {
     </DrawerStack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  drawerContent: {
+    flex: 1,
+  },
+  userInfoSection: {
+    paddingLeft: 20,
+  },
+  title: {
+    marginTop: 20,
+    fontWeight: 'bold',
+  },
+  caption: {
+    fontSize: 14,
+    lineHeight: 14,
+  },
+  row: {
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  section: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  paragraph: {
+    fontWeight: 'bold',
+    marginRight: 3,
+  },
+  drawerSection: {
+    marginTop: 15,
+  },
+  preference: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+});
