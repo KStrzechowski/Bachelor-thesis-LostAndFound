@@ -2,9 +2,9 @@ version: '3.9'
 
 x-common-variables: &common-variables
     ASPNETCORE_ENVIRONMENT: Production
-    PositionStackService__AccessKey: "e3aab94387af95a665b8c6e15d2bee78"
-    LostAndFoundAuthentication__AccessTokenSecret: "5JlMfZSG1qokOwJiangsnKYr8BfCmfRBh4lj5PtctKKNl6NCKQ7q_5oQFRoGF6WYVmQuKE8bIuhRrwbZksXjOBG48zIaa193HvffmSv1XXyfGYuZverFtbpINKGyg-l8tp8XDGUWw_UmhT6vyGq7lzH4FzoOZ-o284jTF2_5A-k"
-    LostAndFoundAuthentication__RefreshTokenSecret: "1Dnm21C8yjIh_aBIRzl-hY97XfAGpF7Lo1rHhh92Uh5YT20InJxx-WxCwSPCtLa7RplhBG_FKRzMgsYiQWZ-wqFs7-aH-wDbu74QnPqUlJ1kfXJYiATPmx86KoJVLqIXo2gNDEunqdWFN87tgLfGVeaSYyIB9_SLc8OtzBvP9mM"
+    PositionStackService__AccessKey: "paste-position-stack-service-api-key-here"
+    LostAndFoundAuthentication__AccessTokenSecret: "paste-access-token-here"
+    LostAndFoundAuthentication__RefreshTokenSecret: "paste-refresh-token-here"
 
 services:
   lostandfound.azurite:
