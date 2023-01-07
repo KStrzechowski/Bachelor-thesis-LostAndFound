@@ -101,7 +101,6 @@ var app = builder.Build();
 
 SeedDbCollections();
 
-app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseResponseCaching();
