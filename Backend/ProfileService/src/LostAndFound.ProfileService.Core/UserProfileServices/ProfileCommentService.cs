@@ -68,7 +68,7 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
             Guid profileOwnerId, ProfileCommentsResourceParameters resourceParameters)
         {
             var userId = ParseUserId(rawUserId);
-            var commentsList = (await GetUserProfile(profileOwnerId)).Comments;
+            var commentsList = (await GetUserProfile(profileOwnerId)).Comments.ToList();
             var commentsSectionDto = new ProfileCommentsSectionResponseDto();
 
             var userComment = commentsList.SingleOrDefault(com => com.AuthorId == userId);
@@ -90,7 +90,7 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
                 await SetCommentsAuthorPictureUrls(commentsSectionDto.Comments);
             }
 
-            int totalItemCount = commentsList.Length - (userComment == null ? 0 : 1);
+            int totalItemCount = commentsList.Count - (userComment == null ? 0 : 1);
             var paginationMetadata = new PaginationMetadata(totalItemCount, resourceParameters.PageSize, resourceParameters.PageNumber);
 
             return (commentsSectionDto, paginationMetadata);
@@ -132,8 +132,8 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
         private async Task SetCommentsAuthorPictureUrls(IEnumerable<CommentDataResponseDto> commentsList)
         {
             var authorsIds = commentsList.Select(x => x.Author.Id);
-            var authorProfiles = await _profilesRepository
-                .FilterByAsync(x => authorsIds.Contains(x.UserId));
+            var authorProfiles = (await _profilesRepository
+                .FilterByAsync(x => authorsIds.Contains(x.UserId))).ToList();
 
             foreach (var comment in commentsList)
             {
