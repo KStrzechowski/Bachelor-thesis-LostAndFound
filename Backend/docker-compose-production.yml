@@ -14,9 +14,9 @@ services:
     restart: always
     command: 'azurite --loose --blobHost 0.0.0.0 --blobPort 10000 --location /workspace --debug /workspace/debug.log'
     ports:
-        - 5500:10000
+        - 10100:10000
     volumes:
-        - ./azurite:/workspace
+        - ./azurite-prod:/workspace
 
   lostandfound.rabbitmq:
     image: rabbitmq:3-management
