@@ -116,7 +116,6 @@ builder.Services.AddSwaggerGen(setupAction =>
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();

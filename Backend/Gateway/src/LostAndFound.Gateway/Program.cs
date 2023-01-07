@@ -15,11 +15,6 @@ builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsProduction())
-{
-    app.UseHttpsRedirection();
-}
-
 app.UseSwaggerForOcelotUI(opt => {}, uiOpt => {
     uiOpt.DocumentTitle = "LostAndFound system - Api Gateway";
     uiOpt.RoutePrefix = string.Empty;
