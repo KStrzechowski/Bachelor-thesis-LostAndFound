@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ProfileService\src\LostAndFound.ProfileService.ThirdPartyServices\LostAndFound.ProfileService.ThirdPartyServices.csproj" />
     <ProjectReference Include="..\..\src\LostAndFound.AuthService.CoreLibrary\LostAndFound.AuthService.CoreLibrary.csproj" />
     <ProjectReference Include="..\..\src\LostAndFound.AuthService.Core\LostAndFound.AuthService.Core.csproj" />
     <ProjectReference Include="..\..\src\LostAndFound.AuthService.DataAccess\LostAndFound.AuthService.DataAccess.csproj" />
