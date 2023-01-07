@@ -1,3 +1,4 @@
+using LostAndFound.ProfileService.BackgroundServices;
 using LostAndFound.ProfileService.Core;
 using LostAndFound.ProfileService.Core.FluentValidators;
 using LostAndFound.ProfileService.CoreLibrary.Settings;
@@ -17,6 +18,10 @@ var authenticationSettings = new AuthenticationSettings();
 builder.Configuration.Bind(AuthenticationSettings.SettingName, authenticationSettings);
 builder.Services.AddSingleton(authenticationSettings);
 
+var rabbitmqSettings = new RabbitMQSettings();
+builder.Configuration.Bind(RabbitMQSettings.SettingName, rabbitmqSettings);
+builder.Services.AddSingleton(rabbitmqSettings);
+
 builder.Services.AddHealthChecks();
 builder.Services.AddControllers(setupAction =>
 {
@@ -28,6 +33,7 @@ builder.Services.AddControllers(setupAction =>
         new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
 });
 
+builder.Services.AddHostedService<RabbitMQBackgroundConsumerService>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddFluentValidators();
 builder.Services.AddDataAccessServices(builder.Configuration);

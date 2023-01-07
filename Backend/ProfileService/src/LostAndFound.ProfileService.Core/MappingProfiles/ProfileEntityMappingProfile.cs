@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LostAndFound.ProfileService.CoreLibrary.Messages;
 using LostAndFound.ProfileService.CoreLibrary.Requests;
 using LostAndFound.ProfileService.CoreLibrary.Responses;
 using ProfileEntity = LostAndFound.ProfileService.DataAccess.Entities.Profile;
@@ -9,7 +10,7 @@ namespace LostAndFound.ProfileService.Core.MappingProfiles
     {
         public ProfileEntityMappingProfile()
         {
-            CreateMap<CreateProfileRequestDto, ProfileEntity>()
+            CreateMap<NewUserAccountMessageDto, ProfileEntity>()
                 .ForMember(entity => entity.UserId, opt => opt.MapFrom(dto => dto.UserId))
                 .ForMember(entity => entity.Email, opt => opt.MapFrom(dto => dto.Email))
                 .ForMember(entity => entity.Username, opt => opt.MapFrom(dto => dto.Username))

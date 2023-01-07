@@ -91,6 +91,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LostAndFound.ProfileService
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{0DB5477A-AF44-40C5-A948-203708151CB8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostAndFound.AuthService.ThirdPartyServices", "AuthService\src\LostAndFound.AuthService.ThirdPartyServices\LostAndFound.AuthService.ThirdPartyServices.csproj", "{1D955E65-3009-470C-9D8F-E78FA23DFDF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -213,6 +215,10 @@ Global
 		{0DB5477A-AF44-40C5-A948-203708151CB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DB5477A-AF44-40C5-A948-203708151CB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DB5477A-AF44-40C5-A948-203708151CB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D955E65-3009-470C-9D8F-E78FA23DFDF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D955E65-3009-470C-9D8F-E78FA23DFDF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D955E65-3009-470C-9D8F-E78FA23DFDF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D955E65-3009-470C-9D8F-E78FA23DFDF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -256,6 +262,7 @@ Global
 		{8593404C-65A6-4A5F-BE3C-CEA38B201622} = {A380A34F-4769-4694-84C9-B9B4132278C9}
 		{C9FD6D41-A06C-4151-ADDA-F88AF28C9213} = {552C6892-7F51-4FF7-A6DD-8893C379AFD6}
 		{77147208-F57C-430C-8A27-F141A5A52148} = {B2E91A50-16AC-4A84-AEAF-D2D0D8B44780}
+		{1D955E65-3009-470C-9D8F-E78FA23DFDF8} = {B49A71DF-9399-45F8-ABC1-533E34202700}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5BDF6858-EE9C-4EA7-8CFE-454D939A4A80}
