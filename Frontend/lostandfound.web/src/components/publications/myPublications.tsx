@@ -1,6 +1,7 @@
 import { getPublicationsUndef, PublicationSearchRequestType } from "commons";
 import Pagination from "components/pagination";
 import { useContext, useEffect, useState } from "react";
+import { FiEdit } from "react-icons/fi";
 import { userContext } from "userContext";
 import { Publication, PublicationCom } from "./publicationsList";
 
@@ -27,16 +28,22 @@ export default function MyPublications() {
 	return (
 		<>
 			<div className="container">
-				<div className=" m-auto w-50 ">
+				<div className=" m-auto w-50">
 					{pub.map((x, i) => (
-						<PublicationCom pub={x} key={i} like={undefined} dislike={undefined} />
+						<PublicationCom
+							pub={x}
+							key={i}
+							like={undefined}
+							dislike={undefined}
+							edit={true}
+						/>
 					))}
 				</div>
 			</div>
 			<Pagination
 				page={page}
 				setPage={(p: number) => setPage(p)}
-				maxPages={15}
+				maxPages={200}
 			/>
 		</>
 	);

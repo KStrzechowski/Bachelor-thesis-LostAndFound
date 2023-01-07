@@ -16,9 +16,11 @@ import { Rating } from "react-simple-star-rating";
 export default function ProfileComments({
 	profId,
 	me,
+	refresh,
 }: {
 	profId: string;
 	me: boolean;
+	refresh: () => void;
 }) {
 	const usrCtx = useContext(userContext);
 	const [comments, setComments] = useState(
@@ -28,7 +30,7 @@ export default function ProfileComments({
 		undefined as ProfileCommentResponseType | undefined
 	);
 	const [ldg, setLdg] = useState(true);
-
+	useEffect(() => setLdg(true), [profId]);
 	useEffect(() => {
 		if (ldg === true) {
 			if (usrCtx.user.authToken != null)
@@ -38,6 +40,7 @@ export default function ProfileComments({
 					}
 					setMyCom(x?.myComment);
 					setLdg(false);
+					refresh();
 				});
 		}
 	}, [profId, ldg]);
@@ -104,7 +107,13 @@ export function ProfileComment({ com }: { com: ProfileCommentResponseType }) {
 					alt="noimg"
 				></img>
 				<div className="row">
-					<strong>{com.author.username}</strong>
+					<Link
+						className="fw-bold"
+						to={`/profile/${com.author.id}`}
+						style={{ textDecoration: "none" }}
+					>
+						{com.author.username}
+					</Link>
 				</div>
 			</div>
 			<div className="col-8">
@@ -115,12 +124,11 @@ export function ProfileComment({ com }: { com: ProfileCommentResponseType }) {
 			</div>
 			<div className="col fs-2 align-self-center">
 				<FiStar
-					className="mt-2"
+					className="mt-2 float-end"
 					fill="#ffc107"
 					color="#ffc107"
-					style={{ float: "right" }}
 				/>
-				<span style={{ float: "right" }}>{com.profileRating}</span>
+				<span className="float-end">{com.profileRating}</span>
 			</div>
 		</div>
 	);
@@ -151,6 +159,7 @@ export function ProfileMyComment({
 				}
 				clsFunc={() => {
 					setEd(false);
+					refresh();
 				}}
 				edit={true}
 			/>

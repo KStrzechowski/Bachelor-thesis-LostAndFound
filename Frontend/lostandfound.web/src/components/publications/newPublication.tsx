@@ -1,9 +1,15 @@
-import { addPublication, CategoryType, getCategories, PublicationState, PublicationType } from "commons";
+import {
+	addPublication,
+	CategoryType,
+	getCategories,
+	PublicationState,
+	PublicationType,
+} from "commons";
 import { useContext, useEffect, useState } from "react";
 import { userContext } from "userContext";
 import { Publication } from "./publicationsList";
 
-export function NewPublication() {
+export function NewPublication({ refresh }: { refresh?: () => void }) {
 	const [exp, setExp] = useState(false);
 	if (exp)
 		return (
@@ -15,7 +21,12 @@ export function NewPublication() {
 					-
 				</button>
 
-				<NewPublicationInner></NewPublicationInner>
+				<NewPublicationInner
+					refresh={() => {
+						setExp(false);
+						if (refresh) refresh();
+					}}
+				></NewPublicationInner>
 			</>
 		);
 	return (
@@ -24,7 +35,7 @@ export function NewPublication() {
 		</button>
 	);
 }
-export function NewPublicationInner() {
+export function NewPublicationInner({ refresh }: { refresh?: () => void }) {
 	const usrCtx = useContext(userContext);
 	const [pub, setPub] = useState(new Publication());
 	const [cats, setCats] = useState([] as CategoryType[]);
@@ -52,7 +63,7 @@ export function NewPublicationInner() {
 	};
 
 	function add() {
-		console.log(pub.incidentDate);
+		console.log(pub);
 		addPublication(
 			{
 				incidentDate: new Date(pub.incidentDate),
@@ -66,7 +77,9 @@ export function NewPublicationInner() {
 				subjectCategoryId: pub.cat,
 			},
 			usrCtx.user.authToken ?? ""
-		);
+		).then((x) => {
+			if (refresh) refresh();
+		});
 	}
 
 	return (
@@ -156,7 +169,10 @@ export function NewPublicationInner() {
 						))}
 					</select>
 				</div>
-				<button className="btn btn-primary mt-3" onClick={() => add()}>
+				<button
+					className="btn btn-primary ms-auto mt-3"
+					onClick={() => add()}
+				>
 					Utwórz
 				</button>
 			</div>

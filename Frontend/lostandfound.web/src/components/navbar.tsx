@@ -38,6 +38,27 @@ export default function Navbar() {
 						<Link
 							data-testid="linktoprofile"
 							className="btn btn-primary rounded-5 me-3"
+							to={"/posts"}
+						>
+							Ogłoszenia
+						</Link>
+						<Link
+							data-testid="linktoprofile"
+							className="btn btn-primary rounded-5 me-3"
+							to={"/posts/mine"}
+						>
+							Moje ogłoszenia
+						</Link>
+						<Link
+							data-testid="linktoprofile"
+							className="btn btn-primary rounded-5 me-3"
+							to={"/chats"}
+						>
+							Czaty
+						</Link>
+						<Link
+							data-testid="linktoprofile"
+							className="btn btn-primary rounded-5 me-3"
 							to={"/profile"}
 						>
 							Profil

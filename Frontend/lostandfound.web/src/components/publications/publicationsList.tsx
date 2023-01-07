@@ -5,15 +5,21 @@ import {
 	getPublicationsUndef,
 	PublicationResponseType,
 	PublicationSearchRequestType,
+	PublicationSortType,
 	SinglePublicationVote,
+	UserType,
 } from "commons";
 import { useContext, useEffect, useState } from "react";
 import { userContext } from "userContext";
 import { NewPublication } from "./newPublication";
 import Pagination from "../pagination";
+import PublicationModal from "./publicationDetails";
+import { Link, useParams } from "react-router-dom";
+import { FiEdit } from "react-icons/fi";
 
 export default function PublicationsList() {
 	const usrCtx = useContext(userContext);
+	const { pubId } = useParams();
 	const [pub, setPub] = useState([] as Publication[]);
 
 	const [page, setPage] = useState(1 as number);
@@ -21,35 +27,64 @@ export default function PublicationsList() {
 		undefined as PublicationSearchRequestType | undefined
 	);
 
+	const [ldg, setLdg] = useState(true);
+
+	const [details, setDetails] = useState(undefined as string | undefined);
+
 	useEffect(() => {
-		getPublicationsUndef(page, usrCtx.user.authToken ?? "", filter).then(
-			(x) => {
+		if (ldg) {
+			setLdg(false);
+			getPublicationsUndef(
+				page,
+				usrCtx.user.authToken ?? "",
+				filter
+			).then((x) => {
 				console.log(x);
 				if (x === undefined)
 					usrCtx.setUser({ authToken: "", isLogged: false });
 				else setPub(x.map((y) => new Publication(y)));
-			}
-		);
-	}, [page, usrCtx.user, usrCtx, filter]);
+			});
+		}
+	}, [page, usrCtx.user, usrCtx, filter, ldg]);
 
 	function like(pubId: string) {
-		return editPublicationRating(
-			pubId,
-			SinglePublicationVote.Up,
-			usrCtx.user.authToken ?? ""
-		);
+		setPubVote(pubId, 1);
 	}
 	function dislike(pubId: string) {
-		console.log(usrCtx.user.authToken);
+		setPubVote(pubId, -1);
+	}
+	function setPubVote(pubId: string, newVote: number) {
+		let pubs = [...pub];
+		let p = pubs.find((x) => x.publicationIdentifier == pubId);
+		if (p == undefined) return;
+		if (p.userVote === newVote) {
+			p.rating -= p.userVote;
+			p.userVote = 0;
+		} else {
+			p.rating += newVote - p.userVote;
+			p.userVote = newVote;
+		}
+		setPub(pubs);
 		return editPublicationRating(
 			pubId,
-			SinglePublicationVote.Down,
+			p.userVote === 1
+				? SinglePublicationVote.Up
+				: p.userVote === 0
+				? SinglePublicationVote.NoVote
+				: SinglePublicationVote.Down,
 			usrCtx.user.authToken ?? ""
 		);
 	}
+
+	const [sort, setSort] = useState(
+		undefined as PublicationSortType | undefined
+	);
+
 	return (
 		<>
-			<NewPublication></NewPublication>
+			{<PublicationModal pubId={details} />}
+			<NewPublication refresh={() => setLdg(true)}></NewPublication>
+			<SortForm setSort={(x) => setSort(x)} sort={sort} />
 			<div className="container">
 				<div className="w-25 float-start">
 					<FiltersForm setFilter={(x) => setFilter(x)}></FiltersForm>
@@ -61,13 +96,17 @@ export default function PublicationsList() {
 							key={i}
 							like={() => like(x.publicationIdentifier)}
 							dislike={() => dislike(x.publicationIdentifier)}
+							select={(x: string) => setDetails(x)}
 						/>
 					))}
 				</div>
 			</div>
 			<Pagination
 				page={page}
-				setPage={(p: number) => setPage(p)}
+				setPage={(p: number) => {
+					setPage(p);
+					setLdg(true);
+				}}
 				maxPages={15}
 			/>
 		</>
@@ -78,10 +117,14 @@ export function PublicationCom({
 	pub,
 	like,
 	dislike,
+	select,
+	edit,
 }: {
 	pub: Publication;
-	like?: () => Promise<any>;
-	dislike?: () => Promise<any>;
+	like?: () => Promise<any> | void;
+	dislike?: () => Promise<any> | void;
+	select?: (pubId: string) => void;
+	edit?: boolean;
 }) {
 	return (
 		<div className="border border-dark bg-light shadow-lg m-3 p-3 pe-1 rounded-4 container row">
@@ -89,13 +132,37 @@ export function PublicationCom({
 				className="img-fluid"
 				style={{ width: "300px" }}
 				src={pub.subjectPicture}
+				data-bs-toggle="modal"
+				data-bs-target="#staticBackdrop"
+				onClick={() => {
+					if (select) select(pub.publicationIdentifier);
+				}}
 			></img>
-			<div className="col text-start p-2">
-				<h4>{pub.title}</h4>
+			<div
+				className="col text-start p-2"
+				data-bs-toggle="modal"
+				data-bs-target="#staticBackdrop"
+				onClick={() => {
+					if (select) select(pub.publicationIdentifier);
+				}}
+			>
+				<h4>
+					{pub.title}{" "}
+					{edit && (
+						<Link
+							className="text-black"
+							to={`/posts/edit/${pub.publicationIdentifier}`}
+						>
+							<FiEdit size="20" />
+						</Link>
+					)}
+				</h4>
 
 				<span className="p-2 fst-italic">{pub.incidentAddress}</span>
+
 				<div className="p-2"> {pub.description}</div>
 			</div>
+
 			<div className="col-1 text-center  p-0">
 				{like !== undefined && (
 					<button
@@ -129,6 +196,23 @@ export function PublicationCom({
 					</h3>
 				)}
 			</div>
+		</div>
+	);
+}
+
+function SortForm({
+	sort,
+	setSort,
+}: {
+	sort: PublicationSortType | undefined;
+	setSort: (newSort: PublicationSortType | undefined) => void;
+}) {
+	return (
+		<div>
+			sortuj:{" "}
+			<select>
+				<option>a </option>
+			</select>
 		</div>
 	);
 }
@@ -251,6 +335,7 @@ export class Publication {
 				: pub?.userVote === SinglePublicationVote.Down
 				? -1
 				: 0;
+		this.user = pub?.author;
 	}
 	publicationIdentifier: string;
 	title: string = "";
@@ -262,4 +347,5 @@ export class Publication {
 	userVote: number = 0;
 	lostorfnd: boolean | undefined;
 	cat: string | undefined;
+	user: UserType | undefined;
 }
