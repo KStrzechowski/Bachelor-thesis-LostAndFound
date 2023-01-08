@@ -9,20 +9,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Events;
 using System.Reflection;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
-
-var logger = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    .Enrich.FromLogContext()
-    .Enrich.WithMachineName()
+Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
+Log.Information("Starting web application");
 
-builder.Host.UseSerilog(logger);
+var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 
 var authenticationSettings = new AuthenticationSettings();
 builder.Configuration.Bind(AuthenticationSettings.SettingName, authenticationSettings);

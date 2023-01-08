@@ -1,17 +1,14 @@
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Serilog;
-using Serilog.Events;
 
-var builder = WebApplication.CreateBuilder(args);
-
-var logger = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    .Enrich.FromLogContext()
-    .Enrich.WithMachineName()
+Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
-builder.Host.UseSerilog(logger);
+Log.Information("Starting web application");
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 
 builder.Configuration
     .AddJsonFile("ocelot.json")
