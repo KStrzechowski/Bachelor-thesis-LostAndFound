@@ -6,7 +6,6 @@ import {
 } from 'commons';
 import React from 'react';
 import { DocumentPickerResponse } from 'react-native-document-picker';
-import { ProfileContext } from '../../../Config';
 import {
   CustomTextInput,
   DocumentSelector,
@@ -17,7 +16,6 @@ import {
 } from '../../Components';
 import {
   getAccessToken,
-  getUserRating,
   removeName,
   removeSurname,
   removeUsername,
@@ -34,6 +32,7 @@ import {
 } from '../../Components/MainComponents';
 import { Appbar } from 'react-native-paper';
 import { View } from 'react-native';
+import { ProfileContext } from '../../Context';
 
 const editProfileDetails = async (profile: ProfileRequestType) => {
   const accessToken = await getAccessToken();

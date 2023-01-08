@@ -1,7 +1,7 @@
 import { LoginRequestType, getProfile, login } from 'commons';
 import React from 'react';
 import { Image, Text, View } from 'react-native';
-import { AuthContext } from '../../../Config';
+import { AuthContext } from '../../Context';
 import {
   CustomTextInput,
   InputSection,

@@ -16,9 +16,11 @@ import {
   getChatMessages,
   MessageRequestType,
   MessageResponseType,
+  readChat,
 } from 'commons';
 import { getAccessToken, getUserId } from '../../SecureStorage';
 import { Appbar, Avatar } from 'react-native-paper';
+import { ProfileContext } from '../../Context';
 
 const GetMessages = async (
   recipentId: string,
@@ -31,6 +33,13 @@ const SendMessage = async (
   message: MessageRequestType,
   accessToken: string,
 ) => await addChatMessage(recipentId, message, accessToken);
+
+const ReadChat = async (chatRecipent: BaseProfileType | undefined) => {
+  const accessToken = await getAccessToken();
+  if (chatRecipent && accessToken) {
+    await readChat(chatRecipent.userId, accessToken);
+  }
+};
 
 const MessageItem = (props: any) => {
   const currentUserId: string = props.currentUserId;
@@ -58,13 +67,13 @@ const MessageItem = (props: any) => {
 
 export const ChatPage = (props: any) => {
   const chatRecipent: BaseProfileType = props.route.params?.chatRecipent;
+  const { updateChats, updateUnreadChatsCount, updateChatsValue } =
+    React.useContext(ProfileContext);
   const [messageContent, setMessageContent] = React.useState<string>('');
   const [currentUserId, setCurrentUserId] = React.useState<string | null>();
   const [messagesData, setMessagesData] = React.useState<MessageResponseType[]>(
     [],
   );
-
-  const [update, setUpdate] = React.useState<boolean>(false);
   const [flatListRef, setFlatListRef] =
     React.useState<KeyboardAwareFlatList | null>(null);
 
@@ -87,7 +96,7 @@ export const ChatPage = (props: any) => {
     };
 
     getData();
-  }, [update]);
+  }, [updateChatsValue]);
 
   return (
     <MainContainer>
@@ -149,6 +158,11 @@ export const ChatPage = (props: any) => {
             flatListRef?.scrollToEnd();
           }, 10);
         }}
+        onEndReached={async () => {
+          await ReadChat(chatRecipent);
+          updateChats();
+          updateUnreadChatsCount();
+        }}
       />
       <View style={styles.sendMessageContainer}>
         <TextInput
@@ -167,7 +181,6 @@ export const ChatPage = (props: any) => {
                 content: messageContent,
               };
               await SendMessage(chatRecipent?.userId, message, accessToken);
-              setUpdate(!update);
               setMessageContent('');
             }
           }}>

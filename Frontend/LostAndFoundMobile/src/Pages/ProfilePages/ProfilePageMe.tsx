@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { Appbar, Avatar, Menu } from 'react-native-paper';
-import { ProfileContext } from '../../../Config';
+import { ProfileContext } from '../../Context';
 import {
   dark,
   dark2,

@@ -4,7 +4,7 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 import { PublicationSearchRequestType } from 'commons';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
   Avatar,
@@ -14,8 +14,8 @@ import {
   Paragraph,
   Title,
 } from 'react-native-paper';
+import { Icon, withBadge } from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { AuthContext, ProfileContext } from '../../Config';
 import { light3, mainStyles, primary } from '../Components';
 import {
   ChatPage,
@@ -36,10 +36,13 @@ import {
   getUserPhotoUrl,
   getUserRating,
 } from '../SecureStorage/Profile';
+import { AuthContext, ProfileContext } from '../Context';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 const CustomDrawerContent = (props: any) => {
   const { signOut } = React.useContext(AuthContext);
-  const { updatePhotoUrlValue } = React.useContext(ProfileContext);
+  const { updatePhotoUrlValue, unreadChatsCount } =
+    React.useContext(ProfileContext);
   const [username, setUsername] = React.useState<string | null>();
   const [name, setName] = React.useState<string | null>();
   const [surname, setSurname] = React.useState<string | null>();
@@ -56,6 +59,20 @@ const CustomDrawerContent = (props: any) => {
     };
     getData();
   }, [updatePhotoUrlValue]);
+
+  React.useEffect(() => {
+    const getData = async () => {};
+    getData();
+  }, [unreadChatsCount]);
+
+  const BadgedIcon: React.FC<
+    PropsWithChildren<{
+      chatsNumber: number;
+    }>
+  > = ({ chatsNumber }) => {
+    const Badge = withBadge(chatsNumber)(Icon);
+    return <Badge />;
+  };
 
   return (
     <DrawerContentScrollView {...props}>
@@ -105,7 +122,7 @@ const CustomDrawerContent = (props: any) => {
         </View>
         <Drawer.Section style={styles.drawerSection}>
           <DrawerItem
-            icon={({ color, size }) => (
+            icon={({ size }) => (
               <MaterialCommunityIcons
                 name="account-outline"
                 color={primary}
@@ -113,19 +130,23 @@ const CustomDrawerContent = (props: any) => {
               />
             )}
             label="Profil"
-            onPress={() =>
-              props.navigation.push('Home', { screen: 'ProfileMe' })
-            }
+            onPress={() => {
+              props.navigation.popToTop();
+              props.navigation.push('Home', { screen: 'ProfileMe' });
+            }}
           />
           <DrawerItem
-            icon={({ color, size }) => (
+            icon={({ size }) => (
               <MaterialCommunityIcons name="post" color={primary} size={size} />
             )}
             label="Ogłoszenia"
-            onPress={() => props.navigation.push('Home', { screen: 'Posts' })}
+            onPress={() => {
+              props.navigation.popToTop();
+              props.navigation.push('Home', { screen: 'Posts' });
+            }}
           />
           <DrawerItem
-            icon={({ color, size }) => (
+            icon={({ size }) => (
               <MaterialCommunityIcons
                 name="post-outline"
                 color={primary}
@@ -137,6 +158,7 @@ const CustomDrawerContent = (props: any) => {
               const searchPublication: PublicationSearchRequestType = {
                 onlyUserPublications: true,
               };
+              props.navigation.popToTop();
               props.navigation.push('Home', {
                 screen: 'Posts',
                 params: { searchPublication: searchPublication },
@@ -144,18 +166,30 @@ const CustomDrawerContent = (props: any) => {
             }}
           />
           <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons name="chat" color={primary} size={size} />
+            icon={({ size }) => (
+              <MaterialCommunityIcons name="chat" color={primary} size={size}>
+                {unreadChatsCount && unreadChatsCount > 0 ? (
+                  <BadgedIcon chatsNumber={unreadChatsCount} />
+                ) : (
+                  <></>
+                )}
+              </MaterialCommunityIcons>
             )}
             label="Czaty"
-            onPress={() => props.navigation.push('Home', { screen: 'Chats' })}
+            onPress={() => {
+              props.navigation.popToTop();
+              props.navigation.push('Home', { screen: 'Chats' });
+            }}
           />
         </Drawer.Section>
         <Drawer.Section style={{ padding: 15 }}>
           <Button
             icon="logout"
             mode="contained"
-            style={[mainStyles.secondaryButton, { paddingVertical: 5 }]}
+            style={[
+              mainStyles.secondaryButton,
+              { paddingVertical: 5, marginHorizontal: 15 },
+            ]}
             onPress={async () => await signOut()}>
             Wyloguj się
           </Button>
