@@ -2,9 +2,9 @@ version: '3.9'
 
 x-common-variables: &common-variables
     ASPNETCORE_ENVIRONMENT: Production
-    PositionStackService__AccessKey: "paste-position-stack-service-api-key-here"
-    LostAndFoundAuthentication__AccessTokenSecret: "paste-access-token-here"
-    LostAndFoundAuthentication__RefreshTokenSecret: "paste-refresh-token-here"
+    PositionStackService__AccessKey: ${PositionStackService__AccessKey}
+    LostAndFoundAuthentication__AccessTokenSecret: ${LostAndFoundAuthentication__AccessTokenSecret}
+    LostAndFoundAuthentication__RefreshTokenSecret: ${LostAndFoundAuthentication__RefreshTokenSecret}
 
 services:
   lostandfound.azurite:
@@ -16,7 +16,7 @@ services:
     ports:
         - 10100:10000
     volumes:
-        - ./azurite-prod:/workspace
+        - ./azurite:/workspace
 
   lostandfound.rabbitmq:
     image: rabbitmq:3-management
@@ -38,6 +38,7 @@ services:
       dockerfile: AuthService/src/LostAndFound.AuthService/Dockerfile
     ports:
         - "6100:80"
+    restart: always
     depends_on:
         - "lostandfound.mongodb"
         - "lostandfound.rabbitmq"
@@ -51,6 +52,7 @@ services:
       dockerfile: ChatService/src/LostAndFound.ChatService/Dockerfile
     ports:
         - "6200:80"
+    restart: always
     depends_on:
         - "lostandfound.mongodb"
     environment:
@@ -63,6 +65,7 @@ services:
       dockerfile: Gateway/src/LostAndFound.Gateway/Dockerfile
     ports:
         - "6500:80"
+    restart: always
     depends_on:
         - "lostandfound.authservice"
         - "lostandfound.chatservice"
@@ -78,7 +81,7 @@ services:
       dockerfile: ProfileService/src/LostAndFound.ProfileService/Dockerfile
     ports:
         - "6300:80"
-    restart: on-failure
+    restart: always
     depends_on:        
         - "lostandfound.mongodb"
         - "lostandfound.azurite"
@@ -93,6 +96,7 @@ services:
       dockerfile: PublicationService/src/LostAndFound.PublicationService/Dockerfile
     ports:
         - "6400:80"
+    restart: always
     depends_on:
         - "lostandfound.mongodb"
         - "lostandfound.azurite"

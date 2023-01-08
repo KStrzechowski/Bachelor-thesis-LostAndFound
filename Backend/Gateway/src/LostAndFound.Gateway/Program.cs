@@ -1,7 +1,18 @@
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .WriteTo.Console()
+    .CreateLogger();
+builder.Host.UseSerilog(logger);
+
 builder.Configuration
     .AddJsonFile("ocelot.json")
     .AddJsonFile($"configuration.{builder.Environment.EnvironmentName}.json");

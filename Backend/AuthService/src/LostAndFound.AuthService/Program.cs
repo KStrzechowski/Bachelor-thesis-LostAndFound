@@ -8,10 +8,21 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
 using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog(logger);
 
 var authenticationSettings = new AuthenticationSettings();
 builder.Configuration.Bind(AuthenticationSettings.SettingName, authenticationSettings);
