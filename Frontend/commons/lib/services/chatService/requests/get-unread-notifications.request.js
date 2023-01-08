@@ -9,6 +9,6 @@ export const getUnreadNotifications = async (accessToken) => {
         return result.body;
     }
     else {
-        return [];
+        return undefined;
     }
 };

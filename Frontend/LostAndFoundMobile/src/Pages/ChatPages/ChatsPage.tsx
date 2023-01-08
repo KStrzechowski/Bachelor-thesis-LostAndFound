@@ -16,6 +16,7 @@ import {
   getChats,
 } from 'commons/';
 import {
+  danger,
   dark,
   dark2,
   light,
@@ -26,6 +27,8 @@ import {
 } from '../../Components';
 import { getAccessToken } from '../../SecureStorage';
 import { Appbar, Avatar } from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ProfileContext } from '../../Context';
 
 const GetChats = async (
   accessToken: string,
@@ -83,7 +86,10 @@ const ChatItem = (props: any) => {
           }}
         />
       )}
-      <View style={{ width: (width * 3) / 4 - 10, paddingRight: 15 }}>
+      <View
+        style={{
+          width: (width * 2) / 4,
+        }}>
         <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
           {item?.username}
         </Text>
@@ -92,11 +98,16 @@ const ChatItem = (props: any) => {
           {item?.lastMessage.content}
         </Text>
       </View>
+      <MaterialCommunityIcons
+        name="chat"
+        color={item?.containsUnreadMessage ? danger : light}
+        size={25}></MaterialCommunityIcons>
     </Pressable>
   );
 };
 
 export const ChatsPage = (props: any) => {
+  const { updateChatsValue } = React.useContext(ProfileContext);
   const [chatsData, setChatsData] = React.useState<BaseProfileChatType[]>([]);
 
   React.useEffect(() => {
@@ -108,7 +119,7 @@ export const ChatsPage = (props: any) => {
     };
 
     getData();
-  }, []);
+  }, [updateChatsValue]);
 
   return (
     <MainContainer>
