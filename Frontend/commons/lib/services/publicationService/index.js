@@ -4,6 +4,7 @@ export { deletePublication } from "./requests/delete-publication.request";
 export { deletePublicationPhoto } from "./requests/delete-publication-photo.request";
 export { editPublication } from "./requests/edit-publication.request";
 export { editPublicationPhoto } from "./requests/edit-publication-photo.request";
+export { editPublicationPhotoWeb } from "./requests/edit-publication-photo-web.request";
 export { editPublicationRating } from "./requests/edit-publication-rating.request";
 export { editPublicationState } from "./requests/edit-publication-state.request";
 export { getCategories } from "./requests/get-categories.request";
