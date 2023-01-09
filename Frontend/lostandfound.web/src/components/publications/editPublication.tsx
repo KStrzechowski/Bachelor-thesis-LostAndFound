@@ -1,13 +1,16 @@
 import {
 	addPublication,
 	CategoryType,
+	deletePublicationPhoto,
 	editPublication,
+	editPublicationPhotoWeb,
 	getCategories,
 	getPublication,
 	PublicationResponseType,
 	PublicationState,
 	PublicationType,
 } from "commons";
+import UploadAndDisplayImage from "components/imagePicker";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigate, useParams } from "react-router-dom";
@@ -27,7 +30,9 @@ export function EditPublication() {
 				pub?.publicationId ?? "",
 				pub,
 				usrCtx.user.authToken ?? ""
-			).then((x) => nav("/posts/mine"));
+			).then((x) => {
+				if (x) nav("/posts/mine");
+			});
 	}
 	useEffect(() => {
 		if (pubId)
@@ -35,12 +40,39 @@ export function EditPublication() {
 				setPub(x)
 			);
 	}, [pubId]);
+
+	function saveImg(file: File) {
+		console.log(file);
+		if (pub)
+			return editPublicationPhotoWeb(
+				pub?.publicationId,
+				file,
+				usrCtx.user.authToken ?? ""
+			).then((x) => {
+				if (x) setPub({ ...pub, subjectPhotoUrl: x.subjectPhotoUrl });
+			});
+		return Promise.resolve();
+	}
+
+	function delImg() {
+		if (pub)
+			return deletePublicationPhoto(
+				pub?.publicationId,
+				usrCtx.user.authToken ?? ""
+			).then((x) => {
+				if (pub) setPub({ ...pub, subjectPhotoUrl: undefined });
+			});
+		return Promise.resolve();
+	}
+
 	if (!pub) return <div>...</div>;
 	return (
 		<EditPublicationInner
 			pub={pub}
 			setPub={(pub) => setPub(pub)}
 			save={() => save()}
+			saveImg={(file: File) => saveImg(file)}
+			delImg={() => delImg()}
 		/>
 	);
 }
@@ -48,10 +80,14 @@ export function EditPublicationInner({
 	pub,
 	setPub,
 	save,
+	saveImg,
+	delImg,
 }: {
 	pub: PublicationResponseType;
 	setPub: (newPub: PublicationResponseType) => void;
 	save: () => void;
+	saveImg: (file: File) => Promise<void>;
+	delImg: () => Promise<void>;
 }) {
 	const usrCtx = useContext(userContext);
 	const [cats, setCats] = useState([] as CategoryType[]);
@@ -85,11 +121,20 @@ export function EditPublicationInner({
 	};
 
 	return (
-		<div className="mt-4 p-3 w-50 m-auto border border-dark rounded-4 bg-light text-start">
-			<div className="text-left p-2 h5">
+		<div className="mt-4 p-3 w-50 m-auto border border-dark rounded-4 bg-light text-end">
+			<div className="text-left p-2 h5 text-start">
 				Edycja ogłoszenia: <span>{pub.title}</span>
 			</div>
 
+			{saveImg && delImg && (
+				<UploadAndDisplayImage
+					currentImg={pub.subjectPhotoUrl}
+					onSave={(x) => {
+						return saveImg(x);
+					}}
+					onDelete={() => delImg()}
+				/>
+			)}
 			<div className="text-end">
 				<div className="p-1 w-100 ">
 					<span className="form-label  me-3 ">Typ ogłoszenia:</span>

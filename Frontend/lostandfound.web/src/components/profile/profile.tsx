@@ -28,7 +28,7 @@ export default function Profile() {
 						me: true,
 					});
 				} else {
-					usrCtx.setUser({ authToken: "", isLogged: false });
+					usrCtx.setUser({ ...usrCtx.user, isLogged: false });
 				}
 			});
 	}, []);
@@ -42,9 +42,11 @@ export function ProfileOther() {
 	const usrCtx = useContext(userContext);
 	const [prof, setProf] = useState(undefined as UserProfile | undefined);
 	const [ldg, setLdg] = useState(true);
+
 	useEffect(() => {
 		setLdg(true);
 	}, [userId]);
+
 	useEffect(() => {
 		if (ldg) {
 			setLdg(false);
@@ -71,6 +73,7 @@ export function ProfileOther() {
 				});
 		}
 	}, [userId, ldg]);
+
 	if (prof === undefined) return <div>...</div>;
 	return (
 		<ProfileInner
@@ -91,16 +94,16 @@ export function ProfileInner({
 	return (
 		<div
 			data-testid="profileInner"
-			className="w-50 border border-1 border-dark m-auto rounded-4 bg-light p-3 container shadow-lg"
+			className="container  border border-dark rounded-5 bg-light p-3 shadow-lg"
 		>
 			<div className="row">
-				<img
-					className="img-fluid "
-					style={{ width: "350px" }}
-					src={profile.pictureUrl}
-					alt="profileImage"
-				></img>
-
+				<div className="col-5 ">
+					<img
+						className="h-auto w-100 rounded-5"
+						src={profile.pictureUrl}
+						alt="profileImage"
+					></img>
+				</div>
 				<div className="col text-start p-2">
 					<div className="h1 d-flex">
 						<h1>{profile.username}</h1>
@@ -121,18 +124,28 @@ export function ProfileInner({
 							/>
 						</div>
 					</div>
-					<div className="p-2">
-						<strong className="row">Imie i nazwisko: </strong>
-						{profile.name} {profile.surname}
-					</div>
-					<div className="p-2">
-						<strong className="row">Miasto: </strong>
-						<span className="p-2 fst-italic">{profile.city}</span>
-					</div>
-					<div className="p-2 pt-3 fst-italic">
-						<strong className="row">Opis: </strong>
-						{profile.description}
-					</div>
+					{(profile.name || profile.surname) && (
+						<div className="p-2">
+							<strong className="row">Imie i nazwisko: </strong>
+							{profile.name} {profile.surname}
+						</div>
+					)}
+					{profile.city && (
+						<div className="p-2">
+							<strong className="row">Miasto: </strong>
+							<span className="p-2 fst-italic">
+								{profile.city}
+							</span>
+						</div>
+					)}
+					{profile.description && (
+						<div className="p-2 pt-3 ">
+							<strong className="row ">Opis: </strong>
+							<div className="fst-italic">
+								{profile.description}
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 			<ProfileComments

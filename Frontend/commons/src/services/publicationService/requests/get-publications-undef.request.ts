@@ -5,7 +5,7 @@ import {
 	mapPublicationFromServer,
 	PublicationSearchRequestType,
 	Order,
-    PublicationSortType,
+	PublicationSortType,
 } from "../publicationTypes";
 
 export const getPublicationsUndef = async (
@@ -14,7 +14,7 @@ export const getPublicationsUndef = async (
 	publication?: PublicationSearchRequestType,
 	orderBy?: {
 		firstArgumentSort: PublicationSortType;
-		secondArgumentSort: PublicationSortType;
+		secondArgumentSort?: PublicationSortType;
 	}
 ): Promise<PublicationResponseType[] | undefined> => {
 	let path = `/publication?pageNumber=${pageNumber}`;
@@ -85,15 +85,15 @@ export const getPublicationsUndef = async (
 		}
 	}
 
-  const result = await http<PublicationFromServerType[]>({
-    path: path,
-    method: "get",
-    accessToken,
-  });
+	const result = await http<PublicationFromServerType[]>({
+		path: path,
+		method: "get",
+		accessToken,
+	});
 
-  if (result.ok && result.body) {
-    return result.body.map(mapPublicationFromServer);
-  } else {
-    return undefined;
-  }
+	if (result.ok && result.body) {
+		return result.body.map(mapPublicationFromServer);
+	} else {
+		return undefined;
+	}
 };

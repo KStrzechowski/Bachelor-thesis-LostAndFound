@@ -13,9 +13,9 @@ export function NewPublication({ refresh }: { refresh?: () => void }) {
 	const [exp, setExp] = useState(false);
 	if (exp)
 		return (
-			<>
+			<div className="col-6 m-auto">
 				<button
-					className="btn btn-primary px-5"
+					className="btn btn-primary rounded-5 px-5"
 					onClick={() => setExp(!exp)}
 				>
 					-
@@ -27,10 +27,13 @@ export function NewPublication({ refresh }: { refresh?: () => void }) {
 						if (refresh) refresh();
 					}}
 				></NewPublicationInner>
-			</>
+			</div>
 		);
 	return (
-		<button className="btn btn-primary px-5" onClick={() => setExp(!exp)}>
+		<button
+			className="btn btn-primary rounded-5 px-5"
+			onClick={() => setExp(!exp)}
+		>
 			+
 		</button>
 	);
@@ -78,16 +81,17 @@ export function NewPublicationInner({ refresh }: { refresh?: () => void }) {
 			},
 			usrCtx.user.authToken ?? ""
 		).then((x) => {
-			if (refresh) refresh();
+			if (refresh && x) refresh();
 		});
 	}
 
 	return (
-		<div className="mt-4 p-3 w-25 m-auto border border-dark rounded-4 bg-light text-start">
+		<div className="mt-4 p-3 border border-dark rounded-4 bg-light text-start">
 			<div className="text-left p-2 h5">Tworzenie nowego ogłoszenia:</div>
 
 			<div className="text-end">
-				<div className="btn-group w-75 d-block">
+				<span className="form-label  me-3 ">Typ ogłoszenia:</span>
+				<div className="btn-group w-75">
 					<button
 						className={
 							"btn text-dark " +

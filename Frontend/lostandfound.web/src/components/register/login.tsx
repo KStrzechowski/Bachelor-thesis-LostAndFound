@@ -26,12 +26,11 @@ export default function Login() {
 				usrCtx.setUser({
 					isLogged: true,
 					authToken: x.accessToken,
+					refreshToken: x.refreshToken,
+					expirationDate: x.accessTokenExpirationTime,
 				} as UsrCont);
 			} else {
-				usrCtx.setUser({
-					isLogged: false,
-					authToken: "",
-				} as UsrCont);
+				usrCtx.setUser({ isLogged: false } as UsrCont);
 			}
 		});
 	}
