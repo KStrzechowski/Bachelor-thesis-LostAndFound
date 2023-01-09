@@ -1,6 +1,7 @@
 import { LoginRequestType, getProfile, login } from 'commons';
 import React from 'react';
 import { Image, Text, View } from 'react-native';
+import Snackbar from 'react-native-snackbar';
 import { AuthContext } from '../../Context';
 import {
   CustomTextInput,
@@ -47,6 +48,16 @@ const loginUser = async (email: string, password: string) => {
       if (profile.surname) await saveSurname(profile.surname);
       if (profile.pictureUrl) await saveUserPhotoUrl(profile.pictureUrl);
     }
+  } else {
+    Snackbar.show({
+      text: 'Niepoprawny adres e-mail lub hasło',
+      duration: Snackbar.LENGTH_SHORT,
+      action: {
+        text: 'Zamknij',
+        textColor: 'green',
+      },
+    });
+    return;
   }
 };
 
