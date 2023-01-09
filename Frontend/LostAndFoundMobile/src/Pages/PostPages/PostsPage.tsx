@@ -18,6 +18,7 @@ import {
   light,
   light2,
   MainContainer,
+  PageSelector,
   primary,
   secondary,
   success,
@@ -116,19 +117,25 @@ export const PostsPage = (props: any) => {
   const [postsData, setPostsData] = React.useState<PublicationResponseType[]>(
     [],
   );
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
 
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
         setPostsData(
-          await getPublications(1, accessToken, searchPublication, orderBy),
+          await getPublications(
+            pageNumber,
+            accessToken,
+            searchPublication,
+            orderBy,
+          ),
         );
       }
     };
 
     getData();
-  }, [searchPublication, orderBy]);
+  }, [searchPublication, orderBy, pageNumber]);
 
   const win = Dimensions.get('window');
   const buttonStyles = StyleSheet.create({
@@ -183,7 +190,7 @@ export const PostsPage = (props: any) => {
           justifyContent: 'space-between',
           marginBottom: 15,
         }}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 150 }}
         keyExtractor={item => item.publicationId.toString()}
         renderItem={({ item }) => (
           <PostItem
@@ -196,6 +203,7 @@ export const PostsPage = (props: any) => {
             }
           />
         )}
+        ListFooterComponent={() => PageSelector(pageNumber, 20, setPageNumber)}
       />
       <TouchableOpacity
         activeOpacity={0.7}

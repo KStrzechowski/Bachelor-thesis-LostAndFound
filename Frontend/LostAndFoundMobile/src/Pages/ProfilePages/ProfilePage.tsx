@@ -20,6 +20,7 @@ import {
   light,
   light3,
   MainContainer,
+  PageSelector,
   ScoreView,
   secondary,
   SecondaryButton,
@@ -160,6 +161,7 @@ export const ProfilePage = (props: any) => {
   const [profileComments, setProfileComments] =
     React.useState<ProfileCommentsSectionResponseType>();
   const [update, setUpdate] = React.useState<boolean>(false);
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -168,14 +170,14 @@ export const ProfilePage = (props: any) => {
         setProfile(await getProfileDetails(userId, accessToken));
         if (profile) {
           setProfileComments(
-            await getProfileComments(profile.userId, accessToken),
+            await getProfileComments(profile.userId, accessToken, pageNumber),
           );
         }
       }
     };
 
     getData();
-  }, [update]);
+  }, [update, pageNumber]);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -289,6 +291,9 @@ export const ProfilePage = (props: any) => {
           data={profileComments?.comments}
           keyExtractor={item => item.author.id.toString()}
           renderItem={({ item }) => <CommentItem item={item} />}
+          ListFooterComponent={() =>
+            PageSelector(pageNumber, 20, setPageNumber)
+          }
         />
       </View>
     </MainContainer>
