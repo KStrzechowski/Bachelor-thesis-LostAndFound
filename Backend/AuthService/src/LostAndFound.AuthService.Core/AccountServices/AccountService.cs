@@ -80,7 +80,13 @@ namespace LostAndFound.AuthService.Core.AccountServices
                 throw new BadRequestException("Invalid refresh token.");
             }
 
-            return await CreateAuthenticatedUser(account);
+            var accessToken = _accessTokenGenerator.GenerateAccessToken(account);
+            return new AuthenticatedUserResponseDto
+            {
+                AccessToken = accessToken.Value,
+                AccessTokenExpirationTime = accessToken.ExpirationTime,
+                RefreshToken = account.RefreshToken,
+            };
         }
 
         public async Task<RegisteredUserAccountResponseDto> RegisterUserAccount(RegisterUserAccountRequestDto registerUserDto)
