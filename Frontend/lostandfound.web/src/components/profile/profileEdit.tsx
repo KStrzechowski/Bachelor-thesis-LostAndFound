@@ -1,6 +1,14 @@
-import { editProfile, getProfile } from "commons";
+import {
+	deleteProfilePhoto,
+	editProfile,
+	editProfilePhoto,
+	editProfilePhotoWeb,
+	getProfile,
+} from "commons";
+import UploadAndDisplayImage from "components/imagePicker";
 import { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { fileURLToPath } from "url";
 import { userContext } from "userContext";
 import { UserProfile } from "./profile";
 
@@ -27,12 +35,12 @@ export default function ProfileEdit() {
 						me: true,
 					});
 				} else {
-					usrCtx.setUser({ authToken: "", isLogged: false });
+					usrCtx.setUser({ ...usrCtx.user, isLogged: false });
 				}
 			});
 	}, []);
 
-	function handeSave() {
+	function handleSave() {
 		if (usrCtx.user.authToken !== null)
 			editProfile(
 				{
@@ -45,14 +53,32 @@ export default function ProfileEdit() {
 			).then((x) => setSvd(true));
 	}
 
+	function saveImg(file: File) {
+		console.log(file);
+		return editProfilePhotoWeb(file, usrCtx.user.authToken ?? "").then(
+			(x) => {
+				if (x && prof) setProf({ ...prof, pictureUrl: x.pictureUrl });
+			}
+		);
+	}
+
+	function delImg() {
+		console.log("del");
+		return deleteProfilePhoto(usrCtx.user.authToken ?? "").then((x) => {if(prof)setProf({...prof, pictureUrl:undefined})});
+	}
+
 	if (svd === true) return <Navigate to="/profile"></Navigate>;
 	if (prof === undefined) return <div>...</div>;
 	return (
-		<ProfileEditInner
-			profile={prof}
-			setProfile={setProf}
-			handleSave={() => handeSave()}
-		/>
+		<>
+			<ProfileEditInner
+				profile={prof}
+				setProfile={setProf}
+				handleSave={() => handleSave()}
+				saveImg={(x) => saveImg(x)}
+				delImg={() => delImg()}
+			/>
+		</>
 	);
 }
 
@@ -60,10 +86,14 @@ export function ProfileEditInner({
 	profile,
 	setProfile,
 	handleSave,
+	saveImg,
+	delImg,
 }: {
 	profile: UserProfile;
 	setProfile: (x: UserProfile) => void;
 	handleSave: () => void;
+	saveImg?: (x: File) => Promise<void>;
+	delImg?: () => Promise<void>;
 }) {
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setProfile({
@@ -83,58 +113,72 @@ export function ProfileEditInner({
 	return (
 		<div
 			data-testid="profileInner"
-			className="w-50 border border-1 border-dark m-auto rounded-4 bg-light p-3 container shadow-lg text-end"
+			className="w-50 border border-1 border-dark m-auto rounded-4 bg-light p-3 shadow-lg text-end container"
 		>
-			<div className="text-start h2 ms-5 ">
+			<div className="text-start h2">
 				Edycja:{" "}
 				<div className="d-inline ms-3 h4">{profile.username}</div>
 			</div>
-			<div className="p-3 w-75 ">
-				<span className="form-label  me-3 ">Imię:</span>
-				<input
-					className="w-75"
-					name="name"
-					type="text"
-					placeholder="Imię"
-					value={profile.name}
-					onChange={(e) => handleChange(e)}
+			{saveImg && delImg && (
+				<UploadAndDisplayImage
+					currentImg={profile.pictureUrl}
+					onSave={(x) => {
+						return saveImg(x);
+					}}
+					onDelete={() => delImg()}
 				/>
+			)}
+			<div className="p-3  row align-items-end">
+				<div className="form-label col-3">Imię:</div>
+				<div className="col-7">
+					<input
+						className="form-control"
+						name="name"
+						type="text"
+						placeholder="Imię"
+						value={profile.name}
+						onChange={(e) => handleChange(e)}
+					/>
+				</div>
 			</div>
-			<div className="p-3 w-75">
-				<span className="form-label me-3 ">Nazwisko:</span>
-
-				<input
-					className="w-75"
-					name="surname"
-					type="text"
-					placeholder="Nazwisko"
-					value={profile.surname}
-					onChange={(e) => handleChange(e)}
-				/>
+			<div className="p-3  row align-items-end">
+				<span className="form-label col-3">Nazwisko:</span>
+				<div className="col-7">
+					<input
+						className=" form-control col"
+						name="surname"
+						type="text"
+						placeholder="Nazwisko"
+						value={profile.surname}
+						onChange={(e) => handleChange(e)}
+					/>
+				</div>
 			</div>
-			<div className="p-3 w-75">
-				<span className="form-label me-3">Miasto:</span>
-
-				<input
-					className="w-75"
-					name="city"
-					type="text"
-					placeholder="Miasto"
-					value={profile.city}
-					onChange={(e) => handleChange(e)}
-				/>
+			<div className="p-3  row align-items-end ">
+				<span className="form-label col-3">Miasto:</span>
+				<div className="col-7">
+					<input
+						className=" form-control col"
+						name="city"
+						type="text"
+						placeholder="Miasto"
+						value={profile.city}
+						onChange={(e) => handleChange(e)}
+					/>
+				</div>
 			</div>
-			<div className="p-3 w-75">
-				<span className="form-label me-3 align-top">Opis:</span>
-
-				<textarea
-					rows={5}
-					className="w-75"
-					name="description"
-					value={profile.description}
-					placeholder="Opis"
-					onChange={(e) => handleChangeArea(e)}
-				></textarea>
+			<div className="p-3  row ">
+				<span className="form-label col-3 ">Opis:</span>
+				<div className="col-7">
+					<textarea
+						rows={5}
+						className="form-control col"
+						name="description"
+						value={profile.description}
+						placeholder="Opis"
+						onChange={(e) => handleChangeArea(e)}
+					></textarea>
+				</div>
 			</div>
 			<button
 				className="btn btn-primary m-auto text-center"

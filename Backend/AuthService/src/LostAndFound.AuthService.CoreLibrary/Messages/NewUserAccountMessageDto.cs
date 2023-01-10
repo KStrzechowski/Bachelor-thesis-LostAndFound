@@ -1,22 +1,22 @@
-﻿namespace LostAndFound.ProfileService.CoreLibrary.Requests
+﻿namespace LostAndFound.AuthService.CoreLibrary.Messages
 {
     /// <summary>
-    /// Basic details of the new user profile
+    /// Basic details of the new user
     /// </summary>
-    public class CreateProfileRequestDto
+    public class NewUserAccountMessageDto
     {
         /// <summary>
-        /// Profile owner Identifier
+        /// User Identifier
         /// </summary>
         public Guid UserId { get; set; }
 
         /// <summary>
-        /// The e-mail address of the profile owner
+        /// The user e-mail
         /// </summary>
         public string Email { get; set; } = string.Empty;
 
         /// <summary>
-        /// The username address of the profile owner
+        /// The username
         /// </summary>
         public string Username { get; set; } = string.Empty;
     }

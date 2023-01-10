@@ -1,11 +1,14 @@
-﻿using LostAndFound.AuthService.Core.HttpClients.Interfaces;
+﻿using AutoMapper;
+using LostAndFound.AuthService.Core.DateTimeProviders;
 using LostAndFound.AuthService.Core.TokenGenerators;
 using LostAndFound.AuthService.Core.TokenValidators;
 using LostAndFound.AuthService.CoreLibrary.Exceptions;
+using LostAndFound.AuthService.CoreLibrary.Messages;
 using LostAndFound.AuthService.CoreLibrary.Requests;
 using LostAndFound.AuthService.CoreLibrary.Responses;
 using LostAndFound.AuthService.DataAccess.Entities;
 using LostAndFound.AuthService.DataAccess.Repositories.Interfaces;
+using LostAndFound.AuthService.ThirdPartyServices.RabbitMQ.MessageProducers;
 using Microsoft.AspNetCore.Identity;
 
 namespace LostAndFound.AuthService.Core.AccountServices
@@ -17,17 +20,22 @@ namespace LostAndFound.AuthService.Core.AccountServices
         private readonly IAccessTokenGenerator _accessTokenGenerator;
         private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IRefreshTokenValidator _refreshTokenValidator;
-        private readonly IProfileHttpClient _profileHttpClient;
+        private readonly IMessageProducer _messageProducer;
+        private readonly IMapper _mapper;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
         public AccountService(IPasswordHasher<Account> passwordHasher, IAccountsRepository accountsRepository, IAccessTokenGenerator accessTokenGenerator,
-            IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenValidator refreshTokenValidator, IProfileHttpClient profileHttpClient)
+            IRefreshTokenGenerator refreshTokenGenerator, IRefreshTokenValidator refreshTokenValidator, IMessageProducer messageProducer, IMapper mapper,
+            IDateTimeProvider dateTimeProvider)
         {
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
             _accountsRepository = accountsRepository ?? throw new ArgumentNullException(nameof(accountsRepository));
             _accessTokenGenerator = accessTokenGenerator ?? throw new ArgumentNullException(nameof(accessTokenGenerator));
             _refreshTokenGenerator = refreshTokenGenerator ?? throw new ArgumentNullException(nameof(refreshTokenGenerator));
             _refreshTokenValidator = refreshTokenValidator ?? throw new ArgumentNullException(nameof(refreshTokenValidator));
-            _profileHttpClient = profileHttpClient ?? throw new ArgumentNullException(nameof(profileHttpClient));
+            _messageProducer = messageProducer ?? throw new ArgumentNullException(nameof(messageProducer));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
         }
 
         public async Task<AuthenticatedUserResponseDto> AuthenticateUser(LoginRequestDto dto)
@@ -72,32 +80,32 @@ namespace LostAndFound.AuthService.Core.AccountServices
                 throw new BadRequestException("Invalid refresh token.");
             }
 
-            return await CreateAuthenticatedUser(account);
+            var accessToken = _accessTokenGenerator.GenerateAccessToken(account);
+            return new AuthenticatedUserResponseDto
+            {
+                AccessToken = accessToken.Value,
+                AccessTokenExpirationTime = accessToken.ExpirationTime,
+                RefreshToken = account.RefreshToken,
+            };
         }
 
-        public async Task<RegisteredUserAccountResponseDto> RegisterUserAccount(RegisterUserAccountRequestDto dto)
+        public async Task<RegisteredUserAccountResponseDto> RegisterUserAccount(RegisterUserAccountRequestDto registerUserDto)
         {
-            var newUserAccount = new Account()
+            var newUserAccount = _mapper.Map<Account>(registerUserDto);
+            if (newUserAccount is null)
             {
-                Email = dto.Email,
-                Username = dto.Username,
-                UserId = Guid.NewGuid(),
-                CreationTime = DateTime.UtcNow,
-            };
+                throw new BadRequestException("Invalid account data.");
+            }
+            newUserAccount.CreationTime = _dateTimeProvider.UtcNow;
 
-            newUserAccount.PasswordHash = _passwordHasher.HashPassword(newUserAccount, dto.Password);
+            newUserAccount.PasswordHash = _passwordHasher.HashPassword(newUserAccount, registerUserDto.Password);
             await _accountsRepository.InsertOneAsync(newUserAccount);
 
-            var registeredUserDto = new RegisteredUserAccountResponseDto()
-            {
-                Email = newUserAccount.Email,
-                UserId = newUserAccount.UserId.ToString(),
-                Username = newUserAccount.Username,
-            };
+            var newUserAccountMessage = _mapper.Map<NewUserAccountMessageDto>(newUserAccount);
+            _messageProducer.SendMessage(newUserAccountMessage);
 
-            await _profileHttpClient.CreateNewUserProfile(registeredUserDto);
-
-            return registeredUserDto;
+            var registeredUseResponseDto = _mapper.Map<RegisteredUserAccountResponseDto>(newUserAccount);
+            return registeredUseResponseDto;
         }
 
         private async Task<AuthenticatedUserResponseDto> CreateAuthenticatedUser(Account account)

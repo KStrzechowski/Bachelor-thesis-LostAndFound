@@ -32,3 +32,6 @@ body {
 	height: 100vh;
 	overflow-y: scroll;
 }
+.modal-backdrop {
+	z-index: 10;
+}

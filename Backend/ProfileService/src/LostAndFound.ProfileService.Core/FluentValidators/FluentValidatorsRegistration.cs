@@ -9,7 +9,7 @@ namespace LostAndFound.ProfileService.Core.FluentValidators
         public static IServiceCollection AddFluentValidators(this IServiceCollection services)
         {
             services.AddFluentValidationAutoValidation();
-            services.AddValidatorsFromAssemblyContaining<CreateProfileRequestDtoValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateProfileCommentRequestDtoValidator>();
 
             return services;
         }

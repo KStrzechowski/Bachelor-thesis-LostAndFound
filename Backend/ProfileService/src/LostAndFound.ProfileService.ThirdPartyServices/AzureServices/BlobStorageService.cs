@@ -32,7 +32,7 @@ namespace LostAndFound.ProfileService.ThirdPartyServices.AzureServices
             var builder = new UriBuilder(blobClient.Uri);
             if (_blobStorageSettings.ReplaceHostUri)
             {
-                builder.Host = _blobStorageSettings.NewUriHostValue;
+                builder = new UriBuilder(_blobStorageSettings.NewUriHostValue + blobClient.Uri.AbsolutePath);
             }
 
             return builder.Uri.ToString();

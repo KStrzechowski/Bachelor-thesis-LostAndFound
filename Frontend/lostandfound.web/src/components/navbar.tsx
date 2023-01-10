@@ -36,6 +36,24 @@ export default function Navbar() {
 				{userCtx.user.isLogged && (
 					<div className="me-3 conatiner-fluid">
 						<Link
+							className="btn btn-primary rounded-5 me-3"
+							to={"/posts"}
+						>
+							Ogłoszenia
+						</Link>
+						<Link
+							className="btn btn-primary rounded-5 me-3"
+							to={"/posts/mine"}
+						>
+							Moje ogłoszenia
+						</Link>
+						<Link
+							className="btn btn-primary rounded-5 me-3"
+							to={"/chats"}
+						>
+							Czaty
+						</Link>
+						<Link
 							data-testid="linktoprofile"
 							className="btn btn-primary rounded-5 me-3"
 							to={"/profile"}

@@ -9,11 +9,18 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+Log.Information("Starting web application");
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 
 var authenticationSettings = new AuthenticationSettings();
 builder.Configuration.Bind(AuthenticationSettings.SettingName, authenticationSettings);
@@ -101,7 +108,6 @@ var app = builder.Build();
 
 SeedDbCollections();
 
-app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseResponseCaching();
@@ -130,12 +136,9 @@ app.Run();
 
 void SeedDbCollections()
 {
-    if (app.Environment.IsDevelopment())
-    {
-        using var scope = app.Services.CreateScope();
-        var dbSeeder = scope.ServiceProvider.GetRequiredService<IDbSeeder>();
-        dbSeeder?.SeedCategoriesCollection();
-    }
+    using var scope = app.Services.CreateScope();
+    var dbSeeder = scope.ServiceProvider.GetRequiredService<IDbSeeder>();
+    dbSeeder?.SeedCategoriesCollection();
 }
 
 // Make the implicit Program class public so test projects can access it

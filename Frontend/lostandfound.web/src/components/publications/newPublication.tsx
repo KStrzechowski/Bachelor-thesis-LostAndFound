@@ -1,30 +1,44 @@
-import { addPublication, CategoryType, getCategories, PublicationState, PublicationType } from "commons";
+import {
+	addPublication,
+	CategoryType,
+	getCategories,
+	PublicationState,
+	PublicationType,
+} from "commons";
 import { useContext, useEffect, useState } from "react";
 import { userContext } from "userContext";
 import { Publication } from "./publicationsList";
 
-export function NewPublication() {
+export function NewPublication({ refresh }: { refresh?: () => void }) {
 	const [exp, setExp] = useState(false);
 	if (exp)
 		return (
-			<>
+			<div className="col-6 m-auto">
 				<button
-					className="btn btn-primary px-5"
+					className="btn btn-primary rounded-5 px-5"
 					onClick={() => setExp(!exp)}
 				>
 					-
 				</button>
 
-				<NewPublicationInner></NewPublicationInner>
-			</>
+				<NewPublicationInner
+					refresh={() => {
+						setExp(false);
+						if (refresh) refresh();
+					}}
+				></NewPublicationInner>
+			</div>
 		);
 	return (
-		<button className="btn btn-primary px-5" onClick={() => setExp(!exp)}>
+		<button
+			className="btn btn-primary rounded-5 px-5"
+			onClick={() => setExp(!exp)}
+		>
 			+
 		</button>
 	);
 }
-export function NewPublicationInner() {
+export function NewPublicationInner({ refresh }: { refresh?: () => void }) {
 	const usrCtx = useContext(userContext);
 	const [pub, setPub] = useState(new Publication());
 	const [cats, setCats] = useState([] as CategoryType[]);
@@ -52,7 +66,7 @@ export function NewPublicationInner() {
 	};
 
 	function add() {
-		console.log(pub.incidentDate);
+		console.log(pub);
 		addPublication(
 			{
 				incidentDate: new Date(pub.incidentDate),
@@ -66,15 +80,18 @@ export function NewPublicationInner() {
 				subjectCategoryId: pub.cat,
 			},
 			usrCtx.user.authToken ?? ""
-		);
+		).then((x) => {
+			if (refresh && x) refresh();
+		});
 	}
 
 	return (
-		<div className="mt-4 p-3 w-25 m-auto border border-dark rounded-4 bg-light text-start">
+		<div className="mt-4 p-3 border border-dark rounded-4 bg-light text-start">
 			<div className="text-left p-2 h5">Tworzenie nowego ogłoszenia:</div>
 
 			<div className="text-end">
-				<div className="btn-group w-75 d-block">
+				<span className="form-label  me-3 ">Typ ogłoszenia:</span>
+				<div className="btn-group w-75">
 					<button
 						className={
 							"btn text-dark " +
@@ -156,7 +173,10 @@ export function NewPublicationInner() {
 						))}
 					</select>
 				</div>
-				<button className="btn btn-primary mt-3" onClick={() => add()}>
+				<button
+					className="btn btn-primary ms-auto mt-3"
+					onClick={() => add()}
+				>
 					Utwórz
 				</button>
 			</div>

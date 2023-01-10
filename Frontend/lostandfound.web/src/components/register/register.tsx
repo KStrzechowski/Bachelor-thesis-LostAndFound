@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { register, RegisterRequestType } from "commons";
 
 export default function Register() {
@@ -17,6 +17,8 @@ export default function Register() {
 		});
 	};
 
+	const nav = useNavigate();
+
 	function handleregister() {
 		if (user.pwd === user.pwd2) {
 			let req: RegisterRequestType = {
@@ -25,7 +27,9 @@ export default function Register() {
 				confirmPassword: user.pwd2,
 				username: user.name,
 			};
-			register(req).then((x) => console.log(x));
+			register(req).then((x) => {
+				if (x) nav("/login");
+			});
 		}
 	}
 
