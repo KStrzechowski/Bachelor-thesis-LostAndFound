@@ -1,14 +1,6 @@
 import { format } from 'date-fns';
 import React from 'react';
-import IoniconsIcon from 'react-native-vector-icons/Ionicons';
-import {
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   BaseProfileChatType,
   BaseProfileType,

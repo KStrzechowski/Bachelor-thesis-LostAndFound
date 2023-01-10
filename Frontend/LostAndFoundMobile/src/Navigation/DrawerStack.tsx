@@ -37,7 +37,6 @@ import {
   getUserRating,
 } from '../SecureStorage/Profile';
 import { AuthContext, ProfileContext } from '../Context';
-import { NavigationActions, StackActions } from 'react-navigation';
 
 const CustomDrawerContent = (props: any) => {
   const { signOut } = React.useContext(AuthContext);
