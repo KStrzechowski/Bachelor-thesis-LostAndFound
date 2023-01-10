@@ -28,6 +28,7 @@ import { getAccessToken } from '../../SecureStorage';
 import { PublicationSearchRequestType } from 'commons';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import { Appbar } from 'react-native-paper';
+import { PaginationMetadata } from 'commons/lib/http';
 
 const PostItem = (props: any) => {
   const item: PublicationResponseType = props.item;
@@ -118,19 +119,21 @@ export const PostsPage = (props: any) => {
     [],
   );
   const [pageNumber, setPageNumber] = React.useState<number>(1);
+  const [pagination, setPagination] = React.useState<PaginationMetadata>();
 
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setPostsData(
-          await getPublications(
-            pageNumber,
-            accessToken,
-            searchPublication,
-            orderBy,
-          ),
+        const responseData = await getPublications(
+          pageNumber,
+          accessToken,
+          searchPublication,
+          orderBy,
         );
+        setPostsData(responseData.publications);
+        setPagination(responseData.pagination);
+        console.log(pagination);
       }
     };
 
@@ -203,7 +206,13 @@ export const PostsPage = (props: any) => {
             }
           />
         )}
-        ListFooterComponent={() => PageSelector(pageNumber, 20, setPageNumber)}
+        ListFooterComponent={() =>
+          PageSelector(
+            pageNumber,
+            pagination ? pagination.TotalPageCount : 1,
+            setPageNumber,
+          )
+        }
       />
       <TouchableOpacity
         activeOpacity={0.7}

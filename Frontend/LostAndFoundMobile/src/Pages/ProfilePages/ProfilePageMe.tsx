@@ -21,6 +21,7 @@ import {
   secondary,
 } from '../../Components';
 import { getAccessToken, removeUserPhotoUrl } from '../../SecureStorage';
+import { PaginationMetadata } from 'commons/lib/http';
 
 const deleteImage = async () => {
   let isDeleted: boolean = false;
@@ -68,6 +69,7 @@ export const ProfilePageMe = (props: any) => {
   const [update, setUpdate] = React.useState<boolean>(false);
   const [visible, setVisible] = React.useState<boolean>(false);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
+  const [pagination, setPagination] = React.useState<PaginationMetadata>();
 
   React.useEffect(() => {
     const getData = async () => {
@@ -84,9 +86,13 @@ export const ProfilePageMe = (props: any) => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken && profile) {
-        setProfileComments(
-          await getProfileComments(profile.userId, accessToken, pageNumber),
+        const responseData = await getProfileComments(
+          profile.userId,
+          accessToken,
+          pageNumber,
         );
+        setProfileComments(responseData?.commentsSection);
+        setPagination(responseData?.pagination);
       }
     };
 
@@ -219,7 +225,11 @@ export const ProfilePageMe = (props: any) => {
           keyExtractor={item => item.author.id.toString()}
           renderItem={({ item }) => <CommentItem item={item} />}
           ListFooterComponent={() =>
-            PageSelector(pageNumber, 20, setPageNumber)
+            PageSelector(
+              pageNumber,
+              pagination ? pagination.TotalPageCount : 1,
+              setPageNumber,
+            )
           }
         />
       </View>

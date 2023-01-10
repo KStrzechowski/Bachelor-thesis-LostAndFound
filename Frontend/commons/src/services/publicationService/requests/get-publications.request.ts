@@ -1,4 +1,4 @@
-import { http } from "../../../http";
+import { http, PaginationMetadata } from "../../../http";
 import {
   PublicationResponseType,
   PublicationFromServerType,
@@ -16,7 +16,10 @@ export const getPublications = async (
     firstArgumentSort: PublicationSortType;
     secondArgumentSort: PublicationSortType;
   }
-): Promise<PublicationResponseType[]> => {
+): Promise<{
+  pagination?: PaginationMetadata;
+  publications: PublicationResponseType[];
+}> => {
   let path = `/publication?pageNumber=${pageNumber}`;
   if (publication) {
     if (publication.title) {
@@ -78,9 +81,17 @@ export const getPublications = async (
     accessToken,
   });
 
-  if (result.ok && result.body) {
-    return result.body.map(mapPublicationFromServer);
+  const pagination = result.headers?.get("X-Pagination");
+  if (result.ok && result.body && pagination) {
+    return {
+      pagination: JSON.parse(pagination),
+      publications: result.body.map(mapPublicationFromServer),
+    };
+  } else if (result.ok && result.body) {
+    return {
+      publications: result.body.map(mapPublicationFromServer),
+    };
   } else {
-    return [];
+    return { publications: [] };
   }
 };

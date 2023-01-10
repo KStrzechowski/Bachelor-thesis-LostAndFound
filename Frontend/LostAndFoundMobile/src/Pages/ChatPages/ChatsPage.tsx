@@ -22,21 +22,28 @@ import { getAccessToken } from '../../SecureStorage';
 import { Appbar, Avatar } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ProfileContext } from '../../Context';
+import { PaginationMetadata } from 'commons/lib/http';
 
 const GetChats = async (
   accessToken: string,
   pageNumber: number,
-): Promise<BaseProfileChatType[]> => {
+): Promise<{
+  pagination?: PaginationMetadata;
+  chats: BaseProfileChatType[];
+}> => {
   const chatsData = await getChats(accessToken, pageNumber);
-  const userIds = chatsData.map(chatData => chatData.chatMember.id);
+  const userIds = chatsData.chats.map(chatData => chatData.chatMember.id);
   const profilesData = await getBaseProfiles(userIds, accessToken);
-  const chats: BaseProfileChatType[] = chatsData.map(chatData => ({
-    userId: chatData.chatMember.id,
-    ...chatData,
-    ...profilesData.find(
-      profileData => profileData.userId === chatData.chatMember.id,
-    ),
-  }));
+  const chats = {
+    pagination: chatsData.pagination,
+    chats: chatsData.chats.map(chatData => ({
+      userId: chatData.chatMember.id,
+      ...chatData,
+      ...profilesData.find(
+        profileData => profileData.userId === chatData.chatMember.id,
+      ),
+    })),
+  };
   return chats;
 };
 
@@ -104,12 +111,15 @@ export const ChatsPage = (props: any) => {
   const { updateChatsValue } = React.useContext(ProfileContext);
   const [chatsData, setChatsData] = React.useState<BaseProfileChatType[]>([]);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
+  const [pagination, setPagination] = React.useState<PaginationMetadata>();
 
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setChatsData(await GetChats(accessToken, pageNumber));
+        const responseData = await GetChats(accessToken, pageNumber);
+        setChatsData(responseData.chats);
+        setPagination(pagination);
       }
     };
 
@@ -156,7 +166,13 @@ export const ChatsPage = (props: any) => {
             }}
           />
         )}
-        ListFooterComponent={() => PageSelector(pageNumber, 20, setPageNumber)}
+        ListFooterComponent={() =>
+          PageSelector(
+            pageNumber,
+            pagination ? pagination.TotalPageCount : 1,
+            setPageNumber,
+          )
+        }
       />
     </MainContainer>
   );

@@ -14,12 +14,14 @@ export const http = async (config) => {
     }
     const response = await fetch(request);
     if (response.ok) {
-        let body;
         try {
-            body = await response.json();
+            const body = await response.json();
+            const headers = response.headers;
+            return { ok: response.ok, body, headers };
         }
-        catch { }
-        return { ok: response.ok, body };
+        catch {
+            return { ok: response.ok };
+        }
     }
     else {
         logError(request, response);
@@ -38,7 +40,8 @@ export const multipartFormDataHttp = async (config, requestData) => {
     if (response.ok) {
         try {
             const body = await response.json();
-            return { ok: response.ok, body };
+            const headers = response.headers;
+            return { ok: response.ok, body, headers };
         }
         catch {
             return { ok: response.ok };
