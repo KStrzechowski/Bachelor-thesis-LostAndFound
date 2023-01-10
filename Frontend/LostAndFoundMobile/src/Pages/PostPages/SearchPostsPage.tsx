@@ -56,10 +56,7 @@ export const SearchPostsPage = (props: any) => {
   const [publicationState, setPublicationState] =
     React.useState<PublicationState>(PublicationState.Open);
   const [firstArgumentSort, setFirstArgumentSort] = React.useState<string>();
-  const [secondArgumentSort, setSecondArgumentSort] = React.useState<string>();
   const [firstArgumentSortOrder, setFirstArgumentSortOrder] =
-    React.useState<Order>(Order.Ascending);
-  const [secondArgumentSortOrder, setSecondArgumentSortOrder] =
     React.useState<Order>(Order.Ascending);
 
   React.useEffect(() => {
@@ -111,9 +108,6 @@ export const SearchPostsPage = (props: any) => {
     const firstSort: PublicationSortType | undefined = firstArgumentSort
       ? { type: firstArgumentSort, order: firstArgumentSortOrder }
       : undefined;
-    const secondSort: PublicationSortType | undefined = secondArgumentSort
-      ? { type: secondArgumentSort, order: secondArgumentSortOrder }
-      : undefined;
 
     props.navigation.push('Home', {
       screen: 'Posts',
@@ -121,7 +115,6 @@ export const SearchPostsPage = (props: any) => {
         searchPublication: searchPublication,
         orderBy: {
           firstArgumentSort: firstSort,
-          secondArgumentSort: secondSort,
         },
       },
     });
@@ -276,31 +269,6 @@ export const SearchPostsPage = (props: any) => {
             <Picker
               selectedValue={firstArgumentSortOrder}
               onValueChange={itemValue => setFirstArgumentSortOrder(itemValue)}>
-              <Picker.Item label="Rosnąco" value={Order.Ascending} />
-              <Picker.Item label="Malejąco" value={Order.Descending} />
-            </Picker>
-          </View>
-        </InputSection>
-        <InputSection title="Sortuj po 2 wartości">
-          <View style={mainStyles.pickerStyle}>
-            <Picker
-              selectedValue={secondArgumentSort}
-              onValueChange={itemValue => setSecondArgumentSort(itemValue)}>
-              <Picker.Item label="Brak" value={undefined} />
-              <Picker.Item label="Tytuł" value={'Title'} />
-              <Picker.Item label="Kategoria" value={'SubjectCategoryId'} />
-              <Picker.Item label="Data zdarzenia" value={'IncidentDate'} />
-              <Picker.Item label="Średnia ocena" value={'AggregateRating'} />
-              <Picker.Item label="Stan ogłoszenia" value={'PublicationState'} />
-              <Picker.Item label="Typ ogłoszenia" value={'PublicationType'} />
-            </Picker>
-          </View>
-          <View style={mainStyles.pickerStyle}>
-            <Picker
-              selectedValue={secondArgumentSortOrder}
-              onValueChange={itemValue =>
-                setSecondArgumentSortOrder(itemValue)
-              }>
               <Picker.Item label="Rosnąco" value={Order.Ascending} />
               <Picker.Item label="Malejąco" value={Order.Descending} />
             </Picker>

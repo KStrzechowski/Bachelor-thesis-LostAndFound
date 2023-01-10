@@ -136,7 +136,7 @@ export const ScoreView = (props: { testID?: string; score?: number }) => {
       }}>
       <AntDesignIcon name="star" size={25} style={{ color: 'gold' }} />
       <Text testID={props.testID} style={{ fontSize: 18 }}>
-        {props.score}
+        {props.score ? props.score.toPrecision(2) : '0'}
       </Text>
     </View>
   );

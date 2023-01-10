@@ -16,7 +16,6 @@ import {
   light,
   light3,
   MainContainer,
-  PageSelector,
   ScoreView,
   secondary,
 } from '../../Components';
@@ -89,7 +88,7 @@ export const ProfilePageMe = (props: any) => {
         const responseData = await getProfileComments(
           profile.userId,
           accessToken,
-          pageNumber,
+          1,
         );
         setProfileComments(responseData?.commentsSection);
         setPagination(responseData?.pagination);
@@ -97,7 +96,7 @@ export const ProfilePageMe = (props: any) => {
     };
 
     getData();
-  }, [profile, pageNumber]);
+  }, [profile]);
 
   return (
     <MainContainer>
@@ -155,82 +154,106 @@ export const ProfilePageMe = (props: any) => {
         </Menu>
       </Appbar.Header>
       <View style={{ flex: 1, padding: 30 }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: 10,
-            marginBottom: 10,
-          }}
-          onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-          {profile?.pictureUrl ? (
-            <Avatar.Image
-              source={{
-                uri: profile.pictureUrl,
-              }}
-              style={{
-                marginBottom: 20,
-                backgroundColor: light3,
-              }}
-              size={(width * 4) / 9}
-            />
-          ) : (
-            <Avatar.Icon
-              icon={'account'}
-              size={(width * 4) / 9}
-              style={{
-                alignSelf: 'center',
-                marginTop: 10,
-                marginRight: 30,
-                backgroundColor: light3,
-              }}
-            />
-          )}
-          <View
-            style={{
-              flex: 1,
-              width: (width * 5) / 9,
-              paddingLeft: 20,
-            }}>
-            <View
-              style={{
-                flex: 2,
-                flexDirection: 'row',
-                marginBottom: 10,
-              }}>
-              <Text style={{ fontSize: 18, flex: 3 }}>{`${
-                profile?.name ? `${profile.name} ` : ''
-              }${profile?.surname ? profile.surname : ''}`}</Text>
-              <ScoreView score={profile?.averageProfileRating} />
-            </View>
-          </View>
-        </View>
-        <Text numberOfLines={3} style={{ fontSize: 18 }}>
-          {profile?.city}
-        </Text>
-        <Text>{profile?.description}</Text>
-        <View
-          style={{
-            marginTop: 30,
-            marginBottom: 10,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-          }}>
-          <Text style={{ fontSize: 20, fontWeight: '600' }}>Komentarze</Text>
-        </View>
         <FlatList
+          ListHeaderComponent={() => (
+            <>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}
+                onLayout={event => setWidth(event.nativeEvent.layout.width)}>
+                {profile?.pictureUrl ? (
+                  <Avatar.Image
+                    source={{
+                      uri: profile.pictureUrl,
+                    }}
+                    style={{
+                      marginBottom: 20,
+                      backgroundColor: light3,
+                    }}
+                    size={(width * 4) / 9}
+                  />
+                ) : (
+                  <Avatar.Icon
+                    icon={'account'}
+                    size={(width * 4) / 9}
+                    style={{
+                      alignSelf: 'center',
+                      marginTop: 10,
+                      marginRight: 30,
+                      backgroundColor: light3,
+                    }}
+                  />
+                )}
+                <View
+                  style={{
+                    flex: 1,
+                    width: (width * 5) / 9,
+                    paddingLeft: 20,
+                  }}>
+                  <View
+                    style={{
+                      flex: 2,
+                      flexDirection: 'row',
+                      marginBottom: 10,
+                    }}>
+                    <Text style={{ fontSize: 18, flex: 3 }}>{`${
+                      profile?.name ? `${profile.name} ` : ''
+                    }${profile?.surname ? profile.surname : ''}`}</Text>
+                    <ScoreView score={profile?.averageProfileRating} />
+                  </View>
+                </View>
+              </View>
+              <Text style={{ fontSize: 18 }}>{profile?.city}</Text>
+              <Text>{profile?.description}</Text>
+              <View
+                style={{
+                  marginTop: 30,
+                  marginBottom: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-end',
+                }}>
+                <Text style={{ fontSize: 20, fontWeight: '600' }}>
+                  Komentarze
+                </Text>
+              </View>
+            </>
+          )}
           contentContainerStyle={{ paddingBottom: 20 }}
           data={profileComments?.comments}
           keyExtractor={item => item.author.id.toString()}
           renderItem={({ item }) => <CommentItem item={item} />}
-          ListFooterComponent={() =>
-            PageSelector(
-              pageNumber,
-              pagination ? pagination.TotalPageCount : 1,
-              setPageNumber,
-            )
-          }
+          onEndReached={() => {
+            const getData = async () => {
+              if (pagination && pageNumber < pagination?.TotalPageCount) {
+                const accessToken = await getAccessToken();
+                if (accessToken && profile) {
+                  const responseData = await getProfileComments(
+                    profile.userId,
+                    accessToken,
+                    pageNumber + 1,
+                  );
+                  if (profileComments && responseData) {
+                    setProfileComments({
+                      myComment: responseData?.commentsSection.myComment,
+                      comments: [
+                        ...profileComments?.comments,
+                        ...responseData?.commentsSection.comments,
+                      ],
+                    });
+                    setPagination(responseData?.pagination);
+                    setPageNumber(pageNumber + 1);
+                  }
+                }
+              }
+            };
+
+            getData();
+          }}
         />
       </View>
     </MainContainer>
