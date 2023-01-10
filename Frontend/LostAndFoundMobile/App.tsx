@@ -58,6 +58,7 @@ const App = () => {
 
   React.useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
+    setUpdateChats(false);
     const tryToSignIn = async () => {
       let token;
       try {
@@ -82,7 +83,7 @@ const App = () => {
       ) {
         setConnection(
           new HubConnectionBuilder()
-            .withUrl('http://localhost:5000/hubs/chat', {
+            .withUrl(`${process.env['REACT_APP_API_GATEWAY_URL']}/hubs/chat`, {
               accessTokenFactory: () => accessToken,
             })
             .withAutomaticReconnect()
@@ -113,8 +114,8 @@ const App = () => {
       console.log('Definicja połączenia z serwerem');
       connection.on('ReceiveMessage', async (data: MessageResponseType) => {
         console.log(`Odebrano wiadomość: ${data}`);
-        await setUnreadChatsCount(setUnreadChats);
         setUpdateChats(!updateChatsValue);
+        await setUnreadChatsCount(setUnreadChats);
       });
 
       connection.onclose(() => console.log('Zakończono połączenie z serwerem'));
