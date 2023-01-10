@@ -1,6 +1,5 @@
 import { webAPIUrl } from "./AppSettings";
 export const http = async (config) => {
-    console.log(`${config.method} ${webAPIUrl}${config.path}`);
     const request = new Request(`${webAPIUrl}${config.path}`, {
         method: config.method || "get",
         headers: {
@@ -13,10 +12,8 @@ export const http = async (config) => {
     if (config.accessToken) {
         request.headers.set("Authorization", `Bearer ${config.accessToken}`);
     }
-    console.log(request);
     const response = await fetch(request);
     if (response.ok) {
-        console.log("Status: OK");
         let body;
         try {
             body = await response.json();
@@ -30,7 +27,6 @@ export const http = async (config) => {
     }
 };
 export const multipartFormDataHttp = async (config, requestData) => {
-    console.log(`${config.method} ${webAPIUrl}${config.path}`);
     const request = new Request(`${webAPIUrl}${config.path}`, {
         method: config.method || "get",
         body: requestData,
@@ -38,10 +34,8 @@ export const multipartFormDataHttp = async (config, requestData) => {
     if (config.accessToken) {
         request.headers.set("Authorization", `Bearer ${config.accessToken}`);
     }
-    console.log(request);
     const response = await fetch(request);
     if (response.ok) {
-        console.log("Status: OK");
         try {
             const body = await response.json();
             return { ok: response.ok, body };

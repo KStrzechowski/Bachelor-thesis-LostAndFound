@@ -51,7 +51,6 @@ export default function PublicationsList() {
 				filter,
 				srt
 			).then((x) => {
-				console.log(x);
 				if (x === undefined)
 					usrCtx.setUser({ ...usrCtx.user, isLogged: false });
 				else {
@@ -333,7 +332,6 @@ function FiltersForm({
 	}, [usrCtx]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		console.log(event.target.value);
 		setFiltLoc({
 			...filt,
 			[event.target.name]: event.target.value,
@@ -344,12 +342,10 @@ function FiltersForm({
 			...filt,
 			[event.target.name]: event.target.valueAsDate,
 		});
-		console.log(filt);
 	};
 
 	function filter() {
 		setFilter(filt);
-		console.log(filt);
 	}
 
 	return (

@@ -13,7 +13,6 @@ export default function Relog({
 	useEffect(() => {
 		if (ldg) {
 			setLdg(false);
-			console.log("refreshing");
 			if (user.refreshToken)
 				refreshToken(user.refreshToken).then((x) => {
 					if (x)

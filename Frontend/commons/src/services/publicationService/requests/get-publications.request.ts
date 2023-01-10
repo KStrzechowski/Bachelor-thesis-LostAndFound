@@ -33,7 +33,6 @@ export const getPublications = async (
       path = path.concat(
         `&FromDate=${publication.incidentFromDate.toDateString()}`
       );
-      console.log(publication.incidentFromDate.toDateString());
     }
     if (publication.incidentToDate) {
       path = path.concat(

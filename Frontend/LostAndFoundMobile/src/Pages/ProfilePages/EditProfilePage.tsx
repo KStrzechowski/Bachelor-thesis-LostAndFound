@@ -38,7 +38,6 @@ const editProfileDetails = async (profile: ProfileRequestType) => {
   const accessToken = await getAccessToken();
   if (accessToken) {
     const response = await editProfile(profile, accessToken);
-    console.log(response);
     if (response) {
       await saveUserRating(response.averageProfileRating.toString());
       if (response?.username) await saveUsername(response.username);

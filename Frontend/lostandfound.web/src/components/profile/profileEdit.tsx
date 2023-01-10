@@ -54,7 +54,6 @@ export default function ProfileEdit() {
 	}
 
 	function saveImg(file: File) {
-		console.log(file);
 		return editProfilePhotoWeb(file, usrCtx.user.authToken ?? "").then(
 			(x) => {
 				if (x && prof) setProf({ ...prof, pictureUrl: x.pictureUrl });
@@ -63,7 +62,6 @@ export default function ProfileEdit() {
 	}
 
 	function delImg() {
-		console.log("del");
 		return deleteProfilePhoto(usrCtx.user.authToken ?? "").then((x) => {if(prof)setProf({...prof, pictureUrl:undefined})});
 	}
 
