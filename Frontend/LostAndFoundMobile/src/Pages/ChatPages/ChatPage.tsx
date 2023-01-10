@@ -180,8 +180,19 @@ export const ChatPage = (props: any) => {
               const message: MessageRequestType = {
                 content: messageContent,
               };
-              await SendMessage(chatRecipent?.userId, message, accessToken);
-              setMessageContent('');
+              const response = await SendMessage(
+                chatRecipent?.userId,
+                message,
+                accessToken,
+              );
+              console.log(response);
+              if (response) {
+                setMessagesData([...messagesData, response]);
+                setMessageContent('');
+                setTimeout(() => {
+                  flatListRef?.scrollToEnd();
+                }, 10);
+              }
             }
           }}>
           <Text style={{ color: light, fontWeight: '600', fontSize: 18 }}>

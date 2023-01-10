@@ -16,6 +16,7 @@ import {
   light,
   light3,
   MainContainer,
+  PageSelector,
   ScoreView,
   secondary,
 } from '../../Components';
@@ -66,6 +67,8 @@ export const ProfilePageMe = (props: any) => {
     React.useState<ProfileCommentsSectionResponseType>();
   const [update, setUpdate] = React.useState<boolean>(false);
   const [visible, setVisible] = React.useState<boolean>(false);
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
+
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
@@ -82,13 +85,13 @@ export const ProfilePageMe = (props: any) => {
       const accessToken = await getAccessToken();
       if (accessToken && profile) {
         setProfileComments(
-          await getProfileComments(profile.userId, accessToken),
+          await getProfileComments(profile.userId, accessToken, pageNumber),
         );
       }
     };
 
     getData();
-  }, [profile]);
+  }, [profile, pageNumber]);
 
   return (
     <MainContainer>
@@ -215,6 +218,9 @@ export const ProfilePageMe = (props: any) => {
           data={profileComments?.comments}
           keyExtractor={item => item.author.id.toString()}
           renderItem={({ item }) => <CommentItem item={item} />}
+          ListFooterComponent={() =>
+            PageSelector(pageNumber, 20, setPageNumber)
+          }
         />
       </View>
     </MainContainer>

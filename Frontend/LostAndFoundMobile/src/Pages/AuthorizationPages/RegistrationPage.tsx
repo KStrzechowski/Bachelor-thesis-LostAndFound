@@ -2,6 +2,7 @@ import { register, RegisterRequestType } from 'commons';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { Appbar } from 'react-native-paper';
+import Snackbar from 'react-native-snackbar';
 import { light, secondary } from '../../Components';
 import {
   CustomTextInput,
@@ -11,6 +12,17 @@ import {
   MainScrollContainer,
   PressableText,
 } from '../../Components/MainComponents';
+
+const validationSnackBar = (text: string) => {
+  Snackbar.show({
+    text,
+    duration: Snackbar.LENGTH_LONG,
+    action: {
+      text: 'Zamknij',
+      textColor: 'green',
+    },
+  });
+};
 
 async function registerAccount(
   username: string,
@@ -24,6 +36,25 @@ async function registerAccount(
     password,
     confirmPassword,
   };
+
+  if (!/\S+@\S+\.\S+/.test(email)) {
+    validationSnackBar(`Wprowadziłeś niepoprawny adres e-mail`);
+    return false;
+  }
+  if (username.length < 8) {
+    validationSnackBar(
+      `Długość nazwy użytkownika musi wynosić co najmniej 8 znaków.`,
+    );
+    return false;
+  }
+  if (password.length < 8) {
+    validationSnackBar(`Długość hasła musi wynosić co najmniej 8 znaków.`);
+    return false;
+  }
+  if (password !== confirmPassword) {
+    validationSnackBar(`Wprowadzone hasła nie są jednakowe`);
+    return false;
+  }
 
   const registerResponse = await register(registerRequest);
   if (registerResponse) {

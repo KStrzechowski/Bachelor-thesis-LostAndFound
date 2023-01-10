@@ -1,8 +1,8 @@
 import { http } from "../../../http";
 import { mapProfileCommentsSectionFromServer, } from "../profileCommentTypes";
-export const getProfileComments = async (userId, accessToken) => {
+export const getProfileComments = async (userId, accessToken, pageNumber = 1) => {
     const result = await http({
-        path: `/profile/${userId}/comments`,
+        path: `/profile/${userId}/comments?pageNumber=${pageNumber}`,
         method: "get",
         accessToken,
     });

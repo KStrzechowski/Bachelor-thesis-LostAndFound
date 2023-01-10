@@ -1,14 +1,6 @@
 import { format } from 'date-fns';
 import React from 'react';
-import IoniconsIcon from 'react-native-vector-icons/Ionicons';
-import {
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   BaseProfileChatType,
   BaseProfileType,
@@ -22,6 +14,7 @@ import {
   light,
   light3,
   MainContainer,
+  PageSelector,
   secondary,
   Subtitle,
 } from '../../Components';
@@ -32,8 +25,9 @@ import { ProfileContext } from '../../Context';
 
 const GetChats = async (
   accessToken: string,
+  pageNumber: number,
 ): Promise<BaseProfileChatType[]> => {
-  const chatsData = await getChats(accessToken);
+  const chatsData = await getChats(accessToken, pageNumber);
   const userIds = chatsData.map(chatData => chatData.chatMember.id);
   const profilesData = await getBaseProfiles(userIds, accessToken);
   const chats: BaseProfileChatType[] = chatsData.map(chatData => ({
@@ -109,17 +103,18 @@ const ChatItem = (props: any) => {
 export const ChatsPage = (props: any) => {
   const { updateChatsValue } = React.useContext(ProfileContext);
   const [chatsData, setChatsData] = React.useState<BaseProfileChatType[]>([]);
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
 
   React.useEffect(() => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setChatsData(await GetChats(accessToken));
+        setChatsData(await GetChats(accessToken, pageNumber));
       }
     };
 
     getData();
-  }, [updateChatsValue]);
+  }, [updateChatsValue, pageNumber]);
 
   return (
     <MainContainer>
@@ -141,7 +136,7 @@ export const ChatsPage = (props: any) => {
       <FlatList
         style={{ padding: 30 }}
         data={chatsData}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 70 }}
         keyExtractor={item => item.userId}
         renderItem={({ item }) => (
           <ChatItem
@@ -161,6 +156,7 @@ export const ChatsPage = (props: any) => {
             }}
           />
         )}
+        ListFooterComponent={() => PageSelector(pageNumber, 20, setPageNumber)}
       />
     </MainContainer>
   );

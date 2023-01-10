@@ -28,11 +28,45 @@ import {
   mainStyles,
   SecondaryButton,
 } from '../../Components/MainComponents';
+import Snackbar from 'react-native-snackbar';
+
+const validationSnackBar = (text: string) => {
+  Snackbar.show({
+    text,
+    duration: Snackbar.LENGTH_LONG,
+    action: {
+      text: 'Zamknij',
+      textColor: 'green',
+    },
+  });
+};
 
 const addNewPost = async (
   publication: PublicationRequestType,
   photo?: DocumentPickerResponse,
 ): Promise<PublicationResponseType | undefined> => {
+  if (!publication.title || !/\S+/.test(publication.title)) {
+    validationSnackBar(`Tytuł nie może być pusty.`);
+    return undefined;
+  }
+  if (
+    !publication.incidentAddress ||
+    !/\S+/.test(publication.incidentAddress)
+  ) {
+    validationSnackBar(`Lokalizacja nie może być pusta.`);
+    return undefined;
+  }
+  if (publication.incidentDate > new Date()) {
+    validationSnackBar(
+      `Podana data musi być mniejsza niż ${new Date().toLocaleDateString()}.`,
+    );
+    return undefined;
+  }
+  if (!publication.description || !/\S+/.test(publication.description)) {
+    validationSnackBar(`Opis nie może być pusty.`);
+    return undefined;
+  }
+
   const accessToken = await getAccessToken();
   if (accessToken) {
     if (photo) {

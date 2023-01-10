@@ -7,10 +7,11 @@ import {
 
 export const getProfileComments = async (
   userId: string,
-  accessToken: string
+  accessToken: string,
+  pageNumber: number = 1
 ): Promise<ProfileCommentsSectionResponseType | undefined> => {
   const result = await http<ProfileCommentsSectionFromServerType>({
-    path: `/profile/${userId}/comments`,
+    path: `/profile/${userId}/comments?pageNumber=${pageNumber}`,
     method: "get",
     accessToken,
   });
