@@ -3,4 +3,4 @@ export declare const addPublication: (publication: PublicationRequestType, acces
     name: string | null;
     type: string | null;
     uri: string;
-}) => Promise<PublicationResponseType | undefined>;
+}, filePhoto?: File) => Promise<PublicationResponseType | undefined>;

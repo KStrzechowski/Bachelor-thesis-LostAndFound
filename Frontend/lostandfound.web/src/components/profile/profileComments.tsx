@@ -6,8 +6,7 @@ import {
 	ProfileCommentResponseType,
 } from "commons";
 import { useContext, useEffect, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { start } from "repl";
+import { Link } from "react-router-dom";
 import { userContext } from "userContext";
 import { AiFillDelete } from "react-icons/ai";
 import { FiEdit, FiStar } from "react-icons/fi";
@@ -218,7 +217,7 @@ export function ProfileMyComment({
 					<AiFillDelete />
 				</button>
 				<button
-					className="btn btn-warning m-1"
+					className="btn btn-primary m-1"
 					onClick={() => setEd(!ed)}
 				>
 					<FiEdit />

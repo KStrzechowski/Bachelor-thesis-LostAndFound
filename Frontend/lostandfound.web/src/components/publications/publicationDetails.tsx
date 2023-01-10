@@ -6,8 +6,7 @@ import {
 	PublicationType,
 } from "commons";
 import { useContext, useEffect, useState } from "react";
-import { findDOMNode } from "react-dom";
-import { Link, NavigateFunction, useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import { userContext } from "userContext";
 
 export default function PublicationModal({

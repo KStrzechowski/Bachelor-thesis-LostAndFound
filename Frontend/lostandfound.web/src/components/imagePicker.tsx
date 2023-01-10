@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AiFillDelete } from "react-icons/ai";
 import { FiChevronsRight, FiSave, FiTrash, FiTrash2 } from "react-icons/fi";
 
 export default function UploadAndDisplayImage({
@@ -39,7 +40,7 @@ export default function UploadAndDisplayImage({
 									className="btn btn-danger m-3"
 									onClick={() => onDelete()}
 								>
-									<FiTrash />
+									<AiFillDelete />
 								</button>
 							</div>
 						)}

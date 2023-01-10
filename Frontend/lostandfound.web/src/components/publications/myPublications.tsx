@@ -1,11 +1,12 @@
 import {
 	deletePublication,
+	editPublicationRating,
 	getPublicationsUndef,
 	PublicationSearchRequestType,
+	SinglePublicationVote,
 } from "commons";
 import Pagination from "components/pagination";
 import { useContext, useEffect, useState } from "react";
-import { FiEdit } from "react-icons/fi";
 import { userContext } from "userContext";
 import { Publication, PublicationCom } from "./publicationsList";
 
@@ -39,6 +40,34 @@ export default function MyPublications() {
 			);
 		return Promise.resolve();
 	}
+	function like(pubId: string) {
+		setPubVote(pubId, 1);
+	}
+	function dislike(pubId: string) {
+		setPubVote(pubId, -1);
+	}
+	function setPubVote(pubId: string, newVote: number) {
+		let pubs = [...pub];
+		let p = pubs.find((x) => x.publicationIdentifier == pubId);
+		if (p == undefined) return;
+		if (p.userVote === newVote) {
+			p.rating -= p.userVote;
+			p.userVote = 0;
+		} else {
+			p.rating += newVote - p.userVote;
+			p.userVote = newVote;
+		}
+		setPub(pubs);
+		return editPublicationRating(
+			pubId,
+			p.userVote === 1
+				? SinglePublicationVote.Up
+				: p.userVote === 0
+				? SinglePublicationVote.NoVote
+				: SinglePublicationVote.Down,
+			usrCtx.user.authToken ?? ""
+		);
+	}
 
 	return (
 		<>
@@ -48,8 +77,8 @@ export default function MyPublications() {
 						<PublicationCom
 							pub={x}
 							key={i}
-							like={undefined}
-							dislike={undefined}
+							like={() => like(x.publicationIdentifier)}
+							dislike={() => dislike(x.publicationIdentifier)}
 							edit={true}
 							del={() => rem(x.publicationIdentifier)}
 						/>

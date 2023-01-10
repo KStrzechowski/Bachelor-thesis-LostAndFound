@@ -42,6 +42,7 @@ export function NewPublicationInner({ refresh }: { refresh?: () => void }) {
 	const usrCtx = useContext(userContext);
 	const [pub, setPub] = useState(new Publication());
 	const [cats, setCats] = useState([] as CategoryType[]);
+	const [selectedImage, setSelectedImage] = useState(null as File | null);
 	useEffect(() => {
 		if (usrCtx.user.authToken !== null)
 			getCategories(usrCtx.user.authToken).then((x) => {
@@ -78,7 +79,9 @@ export function NewPublicationInner({ refresh }: { refresh?: () => void }) {
 				title: pub.title,
 				subjectCategoryId: pub.cat,
 			},
-			usrCtx.user.authToken ?? ""
+			usrCtx.user.authToken ?? "",
+			undefined,
+			selectedImage ?? undefined
 		).then((x) => {
 			if (refresh && x) refresh();
 		});
@@ -89,8 +92,21 @@ export function NewPublicationInner({ refresh }: { refresh?: () => void }) {
 			<div className="text-left p-2 h5">Tworzenie nowego ogłoszenia:</div>
 
 			<div className="text-end">
+				<div className="p-1 w-100 pb-2">
+					<span className="form-label  me-3 ">Zdjęcie:</span>
+					<input
+						className="w-75 form-control d-inline"
+						type="file"
+						name="test"
+						onChange={(e) => {
+							if (e?.target?.files) {
+								setSelectedImage(e.target.files[0]);
+							}
+						}}
+					/>
+				</div>
 				<span className="form-label  me-3 ">Typ ogłoszenia:</span>
-				<div className="btn-group w-75">
+				<div className="btn-group w-75 p-1">
 					<button
 						className={
 							"btn text-dark " +

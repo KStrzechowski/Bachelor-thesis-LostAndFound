@@ -88,6 +88,7 @@ export function EditPublicationInner({
 }) {
 	const usrCtx = useContext(userContext);
 	const [cats, setCats] = useState([] as CategoryType[]);
+	const nav = useNavigate();
 
 	useEffect(() => {
 		if (usrCtx.user.authToken !== null)
@@ -138,7 +139,7 @@ export function EditPublicationInner({
 					<div className="btn-group w-75">
 						<button
 							className={
-								"btn text-dark " +
+								"btn text-dark col-1 " +
 								(pub.publicationType ===
 								PublicationType.LostSubject
 									? "btn-primary"
@@ -156,7 +157,7 @@ export function EditPublicationInner({
 						</button>
 						<button
 							className={
-								"btn text-dark " +
+								"btn text-dark col-1 " +
 								(pub.publicationType ===
 								PublicationType.FoundSubject
 									? "btn-primary"
@@ -171,6 +172,45 @@ export function EditPublicationInner({
 							}
 						>
 							Zgubione
+						</button>
+					</div>
+				</div>
+
+				<div className="p-1 w-100">
+					<span className="form-label  me-3 ">Stan:</span>
+					<div className="btn-group w-75">
+						<button
+							className={
+								"btn text-dark col-1 " +
+								(pub.publicationState === PublicationState.Open
+									? "btn-primary"
+									: "btn-outline-primary ")
+							}
+							onClick={() =>
+								setPub({
+									...pub,
+									publicationState: PublicationState.Open,
+								})
+							}
+						>
+							Otwarte
+						</button>
+						<button
+							className={
+								"btn text-dark col-1 " +
+								(pub.publicationState ===
+								PublicationState.Closed
+									? "btn-danger"
+									: "btn-outline-danger ")
+							}
+							onClick={() =>
+								setPub({
+									...pub,
+									publicationState: PublicationState.Closed,
+								})
+							}
+						>
+							Zamknięte
 						</button>
 					</div>
 				</div>
@@ -240,51 +280,22 @@ export function EditPublicationInner({
 						))}
 					</select>
 				</div>
-				<div className="p-1 w-100 d-block">
-					<span className="form-label  me-3 ">Stan:</span>
-					<div className="btn-group w-75">
+
+				<div className="row align-self-center d-flex p-3">
+						<div className="col"></div>
 						<button
-							className={
-								"btn text-dark " +
-								(pub.publicationState === PublicationState.Open
-									? "btn-primary"
-									: "btn-outline-primary ")
-							}
-							onClick={() =>
-								setPub({
-									...pub,
-									publicationState: PublicationState.Open,
-								})
-							}
+							className="btn btn-primary mt-3 col-3 ms-1"
+							onClick={() => save()}
 						>
-							Otwarte
+							Zapisz
 						</button>
 						<button
-							className={
-								"btn text-dark " +
-								(pub.publicationState ===
-								PublicationState.Closed
-									? "btn-danger"
-									: "btn-outline-danger ")
-							}
-							onClick={() =>
-								setPub({
-									...pub,
-									publicationState: PublicationState.Closed,
-								})
-							}
+							className="btn btn-danger mt-3 col-3 ms-1"
+							onClick={() => nav("/posts/mine")}
 						>
-							Zamknięte
+							Anuluj
 						</button>
 					</div>
-
-					<button
-						className="btn btn-primary mt-3 d-block"
-						onClick={() => save()}
-					>
-						Zapisz
-					</button>
-				</div>
 			</div>
 		</div>
 	);

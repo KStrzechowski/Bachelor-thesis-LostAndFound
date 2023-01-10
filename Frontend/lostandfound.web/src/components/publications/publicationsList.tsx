@@ -18,6 +18,7 @@ import Pagination from "../pagination";
 import PublicationModal from "./publicationDetails";
 import { Link, useParams } from "react-router-dom";
 import { FiChevronDown, FiChevronUp, FiEdit } from "react-icons/fi";
+import { AiFillDelete, AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
 
 export default function PublicationsList() {
 	const usrCtx = useContext(userContext);
@@ -206,16 +207,11 @@ export function PublicationCom({
 			</div>
 
 			<div className="col-1 text-center align-self-center ms-auto">
-				{like !== undefined && (
-					<button
-						className={
-							"btn p-1 " +
-							(pub.userVote === 1 ? "bg-success" : "")
-						}
-						onClick={() => like()}
-					>
-						🖒
-					</button>
+				{like !== undefined && pub.userVote === 1 && (
+					<AiFillLike size={20} onClick={() => like()} style={{ cursor: "pointer" }}/>
+				)}
+				{like !== undefined && pub.userVote !== 1 && (
+					<AiOutlineLike size={20} onClick={() => like()} style={{ cursor: "pointer" }}/>
 				)}
 				<div
 					className={
@@ -226,33 +222,29 @@ export function PublicationCom({
 				>
 					{pub.rating}
 				</div>
-				{dislike !== undefined && (
-					<h3
-						className={
-							"btn p-1 " +
-							(pub.userVote === -1 ? "bg-danger" : "")
-						}
-						onClick={() => dislike()}
-					>
-						🖓
-					</h3>
+				{dislike !== undefined && pub.userVote === -1 && (
+						<AiFillDislike size={20} onClick={() => dislike()} style={{ cursor: "pointer" }}/>
+				)}
+				{dislike !== undefined && pub.userVote !== -1 && (
+						<AiOutlineDislike size={20} onClick={() => dislike()} style={{ cursor: "pointer" }}/>
 				)}
 			</div>
-			<div className="row m-auto align-self-end">
+			<div className="row m-auto align-self-end mt-2">
+				<div className="col"></div>
 				{edit && (
 					<Link
-						className="btn btn-warning text-black col-2 me-auto"
+						className="btn btn-warning text-black col-2 me-auto ms-1"
 						to={`/posts/edit/${pub.publicationIdentifier}`}
 					>
-						<FiEdit size="20" />
+						<FiEdit size="20" className="mb-1 mr-1"/>  Edytuj
 					</Link>
 				)}
 				{del && (
 					<button
-						className="btn btn-danger col-1"
+						className="btn btn-danger col-2 ms-1"
 						onClick={() => del()}
 					>
-						<FiEdit size="20" />
+						<AiFillDelete size="20" className="mb-1 mr-1"/>  Usuń
 					</button>
 				)}
 			</div>
