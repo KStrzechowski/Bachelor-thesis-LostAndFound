@@ -25,7 +25,6 @@ async function registerAccount(
     confirmPassword,
   };
 
-  console.log(registerRequest);
   const registerResponse = await register(registerRequest);
   if (registerResponse) {
     return true;

@@ -16,7 +16,6 @@ export interface HttpResponse<RESB> {
 export const http = async <RESB = undefined, REQB = undefined>(
   config: HttpRequest<REQB>
 ): Promise<HttpResponse<RESB>> => {
-  console.log(`${config.method} ${webAPIUrl}${config.path}`);
   const request = new Request(`${webAPIUrl}${config.path}`, {
     method: config.method || "get",
     headers: {
@@ -30,10 +29,8 @@ export const http = async <RESB = undefined, REQB = undefined>(
     request.headers.set("Authorization", `Bearer ${config.accessToken}`);
   }
 
-  console.log(request);
   const response = await fetch(request);
   if (response.ok) {
-    console.log("Status: OK");
     let body;
     try {
       body = await response.json();
@@ -49,7 +46,6 @@ export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
   config: HttpRequest<REQB>,
   requestData: FormData
 ): Promise<HttpResponse<RESB>> => {
-  console.log(`${config.method} ${webAPIUrl}${config.path}`);
 
   const request = new Request(`${webAPIUrl}${config.path}`, {
     method: config.method || "get",
@@ -59,10 +55,8 @@ export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
     request.headers.set("Authorization", `Bearer ${config.accessToken}`);
   }
 
-  console.log(request);
   const response = await fetch(request);
   if (response.ok) {
-    console.log("Status: OK");
     try {
       const body = await response.json();
       return { ok: response.ok, body };

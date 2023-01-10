@@ -110,19 +110,10 @@ const App = () => {
 
   React.useEffect(() => {
     if (connection?.state === 'Disconnected') {
-      console.log('Definicja połączenia z serwerem');
       connection.on('ReceiveMessage', async (data: MessageResponseType) => {
-        console.log(`Odebrano wiadomość: ${data}`);
         await setUnreadChatsCount(setUnreadChats);
         setUpdateChats(!updateChatsValue);
       });
-
-      connection.onclose(() => console.log('Zakończono połączenie z serwerem'));
-      connection.onreconnecting(() =>
-        console.log('Próba ponownego połączenia z serwerem'),
-      );
-      connection.onreconnected(() => console.log('Połączono z serwerem'));
-      connection.start().then(() => console.log('Połączono z serwerem'));
     }
   }, [connection]);
 

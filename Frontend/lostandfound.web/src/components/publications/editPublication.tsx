@@ -1,5 +1,4 @@
 import {
-	addPublication,
 	CategoryType,
 	deletePublicationPhoto,
 	editPublication,
@@ -13,9 +12,8 @@ import {
 import UploadAndDisplayImage from "components/imagePicker";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { userContext } from "userContext";
-import { Publication } from "./publicationsList";
 
 export function EditPublication() {
 	const usrCtx = useContext(userContext);
@@ -42,7 +40,6 @@ export function EditPublication() {
 	}, [pubId]);
 
 	function saveImg(file: File) {
-		console.log(file);
 		if (pub)
 			return editPublicationPhotoWeb(
 				pub?.publicationId,

@@ -66,7 +66,6 @@ export function NewPublicationInner({ refresh }: { refresh?: () => void }) {
 	};
 
 	function add() {
-		console.log(pub);
 		addPublication(
 			{
 				incidentDate: new Date(pub.incidentDate),
