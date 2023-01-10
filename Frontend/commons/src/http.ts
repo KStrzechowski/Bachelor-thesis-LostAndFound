@@ -11,6 +11,16 @@ export interface HttpRequest<REQB> {
 export interface HttpResponse<RESB> {
   ok: boolean;
   body?: RESB;
+  headers?: Headers;
+}
+
+export interface PaginationMetadata {
+  TotalItemCount: number;
+  TotalPageCount: number;
+  PageSize: number;
+  CurrentPage: number;
+  NextPageLink?: string;
+  PreviousPageLink?: string;
 }
 
 export const http = async <RESB = undefined, REQB = undefined>(
@@ -31,11 +41,13 @@ export const http = async <RESB = undefined, REQB = undefined>(
 
   const response = await fetch(request);
   if (response.ok) {
-    let body;
     try {
-      body = await response.json();
-    } catch {}
-    return { ok: response.ok, body };
+      const body = await response.json();
+      const headers = response.headers;
+      return { ok: response.ok, body, headers };
+    } catch {
+      return { ok: response.ok };
+    }
   } else {
     logError(request, response);
     return { ok: response.ok };
@@ -46,7 +58,6 @@ export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
   config: HttpRequest<REQB>,
   requestData: FormData
 ): Promise<HttpResponse<RESB>> => {
-
   const request = new Request(`${webAPIUrl}${config.path}`, {
     method: config.method || "get",
     body: requestData,
@@ -59,7 +70,8 @@ export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
   if (response.ok) {
     try {
       const body = await response.json();
-      return { ok: response.ok, body };
+      const headers = response.headers;
+      return { ok: response.ok, body, headers };
     } catch {
       return { ok: response.ok };
     }

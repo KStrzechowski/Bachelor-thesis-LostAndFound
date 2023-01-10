@@ -1,19 +1,30 @@
-import { http } from "../../../http";
+import { http, PaginationMetadata } from "../../../http";
 import { ChatBaseResponseType } from "../chatTypes";
 
 export const getChats = async (
   accessToken: string,
   pageNumber?: number
-): Promise<ChatBaseResponseType[]> => {
+): Promise<{
+  pagination?: PaginationMetadata;
+  chats: ChatBaseResponseType[];
+}> => {
   const result = await http<ChatBaseResponseType[]>({
     path: `/chat${pageNumber ? `?pageNumber=${pageNumber}` : ""}`,
     method: "get",
     accessToken,
   });
 
-  if (result.ok && result.body) {
-    return result.body;
+  const pagination = result.headers?.get("X-Pagination");
+  if (result.ok && result.body && pagination) {
+    return {
+      pagination: JSON.parse(pagination),
+      chats: result.body,
+    };
+  } else if (result.ok && result.body) {
+    return {
+      chats: result.body,
+    };
   } else {
-    return [];
+    return { chats: [] };
   }
 };
