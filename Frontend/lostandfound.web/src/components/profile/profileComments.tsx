@@ -16,9 +16,11 @@ import { Rating } from "react-simple-star-rating";
 export default function ProfileComments({
 	profId,
 	me,
+	refresh,
 }: {
 	profId: string;
 	me: boolean;
+	refresh: () => void;
 }) {
 	const usrCtx = useContext(userContext);
 	const [comments, setComments] = useState(
@@ -28,17 +30,24 @@ export default function ProfileComments({
 		undefined as ProfileCommentResponseType | undefined
 	);
 	const [ldg, setLdg] = useState(true);
+	useEffect(() => setLdg(true), [profId]);
 
 	useEffect(() => {
-		if (ldg === true) {
-			if (usrCtx.user.authToken != null)
-				getProfileComments(profId, usrCtx.user.authToken).then((x) => {
-					if (x?.comments !== undefined) {
-						setComments(x?.comments);
-					}
-					setMyCom(x?.myComment);
-					setLdg(false);
-				});
+		if (ldg === true && profId) {
+			{
+				setLdg(false);
+				if (usrCtx.user.authToken != null)
+					getProfileComments(profId, usrCtx.user.authToken).then(
+						(x) => {
+							if (x?.comments !== undefined) {
+								setComments(x?.comments);
+							}
+							setMyCom(x?.myComment);
+
+							refresh();
+						}
+					);
+			}
 		}
 	}, [profId, ldg]);
 
@@ -81,7 +90,7 @@ export default function ProfileComments({
 		<div className="m-3">
 			{addCom()}
 			{comments.length > 0 && (
-				<h5 className="text-start mt-4">Pozostałe komentarze:</h5>
+				<h5 className="text-start mt-4">Komentarze:</h5>
 			)}
 			{comments.map((x) => (
 				<ProfileComment com={x}></ProfileComment>
@@ -92,10 +101,10 @@ export default function ProfileComments({
 
 export function ProfileComment({ com }: { com: ProfileCommentResponseType }) {
 	return (
-		<div className="border border-1 border-dark rounded-4 p-1 px-4 text-start row d-flex">
+		<div className="rounded-4 p-1 m-3 text-start row d-flex">
 			<div className="col align-self-center">
 				<img
-					className="img-fluid row ms-1 align-self-center"
+					className="img-fluid row m-auto align-self-center"
 					style={{ width: "80px" }}
 					src={
 						com?.author?.pictureUrl ??
@@ -104,7 +113,13 @@ export function ProfileComment({ com }: { com: ProfileCommentResponseType }) {
 					alt="noimg"
 				></img>
 				<div className="row">
-					<strong>{com.author.username}</strong>
+					<Link
+						className="fw-bold text-center"
+						to={`/profile/${com.author.id}`}
+						style={{ textDecoration: "none" }}
+					>
+						{com.author.username}
+					</Link>
 				</div>
 			</div>
 			<div className="col-8">
@@ -115,12 +130,11 @@ export function ProfileComment({ com }: { com: ProfileCommentResponseType }) {
 			</div>
 			<div className="col fs-2 align-self-center">
 				<FiStar
-					className="mt-2"
+					className="mt-2 float-end"
 					fill="#ffc107"
 					color="#ffc107"
-					style={{ float: "right" }}
 				/>
-				<span style={{ float: "right" }}>{com.profileRating}</span>
+				<span className="float-end">{com.profileRating}</span>
 			</div>
 		</div>
 	);
@@ -151,15 +165,16 @@ export function ProfileMyComment({
 				}
 				clsFunc={() => {
 					setEd(false);
+					refresh();
 				}}
 				edit={true}
 			/>
 		);
 	return (
-		<div className="border border-1 border-primary rounded-4 p-1 px-4 text-start row">
+		<div className="border border-1 border-primary rounded-4 p-1 m-3 text-start row">
 			<div className="col align-self-center">
 				<img
-					className="img-fluid row ms-1 align-self-center"
+					className="img-fluid row m-auto align-self-center"
 					style={{ width: "80px" }}
 					src={
 						com?.author?.pictureUrl ??
@@ -168,7 +183,9 @@ export function ProfileMyComment({
 					alt="noimg"
 				></img>
 				<div className="row mr-0 align-self-center">
-					<strong>{com.author.username}</strong>
+					<strong className="fw-bold text-center">
+						{com.author.username}
+					</strong>
 				</div>
 			</div>
 			<div className="col-7">
@@ -187,10 +204,9 @@ export function ProfileMyComment({
 					{com.profileRating}
 				</span>
 			</div>
-			<div className="mt-2 col fs-2 align-self-center p-0 ">
+			<div className="m-2 col-1 align-self-center p-0 d-flex flex-column">
 				<button
-					style={{ float: "right" }}
-					className="btn btn-danger mt-1"
+					className="btn btn-danger m-1"
 					onClick={() => {
 						deleteProfileComment(
 							profId,
@@ -202,7 +218,7 @@ export function ProfileMyComment({
 					<AiFillDelete />
 				</button>
 				<button
-					className="btn btn-warning m-1 float-end"
+					className="btn btn-warning m-1"
 					onClick={() => setEd(!ed)}
 				>
 					<FiEdit />

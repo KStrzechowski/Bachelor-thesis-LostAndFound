@@ -55,33 +55,6 @@ namespace LostAndFound.ProfileService.Controllers
         }
 
         /// <summary>
-        /// Create new user profile
-        /// </summary>
-        /// <param name="createProfileRequestDto">Data for new user profile</param>
-        /// <returns>Newly created profile details</returns>
-        /// <response code="201">Creation succeed, returns created profile details</response>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /profile
-        ///     {
-        ///        "UserId": "2b1bafcd-b2fd-492b-b050-9b7027653716",
-        ///        "Email": "user_valid_email@lost.com",
-        ///        "Username": "user_321",
-        ///     }
-        ///
-        /// </remarks>
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [HttpPost]
-        public async Task<ActionResult<ProfileDetailsResponseDto>> CreateProfile(CreateProfileRequestDto createProfileRequestDto)
-        {
-            var newProfileDetails = await _userProfileService.CreateUserProfile(createProfileRequestDto);
-
-            return CreatedAtRoute("GetProfileDetails",
-                 newProfileDetails);
-        }
-
-        /// <summary>
         /// Update authenticated user profile details
         /// </summary>
         /// <param name="updateProfileDetailsRequestDto">Updated user profile details data</param>

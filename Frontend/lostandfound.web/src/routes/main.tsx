@@ -1,5 +1,7 @@
+import Chats from "components/chat/chats";
 import Profile, { ProfileOther } from "components/profile/profile";
 import ProfileEdit from "components/profile/profileEdit";
+import { EditPublication } from "components/publications/editPublication";
 import MyPublications from "components/publications/myPublications";
 import PublicationsList from "components/publications/publicationsList";
 import Landing from "components/register/landing";
@@ -24,9 +26,13 @@ export default function MainRouter() {
 							element={<ProfileOther />}
 						></Route>
 					</Route>
-
+					<Route
+						path="posts/edit/:pubId"
+						element={<EditPublication />}
+					/>
 					<Route path="posts" element={<PublicationsList />} />
 					<Route path="posts/mine" element={<MyPublications />} />
+					<Route path="chats" element={<Chats />} />
 				</Route>
 
 				<Route element={<NoAuth></NoAuth>}>

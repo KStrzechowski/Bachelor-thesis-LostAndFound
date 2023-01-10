@@ -1,7 +1,15 @@
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+Log.Information("Starting web application");
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
+
 builder.Configuration
     .AddJsonFile("ocelot.json")
     .AddJsonFile($"configuration.{builder.Environment.EnvironmentName}.json");
@@ -14,11 +22,6 @@ builder.Services.AddOcelot();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
 var app = builder.Build();
-
-if (app.Environment.IsProduction())
-{
-    app.UseHttpsRedirection();
-}
 
 app.UseSwaggerForOcelotUI(opt => {}, uiOpt => {
     uiOpt.DocumentTitle = "LostAndFound system - Api Gateway";

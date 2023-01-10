@@ -3,14 +3,22 @@ using LostAndFound.AuthService.Core.FluentValidators;
 using LostAndFound.AuthService.CoreLibrary.Settings;
 using LostAndFound.AuthService.DataAccess;
 using LostAndFound.AuthService.Middleware;
+using LostAndFound.AuthService.ThirdPartyServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Reflection;
 using System.Text;
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+Log.Information("Starting web application");
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 
 var authenticationSettings = new AuthenticationSettings();
 builder.Configuration.Bind(AuthenticationSettings.SettingName, authenticationSettings);
@@ -30,7 +38,8 @@ builder.Services.AddControllers(setupAction =>
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddFluentValidators();
 builder.Services.AddDataAccessServices(builder.Configuration);
-builder.Services.AddCoreServices(builder.Configuration);
+builder.Services.AddCoreServices();
+builder.Services.AddThirdPartyServices(builder.Configuration);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(config =>
@@ -93,7 +102,6 @@ builder.Services.AddSwaggerGen(setupAction =>
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();

@@ -2,6 +2,7 @@
 using LostAndFound.ProfileService.Core.DateTimeProviders;
 using LostAndFound.ProfileService.Core.UserProfileServices.Interfaces;
 using LostAndFound.ProfileService.CoreLibrary.Exceptions;
+using LostAndFound.ProfileService.CoreLibrary.Messages;
 using LostAndFound.ProfileService.CoreLibrary.Requests;
 using LostAndFound.ProfileService.CoreLibrary.Responses;
 using LostAndFound.ProfileService.DataAccess.Repositories.Interfaces;
@@ -28,18 +29,12 @@ namespace LostAndFound.ProfileService.Core.UserProfileServices
         }
 
 
-        public async Task<ProfileDetailsResponseDto> CreateUserProfile(CreateProfileRequestDto createProfileRequestDto)
+        public async Task CreateUserProfile(NewUserAccountMessageDto createProfileRequestDto)
         {
             var newProfileEntity = _mapper.Map<Profile>(createProfileRequestDto);
-            if (newProfileEntity == null)
-            {
-                throw new BadRequestException("The profile information is incorrect.");
-            }
             newProfileEntity.CreationTime = _dateTimeProvider.UtcNow;
 
             await _profilesRepository.InsertOneAsync(newProfileEntity);
-
-            return await GetUserProfileDetails(createProfileRequestDto.UserId);
         }
 
         public async Task<ProfileDetailsResponseDto> GetUserProfileDetails(string rawUserId)
