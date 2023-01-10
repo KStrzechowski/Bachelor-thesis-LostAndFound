@@ -25,7 +25,6 @@ export default function MyPublications() {
 			getPublicationsUndef(page, usrCtx.user.authToken ?? "", {
 				onlyUserPublications: true,
 			}).then((x) => {
-				console.log(x);
 				if (x === undefined)
 					usrCtx.setUser({ ...usrCtx.user, isLogged: false });
 				else setPub(x.map((y) => new Publication(y)));

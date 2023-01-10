@@ -10,7 +10,6 @@ export default function Root() {
 	const [loading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		console.log("reading localstorage");
 		var token = localStorage.getItem("accessToken");
 		var reftoken = localStorage.getItem("refreshToken");
 		var date = localStorage.getItem("expiration");
@@ -26,7 +25,6 @@ export default function Root() {
 	}, []);
 
 	useEffect(() => {
-		console.log("writing localstorage");
 		if (user.authToken !== null)
 			localStorage.setItem("accessToken", user.authToken);
 		else {

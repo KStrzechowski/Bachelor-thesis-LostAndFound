@@ -103,14 +103,12 @@ export const AddPostPage = (props: any) => {
       subjectCategoryId: subjectCategory?.id,
       publicationType,
     };
-    console.log(publication);
 
     const response = await addNewPost(
       publication,
       fileResponse.length > 0 ? fileResponse[0] : undefined,
     );
     if (response) {
-      console.log(response);
       props.navigation.push('Home', {
         screen: 'Post',
         params: { publicationId: response?.publicationId },
