@@ -117,14 +117,14 @@ export const ChatsPage = (props: any) => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        const responseData = await GetChats(accessToken, pageNumber);
+        const responseData = await GetChats(accessToken, 1);
         setChatsData(responseData.chats);
         setPagination(pagination);
       }
     };
 
     getData();
-  }, [updateChatsValue, pageNumber]);
+  }, [updateChatsValue]);
 
   return (
     <MainContainer>
@@ -166,13 +166,24 @@ export const ChatsPage = (props: any) => {
             }}
           />
         )}
-        ListFooterComponent={() =>
-          PageSelector(
-            pageNumber,
-            pagination ? pagination.TotalPageCount : 1,
-            setPageNumber,
-          )
-        }
+        onEndReached={() => {
+          const getData = async () => {
+            if (pagination && pageNumber < pagination?.TotalPageCount) {
+              const accessToken = await getAccessToken();
+              if (accessToken) {
+                const responseData = await GetChats(
+                  accessToken,
+                  pageNumber + 1,
+                );
+                setChatsData([...chatsData, ...responseData.chats]);
+                setPagination(pagination);
+                setPageNumber(pageNumber + 1);
+              }
+            }
+          };
+
+          getData();
+        }}
       />
     </MainContainer>
   );

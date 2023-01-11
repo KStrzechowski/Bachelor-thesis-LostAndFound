@@ -18,7 +18,6 @@ import {
   light,
   light2,
   MainContainer,
-  PageSelector,
   primary,
   secondary,
   success,
@@ -126,19 +125,19 @@ export const PostsPage = (props: any) => {
       const accessToken = await getAccessToken();
       if (accessToken) {
         const responseData = await getPublications(
-          pageNumber,
+          1,
           accessToken,
           searchPublication,
           orderBy,
         );
         setPostsData(responseData.publications);
         setPagination(responseData.pagination);
-        console.log(pagination);
       }
     };
 
+    setPageNumber(1);
     getData();
-  }, [searchPublication, orderBy, pageNumber]);
+  }, [searchPublication, orderBy]);
 
   const win = Dimensions.get('window');
   const buttonStyles = StyleSheet.create({
@@ -194,7 +193,7 @@ export const PostsPage = (props: any) => {
           marginBottom: 15,
         }}
         contentContainerStyle={{ paddingBottom: 150 }}
-        keyExtractor={item => item.publicationId.toString()}
+        keyExtractor={item => item.publicationId}
         renderItem={({ item }) => (
           <PostItem
             item={item}
@@ -206,13 +205,25 @@ export const PostsPage = (props: any) => {
             }
           />
         )}
-        ListFooterComponent={() =>
-          PageSelector(
-            pageNumber,
-            pagination ? pagination.TotalPageCount : 1,
-            setPageNumber,
-          )
-        }
+        onEndReached={() => {
+          const getData = async () => {
+            if (pagination && pageNumber < pagination?.TotalPageCount) {
+              const accessToken = await getAccessToken();
+              if (accessToken) {
+                const responseData = await getPublications(
+                  pageNumber + 1,
+                  accessToken,
+                  searchPublication,
+                  orderBy,
+                );
+                setPostsData([...postsData, ...responseData.publications]);
+                setPagination(responseData.pagination);
+                setPageNumber(pageNumber + 1);
+              }
+            }
+          };
+          getData();
+        }}
       />
       <TouchableOpacity
         activeOpacity={0.7}

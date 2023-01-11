@@ -43,7 +43,6 @@ export async function getAccessToken(): Promise<string | null> {
     if (data) {
       // save new access token with expiration date
       await saveAccessToken(data.accessToken, data.accessTokenExpirationTime);
-      await saveRefreshToken(data.refreshToken);
     } else {
       await clearStorage();
       return null;
