@@ -13,6 +13,7 @@ import {
   dark2,
   light,
   light3,
+  LoadingView,
   MainContainer,
   PageSelector,
   secondary,
@@ -112,6 +113,7 @@ export const ChatsPage = (props: any) => {
   const [chatsData, setChatsData] = React.useState<BaseProfileChatType[]>([]);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [pagination, setPagination] = React.useState<PaginationMetadata>();
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -120,14 +122,15 @@ export const ChatsPage = (props: any) => {
         const responseData = await GetChats(accessToken, 1);
         setChatsData(responseData.chats);
         setPagination(pagination);
+        setLoading(false);
       }
     };
 
     getData();
   }, [updateChatsValue]);
 
-  return (
-    <MainContainer>
+  const HeaderBar = () => {
+    return (
       <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
           color={light}
@@ -143,6 +146,21 @@ export const ChatsPage = (props: any) => {
         />
         <Appbar.Action icon="flask-empty" color={secondary}></Appbar.Action>
       </Appbar.Header>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainContainer>
+        <HeaderBar />
+        <LoadingView />
+      </MainContainer>
+    );
+  }
+
+  return (
+    <MainContainer>
+      <HeaderBar />
       <FlatList
         style={{ padding: 30 }}
         data={chatsData}

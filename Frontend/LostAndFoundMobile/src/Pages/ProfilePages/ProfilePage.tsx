@@ -18,6 +18,7 @@ import {
   DeleteButton,
   light,
   light3,
+  LoadingView,
   MainContainer,
   ScoreView,
   secondary,
@@ -162,6 +163,7 @@ export const ProfilePage = (props: any) => {
   const [update, setUpdate] = React.useState<boolean>(false);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [pagination, setPagination] = React.useState<PaginationMetadata>();
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -185,14 +187,15 @@ export const ProfilePage = (props: any) => {
         );
         setProfileComments(responseData?.commentsSection);
         setPagination(responseData?.pagination);
+        setLoading(false);
       }
     };
 
     getData();
   }, [profile]);
 
-  return (
-    <MainContainer>
+  const HeaderBar = () => {
+    return (
       <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
           color={light}
@@ -227,6 +230,21 @@ export const ProfilePage = (props: any) => {
           }}
         />
       </Appbar.Header>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainContainer>
+        <HeaderBar />
+        <LoadingView />
+      </MainContainer>
+    );
+  }
+
+  return (
+    <MainContainer>
+      <HeaderBar />
       <View style={{ flex: 1, padding: 30 }}>
         <FlatList
           ListHeaderComponent={() => (

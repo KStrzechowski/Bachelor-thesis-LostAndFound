@@ -18,6 +18,7 @@ import {
   DocumentSelector,
   InputSection,
   light,
+  LoadingView,
   MainContainer,
   secondary,
 } from '../../Components';
@@ -124,6 +125,7 @@ export const EditPostPage = (props: any) => {
   );
   const [publicationState, setPublicationState] =
     React.useState<PublicationState>(PublicationState.Open);
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -151,6 +153,7 @@ export const EditPostPage = (props: any) => {
             category => category.id === postData.subjectCategoryId,
           ),
         );
+        setLoading(false);
       }
     };
 
@@ -195,8 +198,8 @@ export const EditPostPage = (props: any) => {
     }
   }
 
-  return (
-    <MainContainer>
+  const HeaderBar = () => {
+    return (
       <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
           color={light}
@@ -217,6 +220,21 @@ export const EditPostPage = (props: any) => {
           onPress={async () => await SaveChanges()}
         />
       </Appbar.Header>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainContainer>
+        <HeaderBar />
+        <LoadingView />
+      </MainContainer>
+    );
+  }
+
+  return (
+    <MainContainer>
+      <HeaderBar />
       <MainScrollContainer>
         <InputSection title="Tytuł Ogłoszenia">
           <CustomTextInput

@@ -1,4 +1,4 @@
-import { http } from "../../../http";
+import { http, PaginationMetadata } from "../../../http";
 import {
   mapMessageFromServer,
   MessageFromServerResponseType,
@@ -9,7 +9,10 @@ export const getChatMessages = async (
   recipentId: string,
   accessToken: string,
   pageNumber?: number
-): Promise<MessageResponseType[]> => {
+): Promise<{
+  pagination?: PaginationMetadata;
+  messages: MessageResponseType[];
+}> => {
   const result = await http<MessageFromServerResponseType[]>({
     path: `/chat/message/${recipentId}${
       pageNumber ? `?pageNumber=${pageNumber}` : ""
@@ -18,9 +21,17 @@ export const getChatMessages = async (
     accessToken,
   });
 
-  if (result.ok && result.body) {
-    return result.body.map(mapMessageFromServer);
+  const pagination = result.headers?.get("X-Pagination");
+  if (result.ok && result.body && pagination) {
+    return {
+      pagination: JSON.parse(pagination),
+      messages: result.body.map(mapMessageFromServer),
+    };
+  } else if (result.ok && result.body) {
+    return {
+      messages: result.body.map(mapMessageFromServer),
+    };
   } else {
-    return [];
+    return { messages: [] };
   }
 };
