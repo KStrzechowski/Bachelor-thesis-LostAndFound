@@ -22,12 +22,15 @@ import {
 import { getAccessToken, getUserId } from '../../SecureStorage';
 import { Appbar, Avatar } from 'react-native-paper';
 import { ProfileContext } from '../../Context';
+import { PaginationMetadata } from 'commons/lib/http';
 
 const GetMessages = async (
   recipentId: string,
   accessToken: string,
-): Promise<MessageResponseType[]> =>
-  await getChatMessages(recipentId, accessToken);
+): Promise<{
+  pagination?: PaginationMetadata;
+  messages: MessageResponseType[];
+}> => await getChatMessages(recipentId, accessToken);
 
 const SendMessage = async (
   recipentId: string,
@@ -90,7 +93,9 @@ export const ChatPage = (props: any) => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setMessagesData(await GetMessages(chatRecipent?.userId, accessToken));
+        setMessagesData(
+          (await GetMessages(chatRecipent?.userId, accessToken)).messages,
+        );
         setLoading(false);
       }
     };
