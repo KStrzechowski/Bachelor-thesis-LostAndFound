@@ -12,6 +12,7 @@ import {
   success,
   danger,
   dark,
+  LoadingView,
 } from '../../Components';
 import {
   CategoryType,
@@ -58,6 +59,7 @@ export const SearchPostsPage = (props: any) => {
   const [firstArgumentSort, setFirstArgumentSort] = React.useState<string>();
   const [firstArgumentSortOrder, setFirstArgumentSortOrder] =
     React.useState<Order>(Order.Ascending);
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -65,6 +67,7 @@ export const SearchPostsPage = (props: any) => {
       if (accessToken) {
         setCategories(await getCategories(accessToken));
         if (categories.length > 0) setSubjectCategory(categories[0]);
+        setLoading(false);
       }
     };
 
@@ -120,8 +123,8 @@ export const SearchPostsPage = (props: any) => {
     });
   }
 
-  return (
-    <MainContainer>
+  const HeaderBar = () => {
+    return (
       <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
           color={light}
@@ -142,6 +145,21 @@ export const SearchPostsPage = (props: any) => {
           onPress={() => Search()}
         />
       </Appbar.Header>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainContainer>
+        <HeaderBar />
+        <LoadingView />
+      </MainContainer>
+    );
+  }
+
+  return (
+    <MainContainer>
+      <HeaderBar />
       <MainScrollContainer>
         <InputSection title="Tytuł">
           <CustomTextInput
@@ -222,6 +240,7 @@ export const SearchPostsPage = (props: any) => {
               selectedValue={subjectCategory}
               onValueChange={setSubjectCategory}>
               {mapCategories}
+              <Picker.Item />
             </Picker>
           </View>
         </InputSection>

@@ -2,13 +2,21 @@ import { format } from 'date-fns';
 import React from 'react';
 import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   danger,
   dark,
   dark2,
   light,
   light3,
+  LoadingView,
   MainContainer,
   MainTitle,
   ScoreView,
@@ -64,7 +72,6 @@ const giveVote = async (publicationId: string, vote: SinglePublicationVote) => {
 export const PostPage = (props: any) => {
   const publicationId = props.route.params?.publicationId;
   const [myUserId, setMyUserId] = React.useState<string | null>();
-  const [width, setWidth] = React.useState<number>(10);
   const [postData, setPostData] = React.useState<
     PublicationResponseType | undefined
   >();
@@ -81,11 +88,8 @@ export const PostPage = (props: any) => {
     width: number;
     height: number;
   }>();
-  const [imageProfileDisplayedSize, setImageProfileDisplayedSize] =
-    React.useState<{
-      width: number;
-      height: number;
-    }>();
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const win = Dimensions.get('window');
 
   React.useEffect(() => {
     const getData = async () => {
@@ -102,18 +106,6 @@ export const PostPage = (props: any) => {
 
   React.useEffect(() => {
     const getData = async () => {
-      const accessToken = await getAccessToken();
-      if (accessToken && postData) {
-        setIncidentDate(format(postData.incidentDate, 'dd.MM.yyyy'));
-        setProfile(await getProfileDetails(postData.author.id, accessToken));
-      }
-    };
-
-    getData();
-  }, [postData]);
-
-  React.useEffect(() => {
-    const getData = async () => {
       if (postData) {
         setCategory(
           categories?.find(
@@ -127,13 +119,26 @@ export const PostPage = (props: any) => {
   }, [categories]);
 
   React.useEffect(() => {
+    const getData = async () => {
+      const accessToken = await getAccessToken();
+      if (accessToken && postData) {
+        setIncidentDate(format(postData.incidentDate, 'dd.MM.yyyy'));
+        setProfile(await getProfileDetails(postData.author.id, accessToken));
+        setTimeout(() => setLoading(false), 10);
+      }
+    };
+
+    getData();
+  }, [postData]);
+
+  React.useEffect(() => {
     if (postData?.subjectPhotoUrl) {
       let imageSize = { width: 100, height: 100 };
       Image.getSize(
         postData.subjectPhotoUrl,
         (width, height) => (imageSize = { width, height }),
       );
-      const displayedWidth = width - 20;
+      const displayedWidth = win.width - 20;
       const displayedHeight =
         (imageSize.height * displayedWidth) / imageSize.width;
       setImageDisplayedSize({
@@ -141,27 +146,10 @@ export const PostPage = (props: any) => {
         height: displayedHeight,
       });
     }
-  }, [postData, width]);
+  }, [postData]);
 
-  React.useEffect(() => {
-    if (profile?.pictureUrl) {
-      let imageSize = { width: 25, height: 25 };
-      Image.getSize(
-        profile.pictureUrl,
-        (width, height) => (imageSize = { width, height }),
-      );
-      const displayedWidth = 25;
-      const displayedHeight =
-        (imageSize.height * displayedWidth) / imageSize.width;
-      setImageProfileDisplayedSize({
-        width: displayedWidth,
-        height: displayedHeight,
-      });
-    }
-  }, [profile]);
-
-  return (
-    <MainContainer>
+  const HeaderBar = () => {
+    return (
       <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
           color={light}
@@ -271,8 +259,23 @@ export const PostPage = (props: any) => {
           )}
         </Menu>
       </Appbar.Header>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainContainer>
+        <HeaderBar />
+        <LoadingView />
+      </MainContainer>
+    );
+  }
+
+  return (
+    <MainContainer>
+      <HeaderBar />
       <MainScrollContainer>
-        <View style={{ alignSelf: 'center', marginBottom: 10 }}>
+        <View>
           {postData?.publicationState === PublicationState.Closed ? (
             <MainTitle>Ogłoszenie zamknięte</MainTitle>
           ) : (
@@ -285,7 +288,7 @@ export const PostPage = (props: any) => {
             justifyContent: 'space-between',
             marginBottom: 10,
           }}>
-          <View style={{ maxWidth: (width * 3) / 4 }}>
+          <View>
             <MainTitle>{postData?.title}</MainTitle>
           </View>
           <Text
@@ -299,9 +302,7 @@ export const PostPage = (props: any) => {
               : postData?.aggregateRating}
           </Text>
         </View>
-        <View
-          onLayout={event => setWidth(event.nativeEvent.layout.width)}
-          style={{ alignContent: 'center' }}>
+        <View style={{ alignContent: 'center' }}>
           {postData && postData.subjectPhotoUrl ? (
             <View>
               <Image
@@ -406,9 +407,7 @@ export const PostPage = (props: any) => {
               });
             }
           }}>
-          <View
-            onLayout={event => setWidth(event.nativeEvent.layout.width)}
-            style={{ alignContent: 'center' }}>
+          <View style={{ alignContent: 'center' }}>
             {profile?.pictureUrl ? (
               <Avatar.Image
                 source={{

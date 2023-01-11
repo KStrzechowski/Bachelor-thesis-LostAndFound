@@ -17,6 +17,7 @@ import {
   InputSection,
   light,
   light2,
+  LoadingView,
   MainContainer,
   secondary,
 } from '../../Components';
@@ -99,6 +100,7 @@ export const AddPostPage = (props: any) => {
   const [publicationType, setPublicationType] = React.useState<PublicationType>(
     PublicationType.LostSubject,
   );
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -106,6 +108,7 @@ export const AddPostPage = (props: any) => {
       if (accessToken) {
         setCategories(await getCategories(accessToken));
         if (categories.length > 0) setSubjectCategory(categories[0]);
+        setLoading(false);
       }
     };
 
@@ -150,8 +153,8 @@ export const AddPostPage = (props: any) => {
     }
   }
 
-  return (
-    <MainContainer>
+  const HeaderBar = () => {
+    return (
       <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
           color={light}
@@ -172,6 +175,21 @@ export const AddPostPage = (props: any) => {
           onPress={async () => await AddPost()}
         />
       </Appbar.Header>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainContainer>
+        <HeaderBar />
+        <LoadingView />
+      </MainContainer>
+    );
+  }
+
+  return (
+    <MainContainer>
+      <HeaderBar />
       <MainScrollContainer>
         <DocumentSelector
           fileResponse={fileResponse}

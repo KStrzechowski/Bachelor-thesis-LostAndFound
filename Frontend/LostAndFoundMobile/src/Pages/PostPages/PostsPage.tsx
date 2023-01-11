@@ -17,6 +17,7 @@ import {
   dark2,
   light,
   light2,
+  LoadingView,
   MainContainer,
   primary,
   secondary,
@@ -119,6 +120,7 @@ export const PostsPage = (props: any) => {
   );
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [pagination, setPagination] = React.useState<PaginationMetadata>();
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -132,6 +134,7 @@ export const PostsPage = (props: any) => {
         );
         setPostsData(responseData.publications);
         setPagination(responseData.pagination);
+        setLoading(false);
       }
     };
 
@@ -154,8 +157,8 @@ export const PostsPage = (props: any) => {
     },
   });
 
-  return (
-    <MainContainer>
+  const HeaderBar = () => {
+    return (
       <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.Action icon="flask-empty" color={secondary}></Appbar.Action>
         <Appbar.Content
@@ -184,6 +187,21 @@ export const PostsPage = (props: any) => {
           }
         />
       </Appbar.Header>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainContainer>
+        <HeaderBar />
+        <LoadingView />
+      </MainContainer>
+    );
+  }
+
+  return (
+    <MainContainer>
+      <HeaderBar />
       <FlatList
         style={{ padding: 30 }}
         data={postsData}

@@ -6,6 +6,7 @@ import {
   dark2,
   light,
   light3,
+  LoadingView,
   MainContainer,
   primary,
   secondary,
@@ -76,6 +77,7 @@ export const ChatPage = (props: any) => {
   );
   const [flatListRef, setFlatListRef] =
     React.useState<KeyboardAwareFlatList | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -88,18 +90,16 @@ export const ChatPage = (props: any) => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setMessagesData(
-          (await GetMessages(chatRecipent?.userId, accessToken)).reverse(),
-        );
-        flatListRef?.scrollToEnd();
+        setMessagesData(await GetMessages(chatRecipent?.userId, accessToken));
+        setLoading(false);
       }
     };
 
     getData();
   }, [updateChatsValue]);
 
-  return (
-    <MainContainer>
+  const HeaderBar = () => {
+    return (
       <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
           color={light}
@@ -145,7 +145,23 @@ export const ChatPage = (props: any) => {
           )}
         </Pressable>
       </Appbar.Header>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainContainer>
+        <HeaderBar />
+        <LoadingView />
+      </MainContainer>
+    );
+  }
+
+  return (
+    <MainContainer>
+      <HeaderBar />
       <KeyboardAwareFlatList
+        inverted={true}
         style={{ padding: 30, marginBottom: 70, flex: 1 }}
         contentContainerStyle={{ paddingBottom: 50 }}
         data={messagesData}
@@ -154,9 +170,7 @@ export const ChatPage = (props: any) => {
         )}
         ref={setFlatListRef}
         onKeyboardDidShow={() => {
-          setTimeout(() => {
-            flatListRef?.scrollToEnd();
-          }, 10);
+          flatListRef?.scrollToPosition(-1, -1);
         }}
         onEndReached={async () => {
           await ReadChat(chatRecipent);
@@ -189,9 +203,7 @@ export const ChatPage = (props: any) => {
               if (response) {
                 setMessagesData([...messagesData, response]);
                 setMessageContent('');
-                setTimeout(() => {
-                  flatListRef?.scrollToEnd();
-                }, 10);
+                flatListRef?.scrollToPosition(-1, -1);
               }
             }
           }}>

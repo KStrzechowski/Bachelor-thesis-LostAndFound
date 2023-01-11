@@ -15,6 +15,7 @@ import {
   dark2,
   light,
   light3,
+  LoadingView,
   MainContainer,
   ScoreView,
   secondary,
@@ -69,6 +70,7 @@ export const ProfilePageMe = (props: any) => {
   const [visible, setVisible] = React.useState<boolean>(false);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [pagination, setPagination] = React.useState<PaginationMetadata>();
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -92,14 +94,15 @@ export const ProfilePageMe = (props: any) => {
         );
         setProfileComments(responseData?.commentsSection);
         setPagination(responseData?.pagination);
+        setLoading(false);
       }
     };
 
     getData();
   }, [profile]);
 
-  return (
-    <MainContainer>
+  const HeaderBar = () => {
+    return (
       <Appbar.Header style={{ backgroundColor: secondary }}>
         <Appbar.BackAction
           color={light}
@@ -153,6 +156,21 @@ export const ProfilePageMe = (props: any) => {
           </>
         </Menu>
       </Appbar.Header>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainContainer>
+        <HeaderBar />
+        <LoadingView />
+      </MainContainer>
+    );
+  }
+
+  return (
+    <MainContainer>
+      <HeaderBar />
       <View style={{ flex: 1, padding: 30 }}>
         <FlatList
           ListHeaderComponent={() => (
