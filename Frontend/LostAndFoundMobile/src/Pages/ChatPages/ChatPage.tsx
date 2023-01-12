@@ -121,7 +121,12 @@ export const ChatPage = (props: any) => {
 
   React.useEffect(() => {
     const getMessages = async () => {
-      if (chatMessage && receiveMessage) {
+      if (
+        chatMessage &&
+        receiveMessage &&
+        (chatMessage.authorId === chatRecipent.userId ||
+          chatMessage.authorId === currentUserId)
+      ) {
         setMessagesData([chatMessage, ...messagesData]);
         flatListRef?.scrollToPosition(-1, -1);
       } else {
