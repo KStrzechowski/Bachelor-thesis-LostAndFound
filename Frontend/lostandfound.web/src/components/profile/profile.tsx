@@ -42,7 +42,7 @@ export function ProfileOther() {
 	const usrCtx = useContext(userContext);
 	const [prof, setProf] = useState(undefined as UserProfile | undefined);
 	const [ldg, setLdg] = useState(true);
-
+	const [me, setMe] = useState("");
 	useEffect(() => {
 		setLdg(true);
 	}, [userId]);
@@ -50,27 +50,43 @@ export function ProfileOther() {
 	useEffect(() => {
 		if (ldg) {
 			setLdg(false);
-			if (usrCtx.user.authToken !== null && userId !== undefined)
-				getProfileDetails(userId, usrCtx.user.authToken).then((x) => {
-					if (x !== undefined) {
-						setProf({
-							uId: x.userId,
-							username: x.username,
-							name: x.name,
-							surname: x.surname,
-							email: x.email,
-							description: x.description,
-							city: x.city,
-							averageProfileRating: x.averageProfileRating,
-							pictureUrl:
-								x.pictureUrl ??
-								"https://avatars.dicebear.com/api/bottts/stefan.svg",
-							me: false,
-						});
-					} else {
-						nav("/");
-					}
-				});
+
+			if (usrCtx.user.authToken !== null && userId !== undefined) {
+				getProfile(usrCtx.user.authToken ?? "")
+					.then((x) => {
+						if (x !== undefined) {
+							setMe(x.userId);
+						}
+					})
+					.then((y) => {
+						if (userId && usrCtx.user.authToken !== null)
+							getProfileDetails(
+								userId,
+								usrCtx.user.authToken
+							).then((x) => {
+                                if (x !== undefined) {
+                                    if(me == x.userId)nav("/profile");
+									setProf({
+										uId: x.userId,
+										username: x.username,
+										name: x.name,
+										surname: x.surname,
+										email: x.email,
+										description: x.description,
+										city: x.city,
+										averageProfileRating:
+											x.averageProfileRating,
+										pictureUrl:
+											x.pictureUrl ??
+											"https://avatars.dicebear.com/api/bottts/stefan.svg",
+										me: false,
+									});
+								} else {
+									nav("/");
+								}
+							});
+					});
+			}
 		}
 	}, [userId, ldg]);
 
@@ -79,6 +95,7 @@ export function ProfileOther() {
 		<ProfileInner
 			profile={prof}
 			refresh={() => setLdg(true)}
+			nav={() => nav(`/chats/${prof.uId}`)}
 		></ProfileInner>
 	);
 }
@@ -86,9 +103,11 @@ export function ProfileOther() {
 export function ProfileInner({
 	profile,
 	refresh,
+	nav,
 }: {
 	profile: UserProfile;
 	refresh?: () => void;
+	nav?: () => void;
 }) {
 	let ref = refresh !== undefined ? refresh : () => {};
 	return (
@@ -115,8 +134,18 @@ export function ProfileInner({
 								<FiEdit size="38" />
 							</Link>
 						)}
+						{!profile.me && nav && (
+							<div
+								className="btn btn-primary my-auto ms-3 rounded-5"
+								onClick={() => nav()}
+							>
+								Czat
+							</div>
+						)}
 						<div className="align-self-center ms-auto me-4 d-flex align-items-center">
-							<span>{profile.averageProfileRating}</span>
+							<span>
+								{profile.averageProfileRating?.toFixed(2)}
+							</span>
 							<FiStar
 								className="ms-2 mt-1"
 								fill="#ffc107"
@@ -148,6 +177,7 @@ export function ProfileInner({
 					)}
 				</div>
 			</div>
+
 			<ProfileComments
 				me={profile.me}
 				profId={profile.uId}
@@ -167,6 +197,6 @@ export class UserProfile {
 	city: string | undefined = "Warszawa";
 	averageProfileRating: number | undefined = 4.78;
 	pictureUrl: string | undefined =
-		"https://xsgames.co/randomusers/avatar.php?g=pixel";
+		"https://avatars.dicebear.com/api/bottts/stefan.svg";
 	me: boolean = true;
 }

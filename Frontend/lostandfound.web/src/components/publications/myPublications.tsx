@@ -15,6 +15,7 @@ export default function MyPublications() {
 	const [pub, setPub] = useState([] as Publication[]);
 
 	const [page, setPage] = useState(1 as number);
+	const [maxpg, setmaxpg] = useState(1 as number);
 	const [filter, setFilter] = useState(
 		undefined as PublicationSearchRequestType | undefined
 	);
@@ -28,7 +29,10 @@ export default function MyPublications() {
 			}).then((x) => {
 				if (x === undefined)
 					usrCtx.setUser({ ...usrCtx.user, isLogged: false });
-				else setPub(x.map((y) => new Publication(y)));
+				else {
+					setPub(x.publications.map((y) => new Publication(y)));
+					setmaxpg(x.pagination?.TotalPageCount ?? 100);
+				}
 			});
 		}
 	}, [page, usrCtx.user, usrCtx, filter, ldg]);
@@ -88,7 +92,7 @@ export default function MyPublications() {
 			<Pagination
 				page={page}
 				setPage={(p: number) => setPage(p)}
-				maxPages={200}
+				maxPages={maxpg}
 			/>
 		</>
 	);

@@ -1,6 +1,7 @@
 import { http } from "../../../http";
 import { mapPublicationFromServer, Order, } from "../publicationTypes";
 export const getPublicationsUndef = async (pageNumber, accessToken, publication, orderBy) => {
+    var _a;
     let path = `/publication?pageNumber=${pageNumber}`;
     if (publication) {
         if (publication.title) {
@@ -48,10 +49,19 @@ export const getPublicationsUndef = async (pageNumber, accessToken, publication,
         method: "get",
         accessToken,
     });
-    if (result.ok && result.body) {
-        return result.body.map(mapPublicationFromServer);
+    const pagination = (_a = result.headers) === null || _a === void 0 ? void 0 : _a.get("X-Pagination");
+    if (result.ok && result.body && pagination) {
+        return {
+            pagination: JSON.parse(pagination),
+            publications: result.body.map(mapPublicationFromServer),
+        };
+    }
+    else if (result.ok && result.body) {
+        return {
+            publications: result.body.map(mapPublicationFromServer),
+        };
     }
     else {
-        return undefined;
+        return { publications: [] };
     }
 };

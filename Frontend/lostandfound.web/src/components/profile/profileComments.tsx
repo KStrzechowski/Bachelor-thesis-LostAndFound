@@ -38,10 +38,10 @@ export default function ProfileComments({
 				if (usrCtx.user.authToken != null)
 					getProfileComments(profId, usrCtx.user.authToken).then(
 						(x) => {
-							if (x?.comments !== undefined) {
-								setComments(x?.comments);
+							if (x?.commentsSection.comments !== undefined) {
+								setComments(x?.commentsSection.comments);
 							}
-							setMyCom(x?.myComment);
+							setMyCom(x?.commentsSection.myComment);
 
 							refresh();
 						}
