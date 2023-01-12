@@ -32,7 +32,7 @@ export default function Pagination({
 					</button>
 				)}
 				<button className="btn btn-primary active">{page}</button>
-				{page + 1 < maxPages && (
+				{page + 1 <= maxPages && (
 					<button
 						className="btn btn-primary"
 						onClick={() => setPageIfCan(page + 1)}
