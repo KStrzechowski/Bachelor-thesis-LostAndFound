@@ -109,7 +109,7 @@ const ChatItem = (props: any) => {
 };
 
 export const ChatsPage = (props: any) => {
-  const { updateChatsValue } = React.useContext(ProfileContext);
+  const { unreadChatsCount } = React.useContext(ProfileContext);
   const [chatsData, setChatsData] = React.useState<BaseProfileChatType[]>([]);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [pagination, setPagination] = React.useState<PaginationMetadata>();
@@ -128,7 +128,7 @@ export const ChatsPage = (props: any) => {
     };
 
     getData();
-  }, [updateChatsValue]);
+  }, [unreadChatsCount]);
 
   const HeaderBar = () => {
     return (
