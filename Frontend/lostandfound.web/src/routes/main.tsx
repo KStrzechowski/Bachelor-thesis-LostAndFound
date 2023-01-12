@@ -33,6 +33,7 @@ export default function MainRouter() {
 					<Route path="posts" element={<PublicationsList />} />
 					<Route path="posts/mine" element={<MyPublications />} />
 					<Route path="chats" element={<Chats />} />
+					<Route path="chats/:userId" element={<Chats />} />
 				</Route>
 
 				<Route element={<NoAuth></NoAuth>}>

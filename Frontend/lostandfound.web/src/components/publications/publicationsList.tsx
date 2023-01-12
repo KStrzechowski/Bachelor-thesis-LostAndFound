@@ -16,27 +16,40 @@ import { userContext } from "userContext";
 import { NewPublication } from "./newPublication";
 import Pagination from "../pagination";
 import PublicationModal from "./publicationDetails";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FiChevronDown, FiChevronUp, FiEdit } from "react-icons/fi";
+import {
+	AiFillDelete,
+	AiFillDislike,
+	AiFillLike,
+	AiOutlineDislike,
+	AiOutlineLike,
+} from "react-icons/ai";
 
 export default function PublicationsList() {
 	const usrCtx = useContext(userContext);
-	const { pubId } = useParams();
 	const [pub, setPub] = useState([] as Publication[]);
 
 	const [page, setPage] = useState(1 as number);
+	const [maxpg, setMaxpg] = useState(1 as number);
 	const [filter, setFilter] = useState({} as PublicationSearchRequestType);
 	const [sort, setSort] = useState({
 		order: Order.Descending,
 	} as PublicationSortType);
 
 	const [ldg, setLdg] = useState(true);
+	const [los, setLos] = useState(undefined as boolean | undefined);
 
 	const [details, setDetails] = useState(undefined as string | undefined);
 	useEffect(() => {
 		setLdg(true);
-	}, [filter, sort]);
-
+	}, [filter, sort, los]);
+	useEffect(() => {
+		if (maxpg < page) {
+			setPage(1);
+			setLdg(true);
+		}
+	});
 	useEffect(() => {
 		if (ldg) {
 			let srt = sort?.type
@@ -48,18 +61,27 @@ export default function PublicationsList() {
 			getPublicationsUndef(
 				page,
 				usrCtx.user.authToken ?? "",
-				filter,
+				{
+					...filter,
+					publicationType:
+						los === true
+							? PublicationType.FoundSubject
+							: los === false
+							? PublicationType.LostSubject
+							: undefined,
+				},
 				srt
 			).then((x) => {
 				if (x === undefined)
 					usrCtx.setUser({ ...usrCtx.user, isLogged: false });
 				else {
-					setPub(x.map((y) => new Publication(y)));
+					setPub(x.publications.map((y) => new Publication(y)));
+					setMaxpg(x.pagination?.TotalPageCount ?? 100);
 					setLdg(false);
 				}
 			});
 		}
-	}, [page, usrCtx.user, usrCtx, filter, ldg, sort]);
+	}, [page, usrCtx.user, usrCtx, ldg]);
 
 	const [cats, setCats] = useState([] as (CategoryType | undefined)[]);
 
@@ -108,20 +130,54 @@ export default function PublicationsList() {
 			}
 			<NewPublication refresh={() => setLdg(true)}></NewPublication>
 
-			<div className="row justify-content-start">
+			<div className="row justify-content-start align-items-start">
 				<div className="col-lg-3 col-12 p-5">
 					<FiltersForm
 						filters={filter}
 						setFilter={(x) => {
 							setFilter(x);
-							setLdg(true);
 						}}
 					></FiltersForm>
 				</div>
 				<div className="row col-md-6 col-12">
 					<SortForm setSort={(x) => setSort(x)} sort={sort} />
+					<div className="btn-group w-75 ms-auto me-auto mt-2 ">
+						<div
+							className={
+								"btn  " +
+								(los === true
+									? "btn-primary"
+									: "btn-outline-primary")
+							}
+							onClick={() => {
+								if (los === true) setLos(undefined);
+								else setLos(true);
+							}}
+						>
+							Znalezione
+						</div>
+						<div
+							className={
+								"btn  " +
+								(los === false
+									? "btn-primary"
+									: "btn-outline-primary")
+							}
+							onClick={() => {
+								if (los === false) setLos(undefined);
+								else setLos(false);
+							}}
+						>
+							Zgubione
+						</div>
+					</div>
 					{ldg && (
-						<div className="spinner-border" role="status"></div>
+						<div>
+							<div
+								className=" spinner-border col-12 ms-auto me-auto"
+								role="status"
+							></div>
+						</div>
 					)}
 					{!ldg &&
 						pub.map((x, i) => (
@@ -142,7 +198,7 @@ export default function PublicationsList() {
 					setPage(p);
 					setLdg(true);
 				}}
-				maxPages={15}
+				maxPages={maxpg}
 			/>
 		</div>
 	);
@@ -206,16 +262,19 @@ export function PublicationCom({
 			</div>
 
 			<div className="col-1 text-center align-self-center ms-auto">
-				{like !== undefined && (
-					<button
-						className={
-							"btn p-1 " +
-							(pub.userVote === 1 ? "bg-success" : "")
-						}
+				{like !== undefined && pub.userVote === 1 && (
+					<AiFillLike
+						size={20}
 						onClick={() => like()}
-					>
-						🖒
-					</button>
+						style={{ cursor: "pointer" }}
+					/>
+				)}
+				{like !== undefined && pub.userVote !== 1 && (
+					<AiOutlineLike
+						size={20}
+						onClick={() => like()}
+						style={{ cursor: "pointer" }}
+					/>
 				)}
 				<div
 					className={
@@ -226,33 +285,37 @@ export function PublicationCom({
 				>
 					{pub.rating}
 				</div>
-				{dislike !== undefined && (
-					<h3
-						className={
-							"btn p-1 " +
-							(pub.userVote === -1 ? "bg-danger" : "")
-						}
+				{dislike !== undefined && pub.userVote === -1 && (
+					<AiFillDislike
+						size={20}
 						onClick={() => dislike()}
-					>
-						🖓
-					</h3>
+						style={{ cursor: "pointer" }}
+					/>
+				)}
+				{dislike !== undefined && pub.userVote !== -1 && (
+					<AiOutlineDislike
+						size={20}
+						onClick={() => dislike()}
+						style={{ cursor: "pointer" }}
+					/>
 				)}
 			</div>
-			<div className="row m-auto align-self-end">
+			<div className="row m-auto align-self-end mt-2">
+				<div className="col"></div>
 				{edit && (
 					<Link
-						className="btn btn-warning text-black col-2 me-auto"
+						className="btn btn-warning text-black col-2 me-auto ms-1"
 						to={`/posts/edit/${pub.publicationIdentifier}`}
 					>
-						<FiEdit size="20" />
+						<FiEdit size="20" className="mb-1 mr-1" /> Edytuj
 					</Link>
 				)}
 				{del && (
 					<button
-						className="btn btn-danger col-1"
+						className="btn btn-danger col-2 ms-1"
 						onClick={() => del()}
 					>
-						<FiEdit size="20" />
+						<AiFillDelete size="20" className="mb-1 mr-1" /> Usuń
 					</button>
 				)}
 			</div>
@@ -375,6 +438,7 @@ function FiltersForm({
 				<div className="form-label text-start">Dystans:</div>
 				<select
 					value={filt.incidentDistance || 1}
+					defaultValue={1}
 					className="form-select w-100"
 					onChange={(e) =>
 						setFiltLoc({
@@ -383,9 +447,7 @@ function FiltersForm({
 						})
 					}
 				>
-					<option selected value={1}>
-						1km
-					</option>
+					<option value={1}>1km</option>
 					<option value={2}>2km</option>
 					<option value={3}>3km</option>
 					<option value={5}>5km</option>
@@ -433,7 +495,7 @@ function FiltersForm({
 						})
 					}
 				>
-					<option selected value={""}></option>
+					<option value={""}></option>
 					{cats.map((x, i) => (
 						<option key={i} value={x?.id}>
 							{x?.displayName}
@@ -482,9 +544,9 @@ export class Publication {
 		this.subjectPicture = pub?.subjectPhotoUrl;
 		this.lostorfnd =
 			pub?.publicationType === PublicationType.LostSubject
-				? false
-				: pub?.publicationType === PublicationType.FoundSubject
 				? true
+				: pub?.publicationType === PublicationType.FoundSubject
+				? false
 				: undefined;
 	}
 	publicationIdentifier: string;

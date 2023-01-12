@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AiFillDelete } from "react-icons/ai";
 import { FiChevronsRight, FiSave, FiTrash, FiTrash2 } from "react-icons/fi";
 
 export default function UploadAndDisplayImage({
@@ -7,8 +8,8 @@ export default function UploadAndDisplayImage({
 	onDelete,
 }: {
 	currentImg: string | undefined;
-	onSave: (file: File) => Promise<void>;
-	onDelete: () => Promise<void>;
+	onSave: (file: File) => void;
+	onDelete: () => void;
 }) {
 	const [selectedImage, setSelectedImage] = useState(null as File | null);
 	return (
@@ -23,6 +24,7 @@ export default function UploadAndDisplayImage({
 						onChange={(e) => {
 							if (e?.target?.files) {
 								setSelectedImage(e.target.files[0]);
+								onSave(e.target.files[0]);
 							}
 						}}
 					/>
@@ -39,7 +41,7 @@ export default function UploadAndDisplayImage({
 									className="btn btn-danger m-3"
 									onClick={() => onDelete()}
 								>
-									<FiTrash />
+									<AiFillDelete />
 								</button>
 							</div>
 						)}
@@ -52,15 +54,6 @@ export default function UploadAndDisplayImage({
 									width={"200px"}
 									src={URL.createObjectURL(selectedImage)}
 								/>
-								<button
-									className="btn btn-primary m-3"
-									onClick={() => {
-										onSave(selectedImage);
-										setSelectedImage(null);
-									}}
-								>
-									<FiSave />
-								</button>
 							</div>
 						)}
 					</div>

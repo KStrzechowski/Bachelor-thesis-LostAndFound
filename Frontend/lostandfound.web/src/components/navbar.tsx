@@ -1,3 +1,5 @@
+import { chatContext } from "chatContext";
+import { logout } from "commons";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { userContext, UsrCont } from "userContext";
@@ -5,10 +7,14 @@ var logo = require("../logo.png");
 
 export default function Navbar() {
 	const userCtx = useContext(userContext);
+	const chatCtx = useContext(chatContext);
 
 	function Logout() {
 		userCtx.setUser(new UsrCont());
-		localStorage.removeItem("authToken");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("expiration");
+        //logout();
 	}
 
 	return (
@@ -48,11 +54,17 @@ export default function Navbar() {
 							Moje ogłoszenia
 						</Link>
 						<Link
-							className="btn btn-primary rounded-5 me-3"
+							className="btn btn-primary rounded-5 me-3 position-relative"
 							to={"/chats"}
 						>
 							Czaty
+							{chatCtx.newMsgCount > 0 && (
+								<span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+									{chatCtx.newMsgCount}
+								</span>
+							)}
 						</Link>
+
 						<Link
 							data-testid="linktoprofile"
 							className="btn btn-primary rounded-5 me-3"

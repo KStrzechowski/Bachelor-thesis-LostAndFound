@@ -9,6 +9,7 @@ export default function Register() {
 		pwd: "",
 		pwd2: "",
 	});
+	const [val, setVal] = useState([] as valErrors[]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setUser({
@@ -19,8 +20,20 @@ export default function Register() {
 
 	const nav = useNavigate();
 
+	function onValidate() {
+		var nerr = [] as valErrors[];
+		const mailexp: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+		if (user.name.length < 8) nerr.push(valErrors.name);
+		if (!mailexp.test(user.email)) nerr.push(valErrors.mail);
+		if (user.pwd.length < 8) nerr.push(valErrors.pass1);
+		if (user.pwd !== user.pwd2) nerr.push(valErrors.pass2);
+		setVal(nerr);
+		if (val.length > 0) return false;
+		return true;
+	}
+
 	function handleregister() {
-		if (user.pwd === user.pwd2) {
+		if (onValidate()) {
 			let req: RegisterRequestType = {
 				email: user.email,
 				password: user.pwd,
@@ -32,7 +45,7 @@ export default function Register() {
 			});
 		}
 	}
-
+	console.log(val.includes(valErrors.name));
 	return (
 		<div className="d-flex justify-content-evenly align-items-center h-75">
 			<div
@@ -55,7 +68,13 @@ export default function Register() {
 						placeholder="nazwa"
 						onChange={(e) => handleChange(e)}
 					></input>
+					{val.includes(valErrors.name) && (
+						<div className="ms-1 text-danger text-start">
+							nazwa użytkownika musi zawierać conajmniej 8 znaków
+						</div>
+					)}
 				</div>
+
 				<div className="m-3">
 					<div className="form-label text-start">e-mail:</div>
 					<input
@@ -66,7 +85,13 @@ export default function Register() {
 						placeholder="e-mail"
 						onChange={(e) => handleChange(e)}
 					></input>
+					{val.includes(valErrors.mail) && (
+						<div className="ms-1 text-danger text-start">
+							e-mail musi być poprawny
+						</div>
+					)}
 				</div>
+
 				<div className="m-3">
 					<div className="form-label text-start">hasło:</div>
 					<input
@@ -77,7 +102,13 @@ export default function Register() {
 						placeholder="hasło"
 						onChange={(e) => handleChange(e)}
 					></input>
+					{val.includes(valErrors.pass1) && (
+						<div className="ms-1 text-danger text-start">
+							hasło musi zawierać conajmniej 8 znaków
+						</div>
+					)}
 				</div>
+
 				<div className="m-3">
 					<div className="form-label text-start">powtórz hasło:</div>
 					<input
@@ -88,6 +119,11 @@ export default function Register() {
 						placeholder="powtórz hasło"
 						onChange={(e) => handleChange(e)}
 					></input>
+					{val.includes(valErrors.pass2) && (
+						<div className="ms-1 text-danger text-start">
+							hasła muszą być takie same
+						</div>
+					)}
 				</div>
 				<div
 					className="btn btn-primary rounded-5"
@@ -108,4 +144,10 @@ export default function Register() {
 			</div>
 		</div>
 	);
+}
+enum valErrors {
+	name,
+	mail,
+	pass1,
+	pass2,
 }
