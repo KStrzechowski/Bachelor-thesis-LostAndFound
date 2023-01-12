@@ -25,6 +25,7 @@ import {
   saveUserPhotoUrl,
   saveUserRating,
 } from '../../SecureStorage/Profile';
+import { primary } from '../../Components';
 
 const loginUser = async (email: string, password: string) => {
   const loginRequest: LoginRequestType = {
@@ -54,7 +55,7 @@ const loginUser = async (email: string, password: string) => {
       duration: Snackbar.LENGTH_SHORT,
       action: {
         text: 'Zamknij',
-        textColor: 'green',
+        textColor: primary,
       },
     });
     return;
@@ -81,7 +82,7 @@ export const LoginPage = (props: { navigation: string[] }) => {
           source={Logo}
           style={{ width: '100%', resizeMode: 'stretch', marginBottom: 20 }}
         />
-        <Subtitle>Hej! Dobrze cię znowu widzieć</Subtitle>
+        <Subtitle>Hej! Dobrze Cię znowu widzieć</Subtitle>
         <InputSection title="E-mail">
           <CustomTextInput
             testID="emailPlaceholder"

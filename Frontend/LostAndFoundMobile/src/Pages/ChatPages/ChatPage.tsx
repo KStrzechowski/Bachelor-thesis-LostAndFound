@@ -23,14 +23,17 @@ import { getAccessToken, getUserId } from '../../SecureStorage';
 import { Appbar, Avatar } from 'react-native-paper';
 import { ProfileContext } from '../../Context';
 import { PaginationMetadata } from 'commons/lib/http';
+import { RefreshControl } from 'react-native-gesture-handler';
+import { dark3 } from '../../Components/Colors';
 
 const GetMessages = async (
   recipentId: string,
   accessToken: string,
+  pageNumber: number,
 ): Promise<{
   pagination?: PaginationMetadata;
   messages: MessageResponseType[];
-}> => await getChatMessages(recipentId, accessToken);
+}> => await getChatMessages(recipentId, accessToken, pageNumber);
 
 const SendMessage = async (
   recipentId: string,
@@ -71,7 +74,7 @@ const MessageItem = (props: any) => {
 
 export const ChatPage = (props: any) => {
   const chatRecipent: BaseProfileType = props.route.params?.chatRecipent;
-  const { updateChats, updateUnreadChatsCount, updateChatsValue } =
+  const { updateChats, updateUnreadChatsCount, updateChatsValue, chatMessage } =
     React.useContext(ProfileContext);
   const [messageContent, setMessageContent] = React.useState<string>('');
   const [currentUserId, setCurrentUserId] = React.useState<string | null>();
@@ -80,11 +83,17 @@ export const ChatPage = (props: any) => {
   );
   const [flatListRef, setFlatListRef] =
     React.useState<KeyboardAwareFlatList | null>(null);
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
+  const [pagination, setPagination] = React.useState<PaginationMetadata>();
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [receiveMessage, setReceiveMessage] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const getData = async () => {
       setCurrentUserId(await getUserId());
+      await ReadChat(chatRecipent);
+      updateChats();
+      updateUnreadChatsCount();
     };
     getData();
   }, []);
@@ -93,15 +102,41 @@ export const ChatPage = (props: any) => {
     const getData = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        setMessagesData(
-          (await GetMessages(chatRecipent?.userId, accessToken)).messages,
+        const responseData = await GetMessages(
+          chatRecipent?.userId,
+          accessToken,
+          1,
         );
+        setMessagesData(responseData.messages);
+        setPagination(responseData.pagination);
         setLoading(false);
+        await ReadChat(chatRecipent);
+        updateChats();
+        updateUnreadChatsCount();
       }
     };
 
     getData();
-  }, [updateChatsValue]);
+  }, []);
+
+  React.useEffect(() => {
+    const getMessages = async () => {
+      if (chatMessage && receiveMessage) {
+        setMessagesData([chatMessage, ...messagesData]);
+        flatListRef?.scrollToPosition(-1, -1);
+      } else {
+        setReceiveMessage(true);
+      }
+    };
+
+    getMessages();
+  }, [chatMessage]);
+
+  const onRefresh = React.useCallback(async () => {
+    await ReadChat(chatRecipent);
+    updateChats();
+    updateUnreadChatsCount();
+  }, []);
 
   const HeaderBar = () => {
     return (
@@ -174,17 +209,41 @@ export const ChatPage = (props: any) => {
           <MessageItem item={item} currentUserId={currentUserId} />
         )}
         ref={setFlatListRef}
-        onKeyboardDidShow={() => {
+        onKeyboardDidShow={async () => {
           flatListRef?.scrollToPosition(-1, -1);
-        }}
-        onEndReached={async () => {
           await ReadChat(chatRecipent);
           updateChats();
           updateUnreadChatsCount();
         }}
+        onEndReached={() => {
+          const getData = async () => {
+            if (pagination && pageNumber < pagination?.TotalPageCount) {
+              const accessToken = await getAccessToken();
+              if (accessToken) {
+                const responseData = await GetMessages(
+                  chatRecipent.userId,
+                  accessToken,
+                  pageNumber + 1,
+                );
+                setMessagesData([...messagesData, ...responseData.messages]);
+                setPagination(responseData.pagination);
+                setPageNumber(pageNumber + 1);
+              }
+            }
+          };
+          getData();
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={onRefresh}
+            colors={[primary]}
+          />
+        }
       />
       <View style={styles.sendMessageContainer}>
         <TextInput
+          multiline={true}
           onChangeText={setMessageContent}
           value={messageContent}
           placeholder="Podaj tytuł"
@@ -192,7 +251,10 @@ export const ChatPage = (props: any) => {
         />
 
         <Pressable
-          style={styles.sendButton}
+          style={({ pressed }) => [
+            styles.sendButton,
+            pressed ? { backgroundColor: dark3 } : {},
+          ]}
           onPress={async () => {
             const accessToken = await getAccessToken();
             if (accessToken && messageContent.length > 0) {
@@ -204,9 +266,8 @@ export const ChatPage = (props: any) => {
                 message,
                 accessToken,
               );
-              console.log(response);
               if (response) {
-                setMessagesData([...messagesData, response]);
+                setMessagesData([response, ...messagesData]);
                 setMessageContent('');
                 flatListRef?.scrollToPosition(-1, -1);
               }
@@ -243,7 +304,9 @@ const styles = StyleSheet.create({
     backgroundColor: primary,
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
     padding: 10,
+    paddingVertical: 12,
     flex: 1,
   },
   message: {
@@ -270,5 +333,3 @@ const styles = StyleSheet.create({
     color: light,
   },
 });
-
-/**/

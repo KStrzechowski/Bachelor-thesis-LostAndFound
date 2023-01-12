@@ -112,7 +112,7 @@ export const PageSelector = (
   );
 };
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   selectorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

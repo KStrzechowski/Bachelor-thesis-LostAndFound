@@ -13,9 +13,9 @@ import {
   dark2,
   light,
   light3,
+  LoadingNextPageView,
   LoadingView,
   MainContainer,
-  PageSelector,
   secondary,
   Subtitle,
 } from '../../Components';
@@ -114,6 +114,7 @@ export const ChatsPage = (props: any) => {
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [pagination, setPagination] = React.useState<PaginationMetadata>();
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [loadingNextPage, setLoadingNextPage] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -186,6 +187,7 @@ export const ChatsPage = (props: any) => {
         )}
         onEndReached={() => {
           const getData = async () => {
+            setLoadingNextPage(true);
             if (pagination && pageNumber < pagination?.TotalPageCount) {
               const accessToken = await getAccessToken();
               if (accessToken) {
@@ -198,9 +200,13 @@ export const ChatsPage = (props: any) => {
                 setPageNumber(pageNumber + 1);
               }
             }
+            setLoadingNextPage(false);
           };
 
           getData();
+        }}
+        ListFooterComponent={() => {
+          return loadingNextPage ? <LoadingNextPageView /> : <></>;
         }}
       />
     </MainContainer>

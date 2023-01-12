@@ -15,6 +15,7 @@ import {
   dark2,
   light,
   light3,
+  LoadingNextPageView,
   LoadingView,
   MainContainer,
   ScoreView,
@@ -71,6 +72,7 @@ export const ProfilePageMe = (props: any) => {
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [pagination, setPagination] = React.useState<PaginationMetadata>();
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [loadingNextPage, setLoadingNextPage] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -170,7 +172,59 @@ export const ProfilePageMe = (props: any) => {
 
   return (
     <MainContainer>
-      <HeaderBar />
+      <Appbar.Header style={{ backgroundColor: secondary }}>
+        <Appbar.BackAction
+          color={light}
+          onPress={() => props.navigation.pop()}
+        />
+        <Appbar.Content
+          title={profile?.username}
+          titleStyle={{
+            textAlign: 'center',
+            color: light,
+            fontWeight: 'bold',
+          }}
+        />
+        <Menu
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          anchor={
+            <Appbar.Action
+              color={light}
+              icon="dots-vertical"
+              onPress={() => setVisible(true)}
+            />
+          }>
+          <>
+            <Menu.Item
+              title="Edytuj profil"
+              onPress={() => {
+                setVisible(false);
+                props.navigation.push('Home', {
+                  screen: 'EditProfile',
+                  params: { user: profile },
+                });
+              }}
+            />
+            {profile?.pictureUrl ? (
+              <Menu.Item
+                title="Usuń zdjęcie"
+                onPress={async () => {
+                  setVisible(false);
+                  const isDeleted = await deleteImage();
+                  if (isDeleted) {
+                    await removeUserPhotoUrl();
+                    await updatePhotoUrl();
+                    setUpdate(!update);
+                  }
+                }}
+              />
+            ) : (
+              <></>
+            )}
+          </>
+        </Menu>
+      </Appbar.Header>
       <View style={{ flex: 1, padding: 30 }}>
         <FlatList
           ListHeaderComponent={() => (
@@ -247,6 +301,7 @@ export const ProfilePageMe = (props: any) => {
           renderItem={({ item }) => <CommentItem item={item} />}
           onEndReached={() => {
             const getData = async () => {
+              setLoadingNextPage(true);
               if (pagination && pageNumber < pagination?.TotalPageCount) {
                 const accessToken = await getAccessToken();
                 if (accessToken && profile) {
@@ -268,9 +323,17 @@ export const ProfilePageMe = (props: any) => {
                   }
                 }
               }
+              setLoadingNextPage(false);
             };
 
             getData();
+          }}
+          ListFooterComponent={() => {
+            return (
+              <View style={{ marginTop: 30, marginBottom: 10 }}>
+                {loadingNextPage ? <LoadingNextPageView /> : <></>}
+              </View>
+            );
           }}
         />
       </View>

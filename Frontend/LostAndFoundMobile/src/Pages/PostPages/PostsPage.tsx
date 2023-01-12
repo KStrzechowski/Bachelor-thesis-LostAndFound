@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   Image,
@@ -17,6 +18,7 @@ import {
   dark2,
   light,
   light2,
+  LoadingNextPageView,
   LoadingView,
   MainContainer,
   primary,
@@ -88,7 +90,7 @@ const PostItem = (props: any) => {
           {item.description}
         </Text>
       </View>
-      <View style={{}}>
+      <View>
         {item?.subjectPhotoUrl ? (
           <Image
             source={{
@@ -121,6 +123,7 @@ export const PostsPage = (props: any) => {
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [pagination, setPagination] = React.useState<PaginationMetadata>();
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [loadingNextPage, setLoadingNextPage] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -138,7 +141,6 @@ export const PostsPage = (props: any) => {
       }
     };
 
-    setPageNumber(1);
     getData();
   }, [searchPublication, orderBy]);
 
@@ -225,6 +227,7 @@ export const PostsPage = (props: any) => {
         )}
         onEndReached={() => {
           const getData = async () => {
+            setLoadingNextPage(true);
             if (pagination && pageNumber < pagination?.TotalPageCount) {
               const accessToken = await getAccessToken();
               if (accessToken) {
@@ -239,8 +242,16 @@ export const PostsPage = (props: any) => {
                 setPageNumber(pageNumber + 1);
               }
             }
+            setLoadingNextPage(false);
           };
           getData();
+        }}
+        ListFooterComponent={() => {
+          return (
+            <View style={{ marginBottom: 10 }}>
+              {loadingNextPage ? <LoadingNextPageView /> : <></>}
+            </View>
+          );
         }}
       />
       <TouchableOpacity

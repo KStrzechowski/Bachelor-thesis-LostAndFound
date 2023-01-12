@@ -13,6 +13,10 @@ export const LoadingView = () => {
   );
 };
 
+export const LoadingNextPageView = () => {
+  return <ActivityIndicator color={primary} size="small" />;
+};
+
 const styles = StyleSheet.create({
   mainContainer: {
     justifyContent: 'center',
