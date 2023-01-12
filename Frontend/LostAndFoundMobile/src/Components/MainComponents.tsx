@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import { danger, dark, dark2, light, light2, primary } from './Colors';
+import { danger, dark, dark2, dark3, light, light2, primary } from './Colors';
 
 export const MainContainer: React.FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -60,7 +60,7 @@ export const InputSection: React.FC<
 export const CustomTextInput: React.FC<TextInputProps> = props => {
   return (
     <View style={mainStyles.inputContainer}>
-      <TextInput {...props} />
+      <TextInput multiline={true} {...props} />
     </View>
   );
 };
@@ -73,7 +73,13 @@ export const MainButton: React.FC<
   }>
 > = ({ label, onPress, testID }) => {
   return (
-    <Pressable style={mainStyles.mainButton} onPress={onPress} testID={testID}>
+    <Pressable
+      style={({ pressed }) => [
+        mainStyles.mainButton,
+        pressed ? { backgroundColor: dark3 } : {},
+      ]}
+      onPress={onPress}
+      testID={testID}>
       <Text style={mainStyles.mainButtonText}>{label}</Text>
     </Pressable>
   );
@@ -87,7 +93,12 @@ export const SecondaryButton: React.FC<
   }>
 > = ({ label, onPress, testID }) => {
   return (
-    <Pressable style={mainStyles.secondaryButton} onPress={onPress}>
+    <Pressable
+      style={({ pressed }) => [
+        mainStyles.secondaryButton,
+        pressed ? { backgroundColor: dark3 } : {},
+      ]}
+      onPress={onPress}>
       <Text testID={testID} style={mainStyles.secondaryButtonText}>
         {label}
       </Text>

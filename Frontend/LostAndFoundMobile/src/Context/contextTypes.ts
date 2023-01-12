@@ -1,3 +1,4 @@
+import { MessageResponseType } from 'commons';
 import React from 'react';
 
 export const AuthContext = React.createContext({
@@ -5,6 +6,7 @@ export const AuthContext = React.createContext({
   signOut: async () => {},
 });
 
+let chatMessage: MessageResponseType | undefined;
 export const ProfileContext = React.createContext({
   updatePhotoUrl: async () => {},
   updatePhotoUrlValue: false,
@@ -12,4 +14,5 @@ export const ProfileContext = React.createContext({
   updateChatsValue: false,
   updateUnreadChatsCount: async () => {},
   unreadChatsCount: 0,
+  chatMessage,
 });

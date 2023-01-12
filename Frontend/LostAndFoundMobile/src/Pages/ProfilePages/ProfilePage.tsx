@@ -18,8 +18,10 @@ import {
   DeleteButton,
   light,
   light3,
+  LoadingNextPageView,
   LoadingView,
   MainContainer,
+  primary,
   ScoreView,
   secondary,
   SecondaryButton,
@@ -29,6 +31,18 @@ import { getAccessToken } from '../../SecureStorage';
 import { TextInput } from 'react-native-gesture-handler';
 import { Appbar, Avatar } from 'react-native-paper';
 import { PaginationMetadata } from 'commons/lib/http';
+import Snackbar from 'react-native-snackbar';
+
+const validationSnackBar = (text: string) => {
+  Snackbar.show({
+    text,
+    duration: Snackbar.LENGTH_LONG,
+    action: {
+      text: 'Zamknij',
+      textColor: primary,
+    },
+  });
+};
 
 const CommentItem = (props: any) => {
   const item: ProfileCommentResponseType = props.item;
@@ -38,6 +52,7 @@ const CommentItem = (props: any) => {
       style={{
         marginTop: 20,
         padding: 10,
+        marginHorizontal: 30,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: dark2,
@@ -138,6 +153,11 @@ async function leaveComment(
   commentExists: boolean,
 ) {
   const accessToken = await getAccessToken();
+
+  if (!content.content || !/\S+/.test(content.content)) {
+    validationSnackBar('Komentarz nie może być pusty.');
+    return;
+  }
   if (accessToken) {
     if (commentExists) {
       editProfileComment(userId, content, accessToken);
@@ -164,6 +184,7 @@ export const ProfilePage = (props: any) => {
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const [pagination, setPagination] = React.useState<PaginationMetadata>();
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [loadingNextPage, setLoadingNextPage] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -245,103 +266,110 @@ export const ProfilePage = (props: any) => {
   return (
     <MainContainer>
       <HeaderBar />
-      <View style={{ flex: 1, padding: 30 }}>
-        <FlatList
-          ListHeaderComponent={() => (
-            <>
+      <FlatList
+        ListHeaderComponent={() => (
+          <View style={{ marginHorizontal: 30, marginTop: 30 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 10,
+                marginBottom: 10,
+              }}
+              onLayout={event => setWidth(event.nativeEvent.layout.width)}>
+              {profile?.pictureUrl ? (
+                <Avatar.Image
+                  source={{
+                    uri: profile.pictureUrl,
+                  }}
+                  style={{
+                    marginBottom: 20,
+                    backgroundColor: light3,
+                  }}
+                  size={(width * 4) / 9}
+                />
+              ) : (
+                <Avatar.Icon
+                  icon={'account'}
+                  size={(width * 4) / 9}
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: 10,
+                    marginRight: 30,
+                    backgroundColor: light3,
+                  }}
+                />
+              )}
               <View
                 style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: 10,
-                  marginBottom: 10,
-                }}
-                onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-                {profile?.pictureUrl ? (
-                  <Avatar.Image
-                    source={{
-                      uri: profile.pictureUrl,
-                    }}
-                    style={{
-                      marginBottom: 20,
-                      backgroundColor: light3,
-                    }}
-                    size={(width * 4) / 9}
-                  />
-                ) : (
-                  <Avatar.Icon
-                    icon={'account'}
-                    size={(width * 4) / 9}
-                    style={{
-                      alignSelf: 'center',
-                      marginTop: 10,
-                      marginRight: 30,
-                      backgroundColor: light3,
-                    }}
-                  />
-                )}
+                  flex: 1,
+                  width: (width * 5) / 9,
+                  paddingLeft: 20,
+                }}>
                 <View
                   style={{
-                    flex: 1,
-                    width: (width * 5) / 9,
-                    paddingLeft: 20,
+                    flex: 2,
+                    flexDirection: 'row',
+                    marginBottom: 10,
                   }}>
-                  <View
-                    style={{
-                      flex: 2,
-                      flexDirection: 'row',
-                      marginBottom: 10,
-                    }}>
-                    <Text style={{ fontSize: 18, flex: 3 }}>{`${
-                      profile?.name ? `${profile.name} ` : ''
-                    }${profile?.surname ? profile.surname : ''}`}</Text>
-                    <ScoreView score={profile?.averageProfileRating} />
-                  </View>
+                  <Text style={{ fontSize: 18, flex: 3 }}>{`${
+                    profile?.name ? `${profile.name} ` : ''
+                  }${profile?.surname ? profile.surname : ''}`}</Text>
+                  <ScoreView score={profile?.averageProfileRating} />
                 </View>
               </View>
-              <Text style={{ fontSize: 18 }}>{profile?.city}</Text>
-              <Text>{profile?.description}</Text>
-              <MyComment
-                item={profileComments?.myComment}
-                userId={userId}
-                update={update}
-                updateHandler={setUpdate}
-              />
-            </>
-          )}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          data={profileComments?.comments}
-          keyExtractor={item => item.author.id.toString()}
-          renderItem={({ item }) => <CommentItem item={item} />}
-          onEndReached={() => {
-            const getData = async () => {
-              if (pagination && pageNumber < pagination?.TotalPageCount) {
-                const accessToken = await getAccessToken();
-                if (accessToken && profile) {
-                  const responseData = await getProfileComments(
-                    profile.userId,
-                    accessToken,
-                    pageNumber + 1,
-                  );
-                  if (profileComments && responseData) {
-                    setProfileComments({
-                      myComment: responseData?.commentsSection.myComment,
-                      comments: [
-                        ...profileComments?.comments,
-                        ...responseData?.commentsSection.comments,
-                      ],
-                    });
-                    setPagination(responseData?.pagination);
-                    setPageNumber(pageNumber + 1);
-                  }
+            </View>
+            <Text style={{ fontSize: 18 }}>{profile?.city}</Text>
+            <Text>{profile?.description}</Text>
+            <MyComment
+              item={profileComments?.myComment}
+              userId={userId}
+              update={update}
+              updateHandler={setUpdate}
+            />
+          </View>
+        )}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        data={profileComments?.comments}
+        keyExtractor={item => item.author.id.toString()}
+        renderItem={({ item }) => <CommentItem item={item} />}
+        onEndReached={() => {
+          const getData = async () => {
+            setLoadingNextPage(true);
+            if (pagination && pageNumber < pagination?.TotalPageCount) {
+              const accessToken = await getAccessToken();
+              if (accessToken && profile) {
+                const responseData = await getProfileComments(
+                  profile.userId,
+                  accessToken,
+                  pageNumber + 1,
+                );
+                if (profileComments && responseData) {
+                  setProfileComments({
+                    myComment: responseData?.commentsSection.myComment,
+                    comments: [
+                      ...profileComments?.comments,
+                      ...responseData?.commentsSection.comments,
+                    ],
+                  });
+                  setPagination(responseData?.pagination);
+                  setPageNumber(pageNumber + 1);
                 }
               }
-            };
+            }
+            setLoadingNextPage(false);
+          };
 
-            getData();
-          }}
-        />
-      </View>
+          getData();
+        }}
+        ListFooterComponent={() => {
+          return (
+            <View style={{ marginTop: 30, marginBottom: 10 }}>
+              {loadingNextPage ? <LoadingNextPageView /> : <></>}
+            </View>
+          );
+        }}
+      />
     </MainContainer>
   );
 };

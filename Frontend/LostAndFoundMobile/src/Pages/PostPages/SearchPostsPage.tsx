@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import React from 'react';
 import { Picker } from '@react-native-picker/picker';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import {
   MainContainer,
   InputSection,
@@ -9,10 +9,8 @@ import {
   secondary,
   light,
   dark2,
-  success,
-  danger,
-  dark,
   LoadingView,
+  primary,
 } from '../../Components';
 import {
   CategoryType,
@@ -31,6 +29,18 @@ import {
   mainStyles,
   SecondaryButton,
 } from '../../Components/MainComponents';
+import Snackbar from 'react-native-snackbar';
+
+const validationSnackBar = (text: string) => {
+  Snackbar.show({
+    text,
+    duration: Snackbar.LENGTH_LONG,
+    action: {
+      text: 'Zamknij',
+      textColor: primary,
+    },
+  });
+};
 
 export const SearchPostsPage = (props: any) => {
   const onlyUserPublications: boolean =
@@ -43,19 +53,16 @@ export const SearchPostsPage = (props: any) => {
   const [incidentAddress, setIncidentAddress] = React.useState<
     string | undefined
   >();
-  const [distance, setDistance] = React.useState<number>(5);
+  const [distance, setDistance] = React.useState<number>();
   const [incidentFromDate, setIncidentFromDate] = React.useState<Date>(
-    new Date(),
+    new Date(new Date().getTime() - 1000 * 3600 * 24 * 31 * 3),
   );
   const [incidentToDate, setIncidentToDate] = React.useState<Date>(new Date());
-  const [subjectCategory, setSubjectCategory] = React.useState<
-    CategoryType | undefined
-  >({ id: 'Other', displayName: 'Inne' });
-  const [publicationType, setPublicationType] = React.useState<PublicationType>(
-    PublicationType.LostSubject,
-  );
+  const [subjectCategory, setSubjectCategory] = React.useState<CategoryType>();
+  const [publicationType, setPublicationType] =
+    React.useState<PublicationType>();
   const [publicationState, setPublicationState] =
-    React.useState<PublicationState>(PublicationState.Open);
+    React.useState<PublicationState>();
   const [firstArgumentSort, setFirstArgumentSort] = React.useState<string>();
   const [firstArgumentSortOrder, setFirstArgumentSortOrder] =
     React.useState<Order>(Order.Ascending);
@@ -66,7 +73,6 @@ export const SearchPostsPage = (props: any) => {
       const accessToken = await getAccessToken();
       if (accessToken) {
         setCategories(await getCategories(accessToken));
-        if (categories.length > 0) setSubjectCategory(categories[0]);
         setLoading(false);
       }
     };
@@ -111,6 +117,14 @@ export const SearchPostsPage = (props: any) => {
     const firstSort: PublicationSortType | undefined = firstArgumentSort
       ? { type: firstArgumentSort, order: firstArgumentSortOrder }
       : undefined;
+
+    console.log(searchPublication);
+    if (incidentFromDate > incidentToDate) {
+      validationSnackBar(
+        'Data końcowa wyszukiwania musi być mniejsza od początkowej.',
+      );
+      return;
+    }
 
     props.navigation.push('Home', {
       screen: 'Posts',
@@ -180,6 +194,7 @@ export const SearchPostsPage = (props: any) => {
             <Picker
               selectedValue={distance}
               onValueChange={itemValue => setDistance(itemValue)}>
+              <Picker.Item label="Nieograniczony" value={undefined} />
               <Picker.Item label="1 km" value={1} />
               <Picker.Item label="2 km" value={2} />
               <Picker.Item label="5 km" value={5} />
@@ -239,8 +254,8 @@ export const SearchPostsPage = (props: any) => {
             <Picker
               selectedValue={subjectCategory}
               onValueChange={setSubjectCategory}>
+              <Picker.Item label={'Wszystkie kategorie'} value={undefined} />
               {mapCategories}
-              <Picker.Item />
             </Picker>
           </View>
         </InputSection>
@@ -249,6 +264,7 @@ export const SearchPostsPage = (props: any) => {
             <Picker
               selectedValue={publicationType}
               onValueChange={itemValue => setPublicationType(itemValue)}>
+              <Picker.Item label="Wszystkie typy" value={undefined} />
               <Picker.Item
                 label="Zgubione"
                 value={PublicationType.LostSubject}
@@ -265,6 +281,7 @@ export const SearchPostsPage = (props: any) => {
             <Picker
               selectedValue={publicationState}
               onValueChange={itemValue => setPublicationState(itemValue)}>
+              <Picker.Item label="Wszystkie stany" value={undefined} />
               <Picker.Item label="Otwarte" value={PublicationState.Open} />
               <Picker.Item label="Zakończone" value={PublicationState.Closed} />
             </Picker>
@@ -300,29 +317,3 @@ export const SearchPostsPage = (props: any) => {
     </MainContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  upperContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: dark2,
-    padding: 10,
-    marginBottom: 10,
-  },
-  positiveScore: {
-    fontSize: 24,
-    color: success,
-  },
-  negativeScore: {
-    fontSize: 24,
-    color: danger,
-  },
-  infoContainer: {
-    fontSize: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: dark2,
-    marginBottom: 15,
-  },
-});

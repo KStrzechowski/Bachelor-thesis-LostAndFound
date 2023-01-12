@@ -3,7 +3,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import Snackbar from 'react-native-snackbar';
-import { light, secondary } from '../../Components';
+import { light, primary, secondary } from '../../Components';
 import {
   CustomTextInput,
   InputSection,
@@ -19,7 +19,7 @@ const validationSnackBar = (text: string) => {
     duration: Snackbar.LENGTH_LONG,
     action: {
       text: 'Zamknij',
-      textColor: 'green',
+      textColor: primary,
     },
   });
 };

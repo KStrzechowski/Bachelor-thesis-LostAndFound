@@ -138,7 +138,7 @@ export const PostPage = (props: any) => {
         postData.subjectPhotoUrl,
         (width, height) => (imageSize = { width, height }),
       );
-      const displayedWidth = win.width - 20;
+      const displayedWidth = win.width - 40;
       const displayedHeight =
         (imageSize.height * displayedWidth) / imageSize.width;
       setImageDisplayedSize({
@@ -273,7 +273,115 @@ export const PostPage = (props: any) => {
 
   return (
     <MainContainer>
-      <HeaderBar />
+      <Appbar.Header style={{ backgroundColor: secondary }}>
+        <Appbar.BackAction
+          color={light}
+          onPress={() => props.navigation.pop()}
+        />
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 5,
+          }}>
+          <Appbar.Content
+            title="Ogłoszenie"
+            titleStyle={{ color: light, fontWeight: 'bold' }}
+          />
+          <Text style={{ margin: 1, color: light }}>
+            {postData?.publicationType === PublicationType.FoundSubject
+              ? 'Znaleziono'
+              : 'Zgubiono'}
+          </Text>
+        </View>
+        <Menu
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          anchor={
+            <Appbar.Action
+              color={light}
+              icon="dots-vertical"
+              onPress={() => setVisible(true)}
+            />
+          }>
+          {myUserId === profile?.userId ? (
+            <>
+              <Menu.Item
+                title="Edytuj ogłoszenie"
+                onPress={() => {
+                  setVisible(false);
+                  props.navigation.push('EditPost', { postData });
+                }}
+              />
+              {postData && postData.subjectPhotoUrl ? (
+                <Menu.Item
+                  title="Usuń zdjęcie"
+                  onPress={async () => {
+                    setVisible(false);
+                    const isDeleted = await deleteImage(publicationId);
+                    if (isDeleted) {
+                      setUpdate(!update);
+                    }
+                  }}
+                />
+              ) : (
+                <></>
+              )}
+              <Menu.Item
+                onPress={async () => {
+                  setVisible(false);
+                  const isDeleted = await deletePost(publicationId);
+                  if (isDeleted) {
+                    props.navigation.push('Home', {
+                      screen: 'Posts',
+                    });
+                  }
+                }}
+                title="Usuń ogłoszenie"
+              />
+            </>
+          ) : (
+            <>
+              <Menu.Item
+                title="Rozpocznij czat"
+                onPress={() => {
+                  if (profile) {
+                    setVisible(false);
+                    const chatRecipent: BaseProfileType = {
+                      userId: profile.userId,
+                      username: profile.username,
+                      pictureUrl: profile.pictureUrl,
+                    };
+                    props.navigation.push('Home', {
+                      screen: 'Chat',
+                      params: {
+                        chatRecipent,
+                      },
+                    });
+                  }
+                }}
+              />
+              <Menu.Item
+                title="Zobacz profil"
+                onPress={() => {
+                  setVisible(false);
+                  if (myUserId === profile?.userId) {
+                    props.navigation.push('Home', {
+                      screen: 'ProfileMe',
+                    });
+                  } else {
+                    props.navigation.push('Home', {
+                      screen: 'Profile',
+                      params: { userId: profile?.userId },
+                    });
+                  }
+                }}
+              />
+            </>
+          )}
+        </Menu>
+      </Appbar.Header>
       <MainScrollContainer>
         <View>
           {postData?.publicationState === PublicationState.Closed ? (
@@ -288,7 +396,7 @@ export const PostPage = (props: any) => {
             justifyContent: 'space-between',
             marginBottom: 10,
           }}>
-          <View>
+          <View style={{ maxWidth: (win.width * 3) / 4 }}>
             <MainTitle>{postData?.title}</MainTitle>
           </View>
           <Text

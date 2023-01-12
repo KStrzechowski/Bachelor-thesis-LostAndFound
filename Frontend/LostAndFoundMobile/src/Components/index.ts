@@ -30,4 +30,4 @@ export {
 export { StarRating } from './StarRating';
 export { DocumentSelector } from './DocumentSelector';
 export { PageSelector } from './PageSelector';
-export { LoadingView } from './LoadingComponent';
+export { LoadingView, LoadingNextPageView } from './LoadingComponent';

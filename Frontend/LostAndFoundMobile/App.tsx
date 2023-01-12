@@ -18,6 +18,7 @@ const App = () => {
     React.useState<boolean>(false);
   const [updateChatsValue, setUpdateChats] = React.useState<boolean>(false);
   const [unreadChats, setUnreadChats] = React.useState<number>(0);
+  const [chatMessage, setChatMessage] = React.useState<MessageResponseType>();
 
   const [state, dispatch] = React.useReducer(
     (prevState: any, action: { type: any }) => {
@@ -57,7 +58,6 @@ const App = () => {
   );
 
   React.useEffect(() => {
-    // Fetch the token from storage then navigate to our appropriate place
     setUpdateChats(false);
     const tryToSignIn = async () => {
       let token;
@@ -73,7 +73,6 @@ const App = () => {
   }, []);
 
   React.useEffect(() => {
-    // Fetch the token from storage then navigate to our appropriate place
     const connectToSocket = async () => {
       const accessToken = await getAccessToken();
       if (
@@ -112,10 +111,12 @@ const App = () => {
   React.useEffect(() => {
     if (connection?.state === 'Disconnected') {
       connection.on('ReceiveMessage', async (data: MessageResponseType) => {
+        setChatMessage(data);
         await setUnreadChatsCount(setUnreadChats);
-        setUpdateChats(!updateChatsValue);
-        await setUnreadChatsCount(setUnreadChats);
+        setUpdateChats(updateChatsValue);
       });
+
+      connection.start();
     }
   }, [connection]);
 
@@ -135,6 +136,7 @@ const App = () => {
             await setUnreadChatsCount(setUnreadChats);
           },
           unreadChatsCount: unreadChats,
+          chatMessage,
         }}>
         <PaperProvider>
           <NavigationContainer>
