@@ -225,118 +225,117 @@ export const ProfilePageMe = (props: any) => {
           </>
         </Menu>
       </Appbar.Header>
-      <View style={{ flex: 1, padding: 30 }}>
-        <FlatList
-          ListHeaderComponent={() => (
-            <>
+      <FlatList
+        style={{ paddingHorizontal: 30, marginTop: 30 }}
+        ListHeaderComponent={() => (
+          <>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 10,
+                marginBottom: 10,
+              }}
+              onLayout={event => setWidth(event.nativeEvent.layout.width)}>
+              {profile?.pictureUrl ? (
+                <Avatar.Image
+                  source={{
+                    uri: profile.pictureUrl,
+                  }}
+                  style={{
+                    marginBottom: 20,
+                    backgroundColor: light3,
+                  }}
+                  size={(width * 4) / 9}
+                />
+              ) : (
+                <Avatar.Icon
+                  icon={'account'}
+                  size={(width * 4) / 9}
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: 10,
+                    marginRight: 30,
+                    backgroundColor: light3,
+                  }}
+                />
+              )}
               <View
                 style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: 10,
-                  marginBottom: 10,
-                }}
-                onLayout={event => setWidth(event.nativeEvent.layout.width)}>
-                {profile?.pictureUrl ? (
-                  <Avatar.Image
-                    source={{
-                      uri: profile.pictureUrl,
-                    }}
-                    style={{
-                      marginBottom: 20,
-                      backgroundColor: light3,
-                    }}
-                    size={(width * 4) / 9}
-                  />
-                ) : (
-                  <Avatar.Icon
-                    icon={'account'}
-                    size={(width * 4) / 9}
-                    style={{
-                      alignSelf: 'center',
-                      marginTop: 10,
-                      marginRight: 30,
-                      backgroundColor: light3,
-                    }}
-                  />
-                )}
+                  flex: 1,
+                  width: (width * 5) / 9,
+                  paddingLeft: 20,
+                }}>
                 <View
                   style={{
-                    flex: 1,
-                    width: (width * 5) / 9,
-                    paddingLeft: 20,
+                    flex: 2,
+                    flexDirection: 'row',
+                    marginBottom: 10,
                   }}>
-                  <View
-                    style={{
-                      flex: 2,
-                      flexDirection: 'row',
-                      marginBottom: 10,
-                    }}>
-                    <Text style={{ fontSize: 18, flex: 3 }}>{`${
-                      profile?.name ? `${profile.name} ` : ''
-                    }${profile?.surname ? profile.surname : ''}`}</Text>
-                    <ScoreView score={profile?.averageProfileRating} />
-                  </View>
+                  <Text style={{ fontSize: 18, flex: 3 }}>{`${
+                    profile?.name ? `${profile.name} ` : ''
+                  }${profile?.surname ? profile.surname : ''}`}</Text>
+                  <ScoreView score={profile?.averageProfileRating} />
                 </View>
               </View>
-              <Text style={{ fontSize: 18 }}>{profile?.city}</Text>
-              <Text>{profile?.description}</Text>
-              <View
-                style={{
-                  marginTop: 30,
-                  marginBottom: 10,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-end',
-                }}>
-                <Text style={{ fontSize: 20, fontWeight: '600' }}>
-                  Komentarze
-                </Text>
-              </View>
-            </>
-          )}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          data={profileComments?.comments}
-          keyExtractor={item => item.author.id.toString()}
-          renderItem={({ item }) => <CommentItem item={item} />}
-          onEndReached={() => {
-            const getData = async () => {
-              setLoadingNextPage(true);
-              if (pagination && pageNumber < pagination?.TotalPageCount) {
-                const accessToken = await getAccessToken();
-                if (accessToken && profile) {
-                  const responseData = await getProfileComments(
-                    profile.userId,
-                    accessToken,
-                    pageNumber + 1,
-                  );
-                  if (profileComments && responseData) {
-                    setProfileComments({
-                      myComment: responseData?.commentsSection.myComment,
-                      comments: [
-                        ...profileComments?.comments,
-                        ...responseData?.commentsSection.comments,
-                      ],
-                    });
-                    setPagination(responseData?.pagination);
-                    setPageNumber(pageNumber + 1);
-                  }
+            </View>
+            <Text style={{ fontSize: 18 }}>{profile?.city}</Text>
+            <Text>{profile?.description}</Text>
+            <View
+              style={{
+                marginTop: 30,
+                marginBottom: 10,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+              }}>
+              <Text style={{ fontSize: 20, fontWeight: '600' }}>
+                Komentarze
+              </Text>
+            </View>
+          </>
+        )}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        data={profileComments?.comments}
+        keyExtractor={item => item.author.id.toString()}
+        renderItem={({ item }) => <CommentItem item={item} />}
+        onEndReached={() => {
+          const getData = async () => {
+            setLoadingNextPage(true);
+            if (pagination && pageNumber < pagination?.TotalPageCount) {
+              const accessToken = await getAccessToken();
+              if (accessToken && profile) {
+                const responseData = await getProfileComments(
+                  profile.userId,
+                  accessToken,
+                  pageNumber + 1,
+                );
+                if (profileComments && responseData) {
+                  setProfileComments({
+                    myComment: responseData?.commentsSection.myComment,
+                    comments: [
+                      ...profileComments?.comments,
+                      ...responseData?.commentsSection.comments,
+                    ],
+                  });
+                  setPagination(responseData?.pagination);
+                  setPageNumber(pageNumber + 1);
                 }
               }
-              setLoadingNextPage(false);
-            };
+            }
+            setLoadingNextPage(false);
+          };
 
-            getData();
-          }}
-          ListFooterComponent={() => {
-            return (
-              <View style={{ marginTop: 30, marginBottom: 10 }}>
-                {loadingNextPage ? <LoadingNextPageView /> : <></>}
-              </View>
-            );
-          }}
-        />
-      </View>
+          getData();
+        }}
+        ListFooterComponent={() => {
+          return (
+            <View style={{ marginTop: 30, marginBottom: 10 }}>
+              {loadingNextPage ? <LoadingNextPageView /> : <></>}
+            </View>
+          );
+        }}
+      />
     </MainContainer>
   );
 };

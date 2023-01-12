@@ -52,7 +52,6 @@ const CommentItem = (props: any) => {
       style={{
         marginTop: 20,
         padding: 10,
-        marginHorizontal: 30,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: dark2,
@@ -267,8 +266,9 @@ export const ProfilePage = (props: any) => {
     <MainContainer>
       <HeaderBar />
       <FlatList
+        style={{ paddingHorizontal: 30, marginTop: 30 }}
         ListHeaderComponent={() => (
-          <View style={{ marginHorizontal: 30, marginTop: 30 }}>
+          <View>
             <View
               style={{
                 flexDirection: 'row',
