@@ -85,7 +85,6 @@ export default function Chats() {
 			/>
 			<Chat
 				userId={userId}
-				user={users?.find((y) => y.userId == userId)}
 				refr={refCur}
 				setRef={setRefCur}
 			/>

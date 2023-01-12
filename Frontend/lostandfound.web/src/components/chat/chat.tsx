@@ -3,6 +3,7 @@ import {
 	addChatMessage,
 	BaseProfileType,
 	ChatBaseResponseType,
+	getBaseProfiles,
 	getChatMessages,
 	MessageResponseType,
 	readChat,
@@ -12,12 +13,10 @@ import { userContext } from "userContext";
 
 export default function Chat({
 	userId,
-	user,
 	refr,
 	setRef,
 }: {
 	userId: string | undefined;
-	user: BaseProfileType | undefined;
 	refr: boolean;
 	setRef: (newref: boolean) => void;
 }) {
@@ -27,6 +26,7 @@ export default function Chat({
 	const [newmsg, setNewmsg] = useState("");
 	const usrCtx = useContext(userContext);
 	const chatCtx = useContext(chatContext);
+	const [user, setUser] = useState(undefined as BaseProfileType | undefined);
 	useEffect(() => {
 		if (userId && refr)
 			getChatMessages(userId, usrCtx.user.authToken ?? "")
@@ -36,6 +36,13 @@ export default function Chat({
 				})
 				.then((x) => setRef(false));
 	}, [usrCtx.user, userId, user, refr]);
+
+	useEffect(() => {
+        if (userId)
+            getBaseProfiles([userId], usrCtx.user.authToken ?? "").then((x) =>
+                setUser(x?.at(0))
+			);
+	}, [userId]);
 
 	function Send() {
 		if (userId)
