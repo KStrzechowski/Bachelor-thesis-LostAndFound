@@ -108,15 +108,15 @@ const MyComment = (props: {
         }}>
         <SecondaryButton
           label={item ? 'Edytuj komentarz' : 'Zostaw komentarz'}
-          onPress={() => {
+          onPress={async () => {
             const myComment: ProfileCommentRequestType = {
               content: commentContent,
               profileRating: profileRating,
             };
             if (item) {
-              leaveComment(userId, myComment, true);
+              await leaveComment(userId, myComment, true);
             } else {
-              leaveComment(userId, myComment, false);
+              await leaveComment(userId, myComment, false);
             }
             props.updateHandler(!props.update);
           }}

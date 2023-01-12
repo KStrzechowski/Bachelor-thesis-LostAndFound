@@ -267,7 +267,7 @@ export const ChatPage = (props: any) => {
                 accessToken,
               );
               if (response) {
-                setMessagesData([...messagesData, response]);
+                setMessagesData([response, ...messagesData]);
                 setMessageContent('');
                 flatListRef?.scrollToPosition(-1, -1);
               }
