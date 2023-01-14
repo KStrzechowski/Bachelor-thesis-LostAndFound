@@ -61,6 +61,21 @@
       "SwaggerKey": "accounts"
     },
     {
+      "UpstreamPathTemplate": "/account/password",
+      "DownstreamPathTemplate": "/account/password",
+      "UpstreamHttpMethod": [
+        "Put"
+      ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth-service",
+          "Port": 80
+        }
+      ],
+      "SwaggerKey": "accounts"
+    },
+    {
       "UpstreamPathTemplate": "/chat",
       "DownstreamPathTemplate": "/chat",
       "UpstreamHttpMethod": [
