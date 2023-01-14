@@ -10,21 +10,26 @@ namespace LostAndFound.AuthService.Core.FluentValidators
         {
             RuleFor(dto => dto.Email)
                 .NotEmpty()
-                .EmailAddress();
+                .WithMessage("Adres e-email nie może być pusty.")
+                .EmailAddress()
+                .WithMessage("Adres e-mail jest niepoprawny.");
+
+            RuleFor(dto => dto.Password)
+                .MinimumLength(8)
+                .WithMessage("Hasło musi składać się z przynajmniej 8 znaków.");
 
             RuleFor(dto => dto.Username)
                 .NotEmpty()
-                .MinimumLength(8);
-
-            RuleFor(dto => dto.Password)
-                .MinimumLength(8);
+                .WithMessage("Nazwa użytkownika nie może być pusta.")
+                .MinimumLength(8)
+                .WithMessage("Nazwa użytkownika musi składać się z przynajmniej 8 znaków.");
 
             RuleFor(x => x.Email)
                 .Custom((value, context) =>
                 {
                     if (accountsRepository.IsEmailInUse(value))
                     {
-                        context.AddFailure("Email", "That email is taken");
+                        context.AddFailure("Email", "Podany adres e-mail jest już zajęty");
                     }
                 });
 
@@ -33,7 +38,7 @@ namespace LostAndFound.AuthService.Core.FluentValidators
                 {
                     if (accountsRepository.IsUsernameInUse(value))
                     {
-                        context.AddFailure("Username", "That username is taken");
+                        context.AddFailure("Username", "Podana nazwa użytkownika jest już zajęta");
                     }
                 });
         }
