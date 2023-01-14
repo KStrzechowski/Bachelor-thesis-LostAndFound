@@ -38,5 +38,13 @@ namespace LostAndFound.AuthService.DataAccess.Repositories
 
             await _collection.UpdateOneAsync(filter, update);
         }
+
+        public async Task UpdateAccountPasswordHashAsync(string email, string passwordHash)
+        {
+            var filter = Builders<Account>.Filter.Eq(acc => acc.Email, email);
+            var update = Builders<Account>.Update.Set(acc => acc.PasswordHash, passwordHash);
+
+            await _collection.UpdateOneAsync(filter, update);
+        }
     }
 }

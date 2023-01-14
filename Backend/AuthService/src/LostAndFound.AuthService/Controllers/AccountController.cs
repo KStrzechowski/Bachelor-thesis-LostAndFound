@@ -129,5 +129,38 @@ namespace LostAndFound.AuthService.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Change account password
+        /// </summary>
+        /// <param name="dto">Data to change account password</param>
+        /// <response code="204">Password was successfuly changed</response>
+        /// <response code="401">Problem with authentication of user occurred</response>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /account/password
+        ///     {
+        ///        "Password": "strongPassword321",
+        ///        "NewPassword": "strongNewPassword321"
+        ///     }
+        ///     
+        /// </remarks>
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpPut("password")]
+        public async Task<ActionResult> ChangePassword(ChangeAccountPasswordRequestDto dto)
+        {
+            var rawUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (rawUserId == null)
+            {
+                return Unauthorized();
+            }
+
+            await _accountService.ChangePassword(dto, rawUserId);
+
+            return NoContent();
+        }
     }
 }

@@ -55,6 +55,29 @@ namespace LostAndFound.AuthService.Core.AccountServices
             return await CreateAuthenticatedUser(account);
         }
 
+        public async Task ChangePassword(ChangeAccountPasswordRequestDto dto, string rawUserId)
+        {
+            if (!Guid.TryParse(rawUserId, out Guid userId))
+            {
+                throw new UnauthorizedException();
+            }
+
+            var account = await _accountsRepository.GetSingleAsync(ac => ac.UserId == userId);
+            if (account == null)
+            {
+                throw new UnauthorizedException();
+            }
+
+            var result = _passwordHasher.VerifyHashedPassword(account, account.PasswordHash, dto.Password);
+            if (result == PasswordVerificationResult.Failed)
+            {
+                throw new BadRequestException("Invalid current password");
+            }
+
+            var newPasswordHash = _passwordHasher.HashPassword(account, dto.NewPassword);         
+            await _accountsRepository.UpdateAccountPasswordHashAsync(account.Email, newPasswordHash);
+        }
+
         public async Task LogoutUser(string rawUserId)
         {
             if (!Guid.TryParse(rawUserId, out Guid userId))
