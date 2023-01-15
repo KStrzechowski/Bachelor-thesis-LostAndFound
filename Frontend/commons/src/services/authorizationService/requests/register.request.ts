@@ -1,9 +1,17 @@
 import { http } from "../../../http";
-import { RegisterRequestType, RegisterResponseType } from "../registerTypes";
+import {
+  RegisterErrorType,
+  RegisterRequestType,
+  RegisterResponseType,
+} from "../registerTypes";
 
 export const register = async (
   user: RegisterRequestType
-): Promise<RegisterResponseType | undefined> => {
+): Promise<{
+  ok: boolean;
+  body?: RegisterResponseType;
+  errors?: RegisterErrorType;
+}> => {
   const result = await http<RegisterResponseType, RegisterRequestType>({
     path: "/account/register",
     method: "post",
@@ -11,8 +19,8 @@ export const register = async (
   });
 
   if (result.ok && result.body) {
-    return result.body;
+    return { ok: true, body: result.body };
   } else {
-    return undefined;
+    return { ok: false, errors: result.errors };
   }
 };

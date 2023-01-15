@@ -12,6 +12,7 @@ export interface HttpResponse<RESB> {
   ok: boolean;
   body?: RESB;
   headers?: Headers;
+  errors?: any;
 }
 
 export interface PaginationMetadata {
@@ -50,7 +51,12 @@ export const http = async <RESB = undefined, REQB = undefined>(
     }
   } else {
     logError(request, response);
-    return { ok: response.ok };
+    try {
+      const body = await response.json();
+      return { ok: response.ok, errors: body.errors };
+    } catch {
+      return { ok: response.ok };
+    }
   }
 };
 
@@ -77,7 +83,12 @@ export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
     }
   } else {
     logError(request, response);
-    return { ok: response.ok };
+    try {
+      const body = await response.json();
+      return { ok: response.ok, errors: body.errors };
+    } catch {
+      return { ok: response.ok };
+    }
   }
 };
 

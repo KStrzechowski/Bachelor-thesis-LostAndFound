@@ -48,24 +48,24 @@ const editPost = async (
   publication: PublicationRequestType,
 ): Promise<PublicationResponseType | undefined> => {
   if (!publication.title || !/\S+/.test(publication.title)) {
-    validationSnackBar(`Tytuł nie może być pusty.`);
+    validationSnackBar(`Tytuł nie może być pusty`);
     return undefined;
   }
   if (
     !publication.incidentAddress ||
     !/\S+/.test(publication.incidentAddress)
   ) {
-    validationSnackBar(`Lokalizacja nie może być pusta.`);
+    validationSnackBar(`Lokalizacja nie może być pusta`);
     return undefined;
   }
   if (publication.incidentDate > new Date()) {
     validationSnackBar(
-      `Podana data musi być mniejsza niż ${new Date().toLocaleDateString()}.`,
+      `Podana data musi być mniejsza niż ${new Date().toLocaleDateString()}`,
     );
     return undefined;
   }
   if (!publication.description || !/\S+/.test(publication.description)) {
-    validationSnackBar(`Opis nie może być pusty.`);
+    validationSnackBar(`Opis nie może być pusty`);
     return undefined;
   }
 

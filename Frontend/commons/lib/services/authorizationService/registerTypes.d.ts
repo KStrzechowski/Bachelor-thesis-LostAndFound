@@ -9,3 +9,7 @@ export interface RegisterResponseType {
     email: string;
     username: string;
 }
+export interface RegisterErrorType {
+    emailError?: string;
+    usernameError?: string;
+}

@@ -25,7 +25,13 @@ export const http = async (config) => {
     }
     else {
         logError(request, response);
-        return { ok: response.ok };
+        try {
+            const body = await response.json();
+            return { ok: response.ok, errors: body.errors };
+        }
+        catch {
+            return { ok: response.ok };
+        }
     }
 };
 export const multipartFormDataHttp = async (config, requestData) => {
@@ -49,7 +55,13 @@ export const multipartFormDataHttp = async (config, requestData) => {
     }
     else {
         logError(request, response);
-        return { ok: response.ok };
+        try {
+            const body = await response.json();
+            return { ok: response.ok, errors: body.errors };
+        }
+        catch {
+            return { ok: response.ok };
+        }
     }
 };
 const logError = async (request, response) => {

@@ -121,7 +121,7 @@ export const SearchPostsPage = (props: any) => {
     console.log(searchPublication);
     if (incidentFromDate > incidentToDate) {
       validationSnackBar(
-        'Data końcowa wyszukiwania musi być mniejsza od początkowej.',
+        'Data końcowa wyszukiwania musi być mniejsza od początkowej',
       );
       return;
     }

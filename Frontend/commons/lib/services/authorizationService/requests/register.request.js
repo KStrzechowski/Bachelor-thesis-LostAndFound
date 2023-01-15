@@ -6,9 +6,9 @@ export const register = async (user) => {
         body: user,
     });
     if (result.ok && result.body) {
-        return result.body;
+        return { ok: true, body: result.body };
     }
     else {
-        return undefined;
+        return { ok: false, errors: result.errors };
     }
 };

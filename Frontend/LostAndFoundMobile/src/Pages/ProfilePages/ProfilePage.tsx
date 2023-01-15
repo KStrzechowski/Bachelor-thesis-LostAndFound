@@ -154,7 +154,7 @@ async function leaveComment(
   const accessToken = await getAccessToken();
 
   if (!content.content || !/\S+/.test(content.content)) {
-    validationSnackBar('Komentarz nie może być pusty.');
+    validationSnackBar('Komentarz nie może być pusty');
     return;
   }
   if (accessToken) {

@@ -9,6 +9,7 @@ export interface HttpResponse<RESB> {
     ok: boolean;
     body?: RESB;
     headers?: Headers;
+    errors?: any;
 }
 export interface PaginationMetadata {
     TotalItemCount: number;
