@@ -8,7 +8,8 @@ namespace LostAndFound.ProfileService.Core.FluentValidators
         public CreateProfileCommentRequestDtoValidator()
         {
             RuleFor(dto => dto.Content)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("Treść komentarza nie może być pusta.");
 
             RuleFor(dto => dto.ProfileRating)
                 .GreaterThanOrEqualTo(0)

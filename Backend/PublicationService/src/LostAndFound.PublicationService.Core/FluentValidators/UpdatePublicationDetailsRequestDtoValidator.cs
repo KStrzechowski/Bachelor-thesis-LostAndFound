@@ -11,15 +11,22 @@ namespace LostAndFound.PublicationService.Core.FluentValidators
             ICategoriesRepository categoriesRepository)
         {
             RuleFor(dto => dto.Title)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("Tytuł ogłoszenia nie może być pusty");
+
             RuleFor(dto => dto.Description)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("Opis ogłoszenia nie może być pusty");
+
             RuleFor(dto => dto.IncidentAddress)
-                .NotEmpty();
+                .NotEmpty()
+                .WithMessage("Miejsce zdarzenia w ogłoszeniu nie może być puste");
 
             RuleFor(dto => dto.IncidentDate)
                 .NotEmpty()
-                .LessThan(dateTimeProvider.UtcNow);
+                .WithMessage("Data zdarzenia w ogłoszeniu nie może być pusta")
+                .LessThan(dateTimeProvider.UtcNow)
+                .WithMessage("Data zdarzenia w ogłoszeniu nie może być z przyszłości");
 
             RuleFor(dto => dto.SubjectCategoryId)
                 .NotEmpty()
@@ -27,16 +34,21 @@ namespace LostAndFound.PublicationService.Core.FluentValidators
                 {
                     if (categoriesRepository.DoesCategoryExist(value))
                     {
-                        context.AddFailure("SubjectCategoryId", "Category with this id does not exist");
+                        context.AddFailure("SubjectCategoryId", "Kategoria o podanym Id nie istnieje");
                     }
                 });
 
             RuleFor(dto => dto.PublicationType)
                 .NotNull()
-                .IsInEnum();
+                .WithMessage("Typ ogłoszenia nie może być pusty")
+                .IsInEnum()
+                .WithMessage("Typ ogłoszenia jest niewłaściwy");
+
             RuleFor(dto => dto.PublicationState)
                 .NotNull()
-                .IsInEnum();
+                .WithMessage("Stan ogłoszenia nie może być pusty")
+                .IsInEnum()
+                .WithMessage("Stan ogłoszenia jest niewłaściwy");
         }
     }
 }
