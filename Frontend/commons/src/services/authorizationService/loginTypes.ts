@@ -21,3 +21,8 @@ export const mapLoginFromServer = (
   ...data,
   accessTokenExpirationTime: new Date(data.accessTokenExpirationTime),
 });
+
+export type EditPwdRequestType = {
+    Password: string;
+	NewPassword: string;
+};

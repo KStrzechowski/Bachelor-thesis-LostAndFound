@@ -13,3 +13,7 @@ export type LoginFromServerType = {
     refreshToken: string;
 };
 export declare const mapLoginFromServer: (data: LoginFromServerType) => LoginResponseType;
+export type EditPwdRequestType = {
+    Password: string;
+    NewPassword: string;
+};

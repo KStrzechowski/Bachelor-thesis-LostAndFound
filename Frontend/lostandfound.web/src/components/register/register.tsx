@@ -10,6 +10,8 @@ export default function Register() {
 		pwd2: "",
 	});
 	const [val, setVal] = useState([] as valErrors[]);
+	const [msgu, setMsgu] = useState("");
+	const [msge, setMsge] = useState("");
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setUser({
@@ -41,11 +43,29 @@ export default function Register() {
 				username: user.name,
 			};
 			register(req).then((x) => {
-				if (x) nav("/login");
+				let newMsgu = "";
+
+				if (x.errors?.Username) {
+					x.errors?.Username.forEach((y: string) => {
+						newMsgu = newMsgu.concat(y).concat("\n");
+					});
+				}
+				setMsgu(newMsgu);
+				let newMsge = "";
+				if (x.errors?.Email) {
+					x.errors?.Email.forEach(
+						(y: string) =>
+							(newMsge = newMsge.concat(y).concat("\n"))
+					);
+				}
+				setMsge(newMsge);
+
+				if (!x.errors && newMsge.length < 1 && newMsgu.length < 1)
+					nav("/login");
 			});
 		}
 	}
-	console.log(val.includes(valErrors.name));
+
 	return (
 		<div className="d-flex justify-content-evenly align-items-center h-75">
 			<div
@@ -73,6 +93,11 @@ export default function Register() {
 							nazwa użytkownika musi zawierać conajmniej 8 znaków
 						</div>
 					)}
+					{msgu.length > 0 && (
+						<div className="ms-1 text-danger text-start">
+							{msgu}
+						</div>
+					)}
 				</div>
 
 				<div className="m-3">
@@ -88,6 +113,11 @@ export default function Register() {
 					{val.includes(valErrors.mail) && (
 						<div className="ms-1 text-danger text-start">
 							e-mail musi być poprawny
+						</div>
+					)}
+					{msge.length > 0 && (
+						<div className="ms-1 text-danger text-start">
+							{msge}
 						</div>
 					)}
 				</div>
@@ -125,6 +155,7 @@ export default function Register() {
 						</div>
 					)}
 				</div>
+
 				<div
 					className="btn btn-primary rounded-5"
 					onClick={() => handleregister()}

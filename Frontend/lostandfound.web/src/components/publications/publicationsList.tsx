@@ -41,17 +41,21 @@ export default function PublicationsList() {
 	const [los, setLos] = useState(undefined as boolean | undefined);
 
 	const [details, setDetails] = useState(undefined as string | undefined);
+
 	useEffect(() => {
 		setLdg(true);
 	}, [filter, sort, los]);
+
 	useEffect(() => {
 		if (maxpg < page) {
 			setPage(1);
 			setLdg(true);
 		}
-	});
+	}, [maxpg]);
+
 	useEffect(() => {
 		if (ldg) {
+			setLdg(false);
 			let srt = sort?.type
 				? {
 						firstArgumentSort: sort,
@@ -77,7 +81,6 @@ export default function PublicationsList() {
 				else {
 					setPub(x.publications.map((y) => new Publication(y)));
 					setMaxpg(x.pagination?.TotalPageCount ?? 100);
-					setLdg(false);
 				}
 			});
 		}

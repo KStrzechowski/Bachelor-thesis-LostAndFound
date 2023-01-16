@@ -73,6 +73,8 @@ export function NewPublicationInner({ refresh }: { refresh?: () => void }) {
 		if (pub.lostorfnd === undefined) nerr.push(valErr.type);
 		if (!pub.title) nerr.push(valErr.title);
 		if (!pub.cat) nerr.push(valErr.cat);
+		if (!pub.description) nerr.push(valErr.desc);
+
 		if (!pub.incidentAddress) nerr.push(valErr.place);
 		if (!pub.incidentDate) nerr.push(valErr.date);
 		setVal(nerr);
@@ -184,6 +186,11 @@ export function NewPublicationInner({ refresh }: { refresh?: () => void }) {
 						onChange={(e) => handleChangeArea(e)}
 					></textarea>
 				</div>
+				{val.includes(valErr.desc) && (
+					<div className="w-75 ms-auto text-start text-danger">
+						opis nie może być pusty
+					</div>
+				)}
 				<div className="p-1 w-100 ">
 					<span className="form-label  me-3 ">Miejsce:</span>
 					<input
@@ -250,4 +257,5 @@ enum valErr {
 	place,
 	date,
 	cat,
+	desc,
 }

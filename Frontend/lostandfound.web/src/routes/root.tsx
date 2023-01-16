@@ -108,7 +108,7 @@ export default function Root() {
 		};
 
 		connectToSocket();
-	}, [user.authToken]);
+	}, [user.authToken, connection?.state]);
 
 	useEffect(() => {
 		if (connection?.state === "Disconnected") {
@@ -116,6 +116,7 @@ export default function Root() {
 				"ReceiveMessage",
 				async (data: MessageResponseType) => {
 					setNewMsg(true);
+					getUnread();
 				}
 			);
 			connection.start();
@@ -131,7 +132,7 @@ export default function Root() {
 	}, [user]);
 
 	async function getUnread() {
-		await new Promise((x) => setTimeout(x, 50));
+		await new Promise((x) => setTimeout(x, 200));
 		getUnreadNotifications(user.authToken ?? "").then((x) => {
 			if (x) setNewMsgCount(x.unreadChatsCount);
 		});
