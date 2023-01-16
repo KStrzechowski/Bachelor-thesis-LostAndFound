@@ -11,7 +11,7 @@ import {
   BaseProfileType,
 } from 'commons';
 import React, { Dispatch, SetStateAction } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import {
   dark,
   dark2,
@@ -27,7 +27,7 @@ import {
   SecondaryButton,
   StarRating,
 } from '../../Components';
-import { getAccessToken } from '../../SecureStorage';
+import { getAccessToken, getUserId } from '../../SecureStorage';
 import { TextInput } from 'react-native-gesture-handler';
 import { Appbar, Avatar } from 'react-native-paper';
 import { PaginationMetadata } from 'commons/lib/http';
@@ -62,9 +62,39 @@ const CommentItem = (props: any) => {
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
-          {item.author.username}
-        </Text>
+        <Pressable
+          onPress={async () => {
+            props.navigation.push('Home', {
+              screen: 'Profile',
+              params: { userId: item.author.id },
+            });
+          }}>
+          <View style={{ alignContent: 'center' }}>
+            {item.author.pictureUrl ? (
+              <Avatar.Image
+                source={{
+                  uri: item.author.pictureUrl,
+                }}
+                style={{
+                  backgroundColor: light3,
+                }}
+                size={30}
+              />
+            ) : (
+              <Avatar.Icon
+                icon={'account'}
+                size={30}
+                style={{
+                  alignSelf: 'center',
+                  backgroundColor: light3,
+                }}
+              />
+            )}
+          </View>
+          <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
+            {item.author.username}
+          </Text>
+        </Pressable>
         <ScoreView score={item.profileRating} />
       </View>
       <Text>{item.content}</Text>

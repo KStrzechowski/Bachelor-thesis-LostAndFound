@@ -7,7 +7,7 @@ import {
   ProfileResponseType,
 } from 'commons';
 import React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import { Appbar, Avatar, Menu } from 'react-native-paper';
 import { ProfileContext } from '../../Context';
 import {
@@ -21,7 +21,11 @@ import {
   ScoreView,
   secondary,
 } from '../../Components';
-import { getAccessToken, removeUserPhotoUrl } from '../../SecureStorage';
+import {
+  getAccessToken,
+  getUserId,
+  removeUserPhotoUrl,
+} from '../../SecureStorage';
 import { PaginationMetadata } from 'commons/lib/http';
 
 const deleteImage = async () => {
@@ -51,9 +55,39 @@ const CommentItem = (props: any) => {
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
-          {item.author.username ? item.author.username : 'Anonim'}
-        </Text>
+        <Pressable
+          onPress={async () => {
+            props.navigation.push('Home', {
+              screen: 'Profile',
+              params: { userId: item.author.id },
+            });
+          }}>
+          <View style={{ alignContent: 'center' }}>
+            {item.author.pictureUrl ? (
+              <Avatar.Image
+                source={{
+                  uri: item.author.pictureUrl,
+                }}
+                style={{
+                  backgroundColor: light3,
+                }}
+                size={30}
+              />
+            ) : (
+              <Avatar.Icon
+                icon={'account'}
+                size={30}
+                style={{
+                  alignSelf: 'center',
+                  backgroundColor: light3,
+                }}
+              />
+            )}
+          </View>
+          <Text style={{ fontSize: 18, fontWeight: '500', color: dark }}>
+            {item.author.username}
+          </Text>
+        </Pressable>
         <ScoreView score={item.profileRating} />
       </View>
       <Text>{item.content}</Text>
@@ -136,6 +170,15 @@ export const ProfilePageMe = (props: any) => {
                 props.navigation.push('Home', {
                   screen: 'EditProfile',
                   params: { user: profile },
+                });
+              }}
+            />
+            <Menu.Item
+              title="Zmień hasło"
+              onPress={() => {
+                setVisible(false);
+                props.navigation.push('Home', {
+                  screen: 'EditPassword',
                 });
               }}
             />
