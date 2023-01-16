@@ -38,9 +38,9 @@ export default function Chat({
 	}, [usrCtx.user, userId, user, refr]);
 
 	useEffect(() => {
-        if (userId)
-            getBaseProfiles([userId], usrCtx.user.authToken ?? "").then((x) =>
-                setUser(x?.at(0))
+		if (userId)
+			getBaseProfiles([userId], usrCtx.user.authToken ?? "").then((x) =>
+				setUser(x?.at(0))
 			);
 	}, [userId]);
 
@@ -76,7 +76,7 @@ export default function Chat({
 				<div className="h4 text-start mx-2 border-bottom border-dark border-1">
 					{user?.username}
 				</div>
-				<div className="overflow-scroll " style={{ height: "80vh" }}>
+				<div className="overflow-scroll p-3" style={{ height: "80vh" }}>
 					{msg?.map((x) => (
 						<Message msg={x} isMe={x.authorId !== user?.userId} />
 					))}
@@ -106,14 +106,38 @@ function Message({ msg, isMe }: { msg: MessageResponseType; isMe: boolean }) {
 	return (
 		<div className="d-flex m-1 mx-2">
 			<div
-				className={
-					"text-start border border-dark p-2 rounded-4 " +
-					(isMe ? " ms-auto " : "")
-				}
-				style={{ maxWidth: "50%" }}
+				className={isMe ? " ms-auto " : ""}
+				style={{ maxWidth: "70%" }}
 			>
-				{msg.content}
+				<div
+					className={"" + (isMe ? " text-end " : " text-start")}
+					style={{ fontSize: "12px" }}
+				>
+					{formatTime(msg.creationTime)}
+				</div>
+				<div
+					className={
+						"text-start border border-dark p-2 rounded-4" +
+						(isMe ? " ms-auto " : " me-auto")
+					}
+					style={{ width: "fit-content" }}
+				>
+					{msg.content}
+				</div>
 			</div>
 		</div>
+	);
+}
+function formatTime(date: Date) {
+	date = new Date(date);
+	return (
+		date.getMonth() +
+		1 +
+		"-" +
+		date.getDate() +
+		" " +
+		date.getHours() +
+		":" +
+		(date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes())
 	);
 }

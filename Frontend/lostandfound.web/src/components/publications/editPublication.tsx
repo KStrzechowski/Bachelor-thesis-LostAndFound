@@ -90,6 +90,7 @@ export function EditPublicationInner({
 		place,
 		date,
 		cat,
+		desc,
 	}
 
 	const usrCtx = useContext(userContext);
@@ -130,6 +131,8 @@ export function EditPublicationInner({
 		if (!pub.title || pub.title.length === 0) nerr.push(valErr.title);
 		if (!pub.incidentAddress) nerr.push(valErr.place);
 		if (!pub.incidentDate) nerr.push(valErr.date);
+		if (!pub.description) nerr.push(valErr.desc);
+
 		if (!pub.subjectCategoryId || pub.subjectCategoryId === "none")
 			nerr.push(valErr.cat);
 		setVal(nerr);
@@ -259,6 +262,11 @@ export function EditPublicationInner({
 						placeholder="Opis"
 						onChange={(e) => handleChangeArea(e)}
 					></textarea>
+					{val.includes(valErr.desc) && (
+						<div className="w-75 ms-auto text-start text-danger">
+							opis nie może być pusty
+						</div>
+					)}
 				</div>
 				<div className="p-1 w-100 ">
 					<span className="form-label  me-3 ">Miejsce:</span>

@@ -12,7 +12,7 @@ export default function Login() {
 		pwd: "",
 	});
 	const [val, setVal] = useState([] as valErrors[]);
-
+	const [und, setUnd] = useState(false);
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setUser({
 			...user,
@@ -32,9 +32,10 @@ export default function Login() {
 
 	function onLogin() {
 		let lgn: LoginRequestType = { email: user.email, password: user.pwd };
-		if (onValidate())
+		if (onValidate()) {
 			login(lgn).then((x) => {
 				if (x !== undefined) {
+					setUnd(false);
 					usrCtx.setUser({
 						isLogged: true,
 						authToken: x.accessToken,
@@ -42,9 +43,11 @@ export default function Login() {
 						expirationDate: x.accessTokenExpirationTime,
 					} as UsrCont);
 				} else {
+					setUnd(true);
 					usrCtx.setUser({ isLogged: false } as UsrCont);
 				}
 			});
+		}
 	}
 
 	return (
@@ -89,6 +92,7 @@ export default function Login() {
 						</div>
 					)}
 				</div>
+				{und && <div className="text-danger"> niepoprawne dane</div>}
 				<div
 					className="btn btn-primary rounded-5"
 					onClick={() => onLogin()}

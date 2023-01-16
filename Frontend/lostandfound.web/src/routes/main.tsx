@@ -1,6 +1,7 @@
 import Chats from "components/chat/chats";
 import Profile, { ProfileOther } from "components/profile/profile";
 import ProfileEdit from "components/profile/profileEdit";
+import PwdChange from "components/profile/pwdChange";
 import { EditPublication } from "components/publications/editPublication";
 import MyPublications from "components/publications/myPublications";
 import PublicationsList from "components/publications/publicationsList";
@@ -21,6 +22,7 @@ export default function MainRouter() {
 					<Route path="profile">
 						<Route index element={<Profile />} />
 						<Route path="edit" element={<ProfileEdit />} />
+						<Route path="password" element={<PwdChange />} />
 						<Route
 							path=":userId"
 							element={<ProfileOther />}

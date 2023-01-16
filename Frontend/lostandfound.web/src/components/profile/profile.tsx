@@ -32,7 +32,15 @@ export default function Profile() {
 				}
 			});
 	}, []);
-	if (prof === undefined) return <div>...</div>;
+	if (prof === undefined)
+		return (
+			<div>
+				<div
+					className=" spinner-border col-12 ms-auto me-auto"
+					role="status"
+				></div>
+			</div>
+		);
 	return <ProfileInner profile={prof} refresh={() => {}}></ProfileInner>;
 }
 
@@ -41,16 +49,15 @@ export function ProfileOther() {
 	let { userId } = useParams();
 	const usrCtx = useContext(userContext);
 	const [prof, setProf] = useState(undefined as UserProfile | undefined);
-	const [ldg, setLdg] = useState(true);
+	const [ldg, setLdg] = useState(false);
 	const [me, setMe] = useState("");
 	useEffect(() => {
 		setLdg(true);
 	}, [userId]);
 
 	useEffect(() => {
-		if (ldg) {
+		if (ldg === true) {
 			setLdg(false);
-
 			if (usrCtx.user.authToken !== null && userId !== undefined) {
 				getProfile(usrCtx.user.authToken ?? "")
 					.then((x) => {
@@ -64,8 +71,10 @@ export function ProfileOther() {
 								userId,
 								usrCtx.user.authToken
 							).then((x) => {
-                                if (x !== undefined) {
-                                    if(me == x.userId)nav("/profile");
+								if (x !== undefined) {
+									setLdg(false);
+
+									if (me == x.userId) nav("/profile");
 									setProf({
 										uId: x.userId,
 										username: x.username,
@@ -88,9 +97,19 @@ export function ProfileOther() {
 					});
 			}
 		}
-	}, [userId, ldg]);
+	}, [ldg]);
 
+	if (ldg === true)
+		return (
+			<div>
+				<div
+					className=" spinner-border col-12 ms-auto me-auto"
+					role="status"
+				></div>
+			</div>
+		);
 	if (prof === undefined) return <div>...</div>;
+
 	return (
 		<ProfileInner
 			profile={prof}
@@ -124,15 +143,23 @@ export function ProfileInner({
 					></img>
 				</div>
 				<div className="col text-start p-2">
-					<div className="h1 d-flex">
+					<div className="d-flex">
 						<h1>{profile.username}</h1>
 						{profile.me && (
-							<Link
-								className="text-dark btn float-end"
-								to="/profile/edit"
-							>
-								<FiEdit size="38" />
-							</Link>
+							<>
+								<Link
+									className="text-dark btn float-end"
+									to="/profile/edit"
+								>
+									<FiEdit size="38" />
+								</Link>
+								<Link
+									className="me-auto text mt-auto mb-auto"
+									to="/profile/password"
+								>
+									Zmień hasło
+								</Link>
+							</>
 						)}
 						{!profile.me && nav && (
 							<div
@@ -142,7 +169,7 @@ export function ProfileInner({
 								Czat
 							</div>
 						)}
-						<div className="align-self-center ms-auto me-4 d-flex align-items-center">
+						<div className="h1 align-self-center ms-auto me-4 d-flex align-items-center">
 							<span>
 								{profile.averageProfileRating?.toFixed(2)}
 							</span>
