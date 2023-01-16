@@ -1,4 +1,4 @@
-import { register, RegisterRequestType } from 'commons';
+import { register, RegisterRequestType, RegisterResponseType } from 'commons';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { Appbar } from 'react-native-paper';
@@ -43,12 +43,12 @@ async function registerAccount(
   }
   if (username.length < 8) {
     validationSnackBar(
-      `Długość nazwy użytkownika musi wynosić co najmniej 8 znaków.`,
+      `Długość nazwy użytkownika musi wynosić co najmniej 8 znaków`,
     );
     return false;
   }
   if (password.length < 8) {
-    validationSnackBar(`Długość hasła musi wynosić co najmniej 8 znaków.`);
+    validationSnackBar(`Długość hasła musi wynosić co najmniej 8 znaków`);
     return false;
   }
   if (password !== confirmPassword) {
@@ -57,9 +57,22 @@ async function registerAccount(
   }
 
   const registerResponse = await register(registerRequest);
-  if (registerResponse) {
+  if (registerResponse.ok) {
     return true;
   } else {
+    if (
+      registerResponse.errors?.Email &&
+      registerResponse.errors?.Email.length > 0
+    ) {
+      validationSnackBar(registerResponse.errors.Email[0]);
+    } else if (
+      registerResponse.errors?.Username &&
+      registerResponse.errors?.Username.length > 0
+    ) {
+      validationSnackBar(registerResponse.errors.Username[0]);
+    } else {
+      validationSnackBar(`Coś poszło nie tak, spróbuj ponownie`);
+    }
     return false;
   }
 }
