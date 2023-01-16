@@ -8,5 +8,6 @@ namespace LostAndFound.AuthService.DataAccess.Repositories.Interfaces
         bool IsUsernameInUse(string value);
         Task RemoveRefreshTokenFromAccountAsync(string email);
         Task UpdateAccountRefreshTokenAsync(string email, string refreshTokenRaw);
+        Task UpdateAccountPasswordHashAsync(string email, string passwordHash);
     }
 }

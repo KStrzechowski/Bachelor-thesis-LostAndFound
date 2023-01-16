@@ -45,5 +45,34 @@ namespace LostAndFound.AuthService.IntegrationTests
             response.Headers.WwwAuthenticate.ToString().Should()
                 .BeEquivalentTo("Bearer error=\"invalid_token\"");
         }
+
+        [Theory]
+        [InlineData("account/password")]
+        public async Task SecuredPutEndpoint_WithoutAuthorizationHeader_ReturnsUnauthorizedStatusCode(
+            string url)
+        {
+            var response = await _client.PutAsync(url, null!);
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+            response.Headers.Contains("WWW-Authenticate").Should().BeTrue();
+            response.Headers.WwwAuthenticate.ToString().Should()
+                .BeEquivalentTo("Bearer");
+        }
+
+        [Theory]
+        [InlineData("account/password")]
+        public async Task SecuredPutEndpoint_WithInvalidAuthorizationHeader_ReturnsUnauthorizedStatusCode(
+            string url)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "invalid-token");
+
+            var response = await _client.SendAsync(request);
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+            response.Headers.Contains("WWW-Authenticate").Should().BeTrue();
+            response.Headers.WwwAuthenticate.ToString().Should()
+                .BeEquivalentTo("Bearer error=\"invalid_token\"");
+        }
     }
 }

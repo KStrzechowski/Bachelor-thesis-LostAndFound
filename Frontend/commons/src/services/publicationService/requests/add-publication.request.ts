@@ -9,7 +9,8 @@ import {
 export const addPublication = async (
   publication: PublicationRequestType,
   accessToken: string,
-  photo?: { name: string | null; type: string | null; uri: string }
+  photo?: { name: string | null; type: string | null; uri: string },
+  filePhoto?: File
 ): Promise<PublicationResponseType | undefined> => {
   const data: FormData = new FormData();
   if (publication.title) data.append("title", publication.title);
@@ -34,6 +35,12 @@ export const addPublication = async (
         })
       )
     );
+  else if(filePhoto){
+    data.append(
+      "photo",
+      filePhoto
+    );
+  }
 
   const result = await multipartFormDataHttp<PublicationFromServerType>(
     {

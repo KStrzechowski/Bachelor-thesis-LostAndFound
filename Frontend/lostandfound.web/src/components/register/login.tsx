@@ -11,6 +11,7 @@ export default function Login() {
 		email: "",
 		pwd: "",
 	});
+	const [val, setVal] = useState([] as valErrors[]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setUser({
@@ -19,20 +20,31 @@ export default function Login() {
 		});
 	};
 
+	function onValidate() {
+		var nerr = [] as valErrors[];
+		const mailexp: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+		if (!mailexp.test(user.email)) nerr.push(valErrors.mail);
+		if (user.pwd.length < 8) nerr.push(valErrors.pass1);
+		setVal(nerr);
+		if (val.length > 0) return false;
+		return true;
+	}
+
 	function onLogin() {
 		let lgn: LoginRequestType = { email: user.email, password: user.pwd };
-		login(lgn).then((x) => {
-			if (x !== undefined) {
-				usrCtx.setUser({
-					isLogged: true,
-					authToken: x.accessToken,
-					refreshToken: x.refreshToken,
-					expirationDate: x.accessTokenExpirationTime,
-				} as UsrCont);
-			} else {
-				usrCtx.setUser({ isLogged: false } as UsrCont);
-			}
-		});
+		if (onValidate())
+			login(lgn).then((x) => {
+				if (x !== undefined) {
+					usrCtx.setUser({
+						isLogged: true,
+						authToken: x.accessToken,
+						refreshToken: x.refreshToken,
+						expirationDate: x.accessTokenExpirationTime,
+					} as UsrCont);
+				} else {
+					usrCtx.setUser({ isLogged: false } as UsrCont);
+				}
+			});
 	}
 
 	return (
@@ -55,6 +67,11 @@ export default function Login() {
 						placeholder="e-mail"
 						onChange={(e) => handleChange(e)}
 					></input>
+					{val.includes(valErrors.mail) && (
+						<div className="ms-1 text-danger text-start">
+							e-mail musi być poprawny
+						</div>
+					)}
 				</div>
 				<div className="m-3">
 					<div className="form-label text-start">hasło:</div>
@@ -66,6 +83,11 @@ export default function Login() {
 						placeholder="hasło"
 						onChange={(e) => handleChange(e)}
 					></input>
+					{val.includes(valErrors.pass1) && (
+						<div className="ms-1 text-danger text-start">
+							hasło musi zawierać conajmniej 8 znaków
+						</div>
+					)}
 				</div>
 				<div
 					className="btn btn-primary rounded-5"
@@ -87,4 +109,9 @@ export default function Login() {
 			</div>
 		</div>
 	);
+}
+
+enum valErrors {
+	mail,
+	pass1,
 }

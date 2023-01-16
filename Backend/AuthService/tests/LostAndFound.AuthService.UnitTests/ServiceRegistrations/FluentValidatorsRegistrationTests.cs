@@ -20,6 +20,7 @@ namespace LostAndFound.AuthService.UnitTests.ServiceRegistrations
         [InlineData(typeof(RegisterUserRequestDtoValidator))]
         [InlineData(typeof(LoginRequestDtoValidator))]
         [InlineData(typeof(RefreshRequestDtoValidator))]
+        [InlineData(typeof(ChangeAccountPasswordRequestDtoValidator))]
         public void AddFluentValidators_Execute_ResultsInExpectedValidatorIsRegistered(Type type)
         {
             var mockedAccountsRepository = new Mock<IAccountsRepository>();

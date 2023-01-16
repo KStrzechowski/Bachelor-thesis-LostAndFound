@@ -10,7 +10,7 @@ export default function Pagination({
 	maxPages: number;
 }) {
 	function setPageIfCan(page: number) {
-		if (page > 0 && page < maxPages) setPage(page);
+		if (page > 0 && page <= maxPages) setPage(page);
 	}
 	return (
 		<div className="">
@@ -32,7 +32,7 @@ export default function Pagination({
 					</button>
 				)}
 				<button className="btn btn-primary active">{page}</button>
-				{page + 1 < maxPages && (
+				{page + 1 <= maxPages && (
 					<button
 						className="btn btn-primary"
 						onClick={() => setPageIfCan(page + 1)}
@@ -41,7 +41,7 @@ export default function Pagination({
 					</button>
 				)}
 			</div>
-			{page + 1 > 0 && (
+			{page + 1 <= maxPages && (
 				<button
 					className="btn btn-primary"
 					onClick={() => setPageIfCan(page + 1)}

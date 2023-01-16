@@ -9,5 +9,6 @@ namespace LostAndFound.AuthService.Core.AccountServices
         Task<AuthenticatedUserResponseDto> AuthenticateUser(LoginRequestDto dto);
         Task<AuthenticatedUserResponseDto> RefreshUserAuthentication(RefreshRequestDto dto);
         Task LogoutUser(string userId);
+        Task ChangePassword(ChangeAccountPasswordRequestDto dto, string rawUserId);
     }
 }

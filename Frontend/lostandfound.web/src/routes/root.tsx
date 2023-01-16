@@ -1,13 +1,23 @@
-import { refreshToken } from "commons";
+import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import {
+	getUnreadNotifications,
+	MessageResponseType,
+	refreshToken,
+} from "commons";
 import Navbar from "components/navbar";
 import Relog from "components/register/relog";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { userContext, UsrCont } from "userContext";
+import { chatContext } from "chatContext";
 
 export default function Root() {
 	const [user, setUser] = useState(new UsrCont());
 	const [loading, setIsLoading] = useState(true);
+
+	const [connection, setConnection] = useState<HubConnection>();
+	const [newMsg, setNewMsg] = useState(false);
+	const [newMsgCount, setNewMsgCount] = useState(0);
 
 	useEffect(() => {
 		var token = localStorage.getItem("accessToken");
@@ -38,7 +48,7 @@ export default function Root() {
 		if (user.expirationDate !== null)
 			localStorage.setItem(
 				"expiration",
-				user.expirationDate.toISOString()
+				user.expirationDate?.toISOString()
 			);
 		else {
 			localStorage.removeItem("expiration");
@@ -72,14 +82,83 @@ export default function Root() {
 		}
 	}, [user]);
 
+	useEffect(() => {
+		const connectToSocket = async () => {
+			const accessToken = user.authToken;
+			if (
+				accessToken &&
+				user.isLogged &&
+				(!connection || connection.state === "Disconnected")
+			) {
+				setConnection(
+					new HubConnectionBuilder()
+						.withUrl(
+							`${process.env["REACT_APP_API_GATEWAY_URL"]}/hubs/chat`,
+							{
+								accessTokenFactory: () => accessToken,
+							}
+						)
+						.withAutomaticReconnect()
+						.build()
+				);
+			} else if (connection) {
+				await connection.stop();
+				setConnection(undefined);
+			}
+		};
+
+		connectToSocket();
+	}, [user.authToken]);
+
+	useEffect(() => {
+		if (connection?.state === "Disconnected") {
+			connection.on(
+				"ReceiveMessage",
+				async (data: MessageResponseType) => {
+					setNewMsg(true);
+				}
+			);
+			connection.start();
+		}
+	}, [connection]);
+
+	useEffect(() => {
+		if (user.authToken && newMsg == true) getUnread();
+	}, [newMsg]);
+
+	useEffect(() => {
+		if (user.authToken) getUnread();
+	}, [user]);
+
+	async function getUnread() {
+		await new Promise((x) => setTimeout(x, 50));
+		getUnreadNotifications(user.authToken ?? "").then((x) => {
+			if (x) setNewMsgCount(x.unreadChatsCount);
+		});
+	}
+
 	if (loading === true) return <div>...</div>;
 
 	return (
 		<userContext.Provider
 			value={{ user: user, setUser: (arg: UsrCont) => setUser(arg) }}
 		>
-			<Navbar></Navbar>
-			<Outlet></Outlet>
+			<chatContext.Provider
+				value={{
+					newMsg: newMsg,
+					setMewMsg: (newMsg) => setNewMsg(newMsg),
+					newMsgCount: newMsgCount,
+					readMsg: () => {
+						if (user.authToken)
+							getUnreadNotifications(user.authToken).then((x) => {
+								if (x) setNewMsgCount(x.unreadChatsCount);
+							});
+					},
+				}}
+			>
+				<Navbar></Navbar>
+				<Outlet></Outlet>
+			</chatContext.Provider>
 		</userContext.Provider>
 	);
 }

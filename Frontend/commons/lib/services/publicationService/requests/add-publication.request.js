@@ -1,6 +1,6 @@
 import { multipartFormDataHttp } from "../../../http";
 import { mapPublicationFromServer, } from "../publicationTypes";
-export const addPublication = async (publication, accessToken, photo) => {
+export const addPublication = async (publication, accessToken, photo, filePhoto) => {
     const data = new FormData();
     if (publication.title)
         data.append("title", publication.title);
@@ -20,6 +20,9 @@ export const addPublication = async (publication, accessToken, photo) => {
             type: photo.type,
             uri: photo.uri,
         })));
+    else if (filePhoto) {
+        data.append("photo", filePhoto);
+    }
     const result = await multipartFormDataHttp({
         path: "/publication",
         method: "post",

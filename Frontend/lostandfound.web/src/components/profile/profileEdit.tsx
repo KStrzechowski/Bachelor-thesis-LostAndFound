@@ -18,6 +18,8 @@ export default function ProfileEdit() {
 	const [prof, setProf] = useState(undefined as UserProfile | undefined);
 	const [svd, setSvd] = useState(false);
 
+	const [newPhoto, setNewPhoto] = useState(null as File | null | undefined);
+
 	useEffect(() => {
 		if (usrCtx.user.authToken !== null)
 			getProfile(usrCtx.user.authToken).then((x) => {
@@ -50,19 +52,31 @@ export default function ProfileEdit() {
 					description: prof?.description,
 				},
 				usrCtx.user.authToken
-			).then((x) => setSvd(true));
+			).then((x) => {
+				if (x && usrCtx.user.authToken) {
+					if (newPhoto && newPhoto !== null) {
+						editProfilePhotoWeb(
+							newPhoto,
+							usrCtx.user.authToken
+						).then((s) => setSvd(true));
+					} else if (newPhoto === undefined) {
+						deleteProfilePhoto(usrCtx.user.authToken).then((s) =>
+							setSvd(true)
+						);
+					} else {
+						setSvd(true);
+					}
+				}
+			});
 	}
 
 	function saveImg(file: File) {
-		return editProfilePhotoWeb(file, usrCtx.user.authToken ?? "").then(
-			(x) => {
-				if (x && prof) setProf({ ...prof, pictureUrl: x.pictureUrl });
-			}
-		);
+		setNewPhoto(file);
 	}
 
 	function delImg() {
-		return deleteProfilePhoto(usrCtx.user.authToken ?? "").then((x) => {if(prof)setProf({...prof, pictureUrl:undefined})});
+		setNewPhoto(undefined);
+		if (prof) setProf({ ...prof, pictureUrl: "" });
 	}
 
 	if (svd === true) return <Navigate to="/profile"></Navigate>;
@@ -90,8 +104,8 @@ export function ProfileEditInner({
 	profile: UserProfile;
 	setProfile: (x: UserProfile) => void;
 	handleSave: () => void;
-	saveImg?: (x: File) => Promise<void>;
-	delImg?: () => Promise<void>;
+	saveImg?: (x: File) => void;
+	delImg?: () => void;
 }) {
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setProfile({

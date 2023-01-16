@@ -22,6 +22,7 @@ export function EditPublication() {
 	const [pub, setPub] = useState(
 		undefined as PublicationResponseType | undefined
 	);
+	const [photo, setPhoto] = useState(null as File | null | undefined);
 	function save() {
 		if (pub)
 			editPublication(
@@ -29,7 +30,24 @@ export function EditPublication() {
 				pub,
 				usrCtx.user.authToken ?? ""
 			).then((x) => {
-				if (x) nav("/posts/mine");
+				if (photo && photo !== null) {
+					editPublicationPhotoWeb(
+						pub?.publicationId,
+						photo,
+						usrCtx.user.authToken ?? ""
+					).then((y) => {
+						if (x) nav("/posts/mine");
+					});
+				} else if (photo === undefined) {
+					deletePublicationPhoto(
+						pub?.publicationId,
+						usrCtx.user.authToken ?? ""
+					).then((y) => {
+						if (x) nav("/posts/mine");
+					});
+				} else {
+					nav("/posts/mine");
+				}
 			});
 	}
 	useEffect(() => {
@@ -39,37 +57,17 @@ export function EditPublication() {
 			);
 	}, [pubId]);
 
-	function saveImg(file: File) {
-		if (pub)
-			return editPublicationPhotoWeb(
-				pub?.publicationId,
-				file,
-				usrCtx.user.authToken ?? ""
-			).then((x) => {
-				if (x) setPub({ ...pub, subjectPhotoUrl: x.subjectPhotoUrl });
-			});
-		return Promise.resolve();
-	}
-
-	function delImg() {
-		if (pub)
-			return deletePublicationPhoto(
-				pub?.publicationId,
-				usrCtx.user.authToken ?? ""
-			).then((x) => {
-				if (pub) setPub({ ...pub, subjectPhotoUrl: undefined });
-			});
-		return Promise.resolve();
-	}
-
 	if (!pub) return <div>...</div>;
 	return (
 		<EditPublicationInner
 			pub={pub}
 			setPub={(pub) => setPub(pub)}
 			save={() => save()}
-			saveImg={(file: File) => saveImg(file)}
-			delImg={() => delImg()}
+			saveImg={(file: File) => setPhoto(file)}
+			delImg={() => {
+				setPub({ ...pub, subjectPhotoUrl: undefined });
+				setPhoto(undefined);
+			}}
 		/>
 	);
 }
@@ -83,11 +81,21 @@ export function EditPublicationInner({
 	pub: PublicationResponseType;
 	setPub: (newPub: PublicationResponseType) => void;
 	save: () => void;
-	saveImg: (file: File) => Promise<void>;
-	delImg: () => Promise<void>;
+	saveImg: (file: File) => void;
+	delImg: () => void;
 }) {
+	enum valErr {
+		type,
+		title,
+		place,
+		date,
+		cat,
+	}
+
 	const usrCtx = useContext(userContext);
 	const [cats, setCats] = useState([] as CategoryType[]);
+	const nav = useNavigate();
+	const [val, setVal] = useState([] as valErr[]);
 
 	useEffect(() => {
 		if (usrCtx.user.authToken !== null)
@@ -117,6 +125,18 @@ export function EditPublicationInner({
 		});
 	};
 
+	function onValidate() {
+		var nerr = [] as valErr[];
+		if (!pub.title || pub.title.length === 0) nerr.push(valErr.title);
+		if (!pub.incidentAddress) nerr.push(valErr.place);
+		if (!pub.incidentDate) nerr.push(valErr.date);
+		if (!pub.subjectCategoryId || pub.subjectCategoryId === "none")
+			nerr.push(valErr.cat);
+		setVal(nerr);
+		if (nerr.length > 0) return false;
+		return true;
+	}
+
 	return (
 		<div className="mt-4 p-3 w-50 m-auto border border-dark rounded-4 bg-light text-end">
 			<div className="text-left p-2 h5 text-start">
@@ -138,25 +158,7 @@ export function EditPublicationInner({
 					<div className="btn-group w-75">
 						<button
 							className={
-								"btn text-dark " +
-								(pub.publicationType ===
-								PublicationType.LostSubject
-									? "btn-primary"
-									: "btn-outline-primary ")
-							}
-							onClick={() =>
-								setPub({
-									...pub,
-									publicationType:
-										PublicationType.LostSubject,
-								})
-							}
-						>
-							Znalezione
-						</button>
-						<button
-							className={
-								"btn text-dark " +
+								"btn text-dark col-1 " +
 								(pub.publicationType ===
 								PublicationType.FoundSubject
 									? "btn-primary"
@@ -170,7 +172,64 @@ export function EditPublicationInner({
 								})
 							}
 						>
+							Znalezione
+						</button>
+						<button
+							className={
+								"btn text-dark col-1 " +
+								(pub.publicationType ===
+								PublicationType.LostSubject
+									? "btn-primary"
+									: "btn-outline-primary ")
+							}
+							onClick={() =>
+								setPub({
+									...pub,
+									publicationType:
+										PublicationType.LostSubject,
+								})
+							}
+						>
 							Zgubione
+						</button>
+					</div>
+				</div>
+
+				<div className="p-1 w-100">
+					<span className="form-label  me-3 ">Stan:</span>
+					<div className="btn-group w-75">
+						<button
+							className={
+								"btn text-dark col-1 " +
+								(pub.publicationState === PublicationState.Open
+									? "btn-primary"
+									: "btn-outline-primary ")
+							}
+							onClick={() =>
+								setPub({
+									...pub,
+									publicationState: PublicationState.Open,
+								})
+							}
+						>
+							Otwarte
+						</button>
+						<button
+							className={
+								"btn text-dark col-1 " +
+								(pub.publicationState ===
+								PublicationState.Closed
+									? "btn-danger"
+									: "btn-outline-danger ")
+							}
+							onClick={() =>
+								setPub({
+									...pub,
+									publicationState: PublicationState.Closed,
+								})
+							}
+						>
+							Zamknięte
 						</button>
 					</div>
 				</div>
@@ -184,6 +243,11 @@ export function EditPublicationInner({
 						placeholder="Tytuł"
 						onChange={(e) => handleChange(e)}
 					/>
+					{val.includes(valErr.title) && (
+						<div className="w-75 ms-auto text-start text-danger">
+							tytuł nie może być pusty
+						</div>
+					)}
 				</div>
 				<div className="p-1 w-100 ">
 					<span className="form-label  me-3 align-top">Opis:</span>
@@ -206,11 +270,18 @@ export function EditPublicationInner({
 						placeholder="Miejsce"
 						onChange={(e) => handleChange(e)}
 					/>
+					{val.includes(valErr.place) && (
+						<div className="w-75 ms-auto text-start text-danger">
+							miejsce nie może być puste
+						</div>
+					)}
 				</div>
 				<div className="p-1 w-100 ">
 					<span className="form-label  me-3 ">Data:</span>
 					<input
-						value={pub.incidentDate.toISOString().substring(0, 10)}
+						value={pub.incidentDate
+							?.toISOString()
+							?.substring(0, 10)}
 						className="w-75 form-control d-inline"
 						name="incidentDate"
 						type="date"
@@ -219,10 +290,16 @@ export function EditPublicationInner({
 							handleChangeDate(e);
 						}}
 					/>
+					{val.includes(valErr.date) && (
+						<div className="w-75 ms-auto text-start text-danger">
+							data nie może być pusta
+						</div>
+					)}
 				</div>
 				<div className="p-1 w-100 ">
 					<span className="form-label  me-3 ">Kategoria:</span>
 					<select
+						defaultValue="none"
 						value={pub.subjectCategoryId}
 						className="form-select w-75 d-inline"
 						onChange={(e) => {
@@ -232,57 +309,35 @@ export function EditPublicationInner({
 							});
 						}}
 					>
-						<option selected value="none"></option>
+						<option value="none"></option>
 						{cats.map((x, i) => (
 							<option key={i} value={x.id}>
 								{x.displayName}
 							</option>
 						))}
 					</select>
+					{val.includes(valErr.cat) && (
+						<div className="w-75 ms-auto text-start text-danger">
+							kategoria nie może być pusta
+						</div>
+					)}
 				</div>
-				<div className="p-1 w-100 d-block">
-					<span className="form-label  me-3 ">Stan:</span>
-					<div className="btn-group w-75">
-						<button
-							className={
-								"btn text-dark " +
-								(pub.publicationState === PublicationState.Open
-									? "btn-primary"
-									: "btn-outline-primary ")
-							}
-							onClick={() =>
-								setPub({
-									...pub,
-									publicationState: PublicationState.Open,
-								})
-							}
-						>
-							Otwarte
-						</button>
-						<button
-							className={
-								"btn text-dark " +
-								(pub.publicationState ===
-								PublicationState.Closed
-									? "btn-danger"
-									: "btn-outline-danger ")
-							}
-							onClick={() =>
-								setPub({
-									...pub,
-									publicationState: PublicationState.Closed,
-								})
-							}
-						>
-							Zamknięte
-						</button>
-					</div>
 
+				<div className="row align-self-center d-flex p-3">
+					<div className="col"></div>
 					<button
-						className="btn btn-primary mt-3 d-block"
-						onClick={() => save()}
+						className="btn btn-primary mt-3 col-3 ms-1"
+						onClick={() => {
+							if (onValidate()) save();
+						}}
 					>
 						Zapisz
+					</button>
+					<button
+						className="btn btn-danger mt-3 col-3 ms-1"
+						onClick={() => nav("/posts/mine")}
+					>
+						Anuluj
 					</button>
 				</div>
 			</div>

@@ -35,7 +35,7 @@ namespace LostAndFound.AuthService.UnitTests.Core.FluentValidators
             var result = validator.TestValidate(validDtoModel);
 
             result.ShouldHaveAnyValidationError();
-            result.Errors.First().ErrorMessage.Should().Contain("email is taken");
+            result.Errors.First().ErrorMessage.Should().Contain("e-mail jest już zajęty");
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace LostAndFound.AuthService.UnitTests.Core.FluentValidators
             var result = validator.TestValidate(validDtoModel);
 
             result.ShouldHaveAnyValidationError();
-            result.Errors.First().ErrorMessage.Should().Contain("username is taken");
+            result.Errors.First().ErrorMessage.Should().Contain("nazwa użytkownika jest już zajęt");
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace LostAndFound.AuthService.UnitTests.Core.FluentValidators
             var result = validator.TestValidate(validDtoModel);
 
             result.ShouldHaveAnyValidationError();
-            result.Errors.First().ErrorMessage.Should().Contain("The length of 'Username' must be at least 8 characters");
+            result.Errors.First().ErrorMessage.Should().Contain("Nazwa użytkownika musi składać się z przynajmniej 8 znaków.");
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace LostAndFound.AuthService.UnitTests.Core.FluentValidators
             var result = validator.TestValidate(validDtoModel);
 
             result.ShouldHaveAnyValidationError();
-            result.Errors.First().ErrorMessage.Should().Contain("The length of 'Password' must be at least 8 characters");
+            result.Errors.First().ErrorMessage.Should().Contain("Hasło musi składać się z przynajmniej 8 znaków.");
         }
 
         [Theory]
