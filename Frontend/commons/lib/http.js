@@ -24,12 +24,13 @@ export const http = async (config) => {
         }
     }
     else {
-        logError(request, response);
         try {
             const body = await response.json();
+            logErrorBody(request, body);
             return { ok: response.ok, errors: body.errors };
         }
         catch {
+            logError(request, response);
             return { ok: response.ok };
         }
     }
@@ -54,12 +55,13 @@ export const multipartFormDataHttp = async (config, requestData) => {
         }
     }
     else {
-        logError(request, response);
         try {
             const body = await response.json();
+            logErrorBody(request, body);
             return { ok: response.ok, errors: body.errors };
         }
         catch {
+            logError(request, response);
             return { ok: response.ok };
         }
     }
@@ -73,5 +75,8 @@ const logError = async (request, response) => {
     else {
         body = await response.text();
     }
+    console.error(`Error reqesting ${request.method} ${request.url}`, body);
+};
+const logErrorBody = async (request, body) => {
     console.error(`Error reqesting ${request.method} ${request.url}`, body);
 };

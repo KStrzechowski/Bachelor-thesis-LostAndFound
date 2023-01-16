@@ -60,10 +60,16 @@ async function registerAccount(
   if (registerResponse.ok) {
     return true;
   } else {
-    if (registerResponse.errors?.emailError) {
-      validationSnackBar(registerResponse.errors.emailError);
-    } else if (registerResponse.errors?.usernameError) {
-      validationSnackBar(registerResponse.errors.usernameError);
+    if (
+      registerResponse.errors?.Email &&
+      registerResponse.errors?.Email.length > 0
+    ) {
+      validationSnackBar(registerResponse.errors.Email[0]);
+    } else if (
+      registerResponse.errors?.Username &&
+      registerResponse.errors?.Username.length > 0
+    ) {
+      validationSnackBar(registerResponse.errors.Username[0]);
     } else {
       validationSnackBar(`Coś poszło nie tak, spróbuj ponownie`);
     }

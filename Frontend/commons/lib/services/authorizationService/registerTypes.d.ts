@@ -10,6 +10,6 @@ export interface RegisterResponseType {
     username: string;
 }
 export interface RegisterErrorType {
-    emailError?: string;
-    usernameError?: string;
+    Email?: string[];
+    Username?: string[];
 }

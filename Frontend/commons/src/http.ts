@@ -8,11 +8,11 @@ export interface HttpRequest<REQB> {
   contentType?: string;
 }
 
-export interface HttpResponse<RESB> {
+export interface HttpResponse<RESB, RESE> {
   ok: boolean;
   body?: RESB;
   headers?: Headers;
-  errors?: any;
+  errors?: RESE;
 }
 
 export interface PaginationMetadata {
@@ -24,9 +24,13 @@ export interface PaginationMetadata {
   PreviousPageLink?: string;
 }
 
-export const http = async <RESB = undefined, REQB = undefined>(
+export const http = async <
+  RESB = undefined,
+  REQB = undefined,
+  RESE = undefined
+>(
   config: HttpRequest<REQB>
-): Promise<HttpResponse<RESB>> => {
+): Promise<HttpResponse<RESB, RESE>> => {
   const request = new Request(`${webAPIUrl}${config.path}`, {
     method: config.method || "get",
     headers: {
@@ -50,20 +54,25 @@ export const http = async <RESB = undefined, REQB = undefined>(
       return { ok: response.ok };
     }
   } else {
-    logError(request, response);
     try {
       const body = await response.json();
+      logErrorBody(request, body);
       return { ok: response.ok, errors: body.errors };
     } catch {
+      logError(request, response);
       return { ok: response.ok };
     }
   }
 };
 
-export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
+export const multipartFormDataHttp = async <
+  RESB = undefined,
+  REQB = undefined,
+  RESE = undefined
+>(
   config: HttpRequest<REQB>,
   requestData: FormData
-): Promise<HttpResponse<RESB>> => {
+): Promise<HttpResponse<RESB, RESE>> => {
   const request = new Request(`${webAPIUrl}${config.path}`, {
     method: config.method || "get",
     body: requestData,
@@ -82,11 +91,12 @@ export const multipartFormDataHttp = async <RESB = undefined, REQB = undefined>(
       return { ok: response.ok };
     }
   } else {
-    logError(request, response);
     try {
       const body = await response.json();
+      logErrorBody(request, body);
       return { ok: response.ok, errors: body.errors };
     } catch {
+      logError(request, response);
       return { ok: response.ok };
     }
   }
@@ -100,5 +110,9 @@ const logError = async (request: Request, response: Response) => {
   } else {
     body = await response.text();
   }
+  console.error(`Error reqesting ${request.method} ${request.url}`, body);
+};
+
+const logErrorBody = async (request: Request, body: any) => {
   console.error(`Error reqesting ${request.method} ${request.url}`, body);
 };
