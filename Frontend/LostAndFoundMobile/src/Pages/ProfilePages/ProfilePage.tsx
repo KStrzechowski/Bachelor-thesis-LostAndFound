@@ -27,7 +27,7 @@ import {
   SecondaryButton,
   StarRating,
 } from '../../Components';
-import { getAccessToken, getUserId } from '../../SecureStorage';
+import { getAccessToken } from '../../SecureStorage';
 import { TextInput } from 'react-native-gesture-handler';
 import { Appbar, Avatar } from 'react-native-paper';
 import { PaginationMetadata } from 'commons/lib/http';
@@ -46,6 +46,7 @@ const validationSnackBar = (text: string) => {
 
 const CommentItem = (props: any) => {
   const item: ProfileCommentResponseType = props.item;
+  const navigate: () => Promise<void> = props.navigate;
 
   return (
     <View
@@ -63,13 +64,9 @@ const CommentItem = (props: any) => {
           justifyContent: 'space-between',
         }}>
         <Pressable
-          onPress={async () => {
-            props.navigation.push('Home', {
-              screen: 'Profile',
-              params: { userId: item.author.id },
-            });
-          }}>
-          <View style={{ alignContent: 'center' }}>
+          style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+          onPress={navigate}>
+          <View style={{ marginRight: 10 }}>
             {item.author.pictureUrl ? (
               <Avatar.Image
                 source={{
@@ -362,7 +359,17 @@ export const ProfilePage = (props: any) => {
         contentContainerStyle={{ paddingBottom: 20 }}
         data={profileComments?.comments}
         keyExtractor={item => item.author.id.toString()}
-        renderItem={({ item }) => <CommentItem item={item} />}
+        renderItem={({ item }) => (
+          <CommentItem
+            item={item}
+            navigate={async () => {
+              props.navigation.push('Home', {
+                screen: 'Profile',
+                params: { userId: item.author.id },
+              });
+            }}
+          />
+        )}
         onEndReached={() => {
           const getData = async () => {
             setLoadingNextPage(true);

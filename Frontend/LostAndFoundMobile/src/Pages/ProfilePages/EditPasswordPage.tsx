@@ -1,3 +1,4 @@
+import { changePassword, ChangePasswordRequestType } from 'commons';
 import React from 'react';
 import { Appbar } from 'react-native-paper';
 import Snackbar from 'react-native-snackbar';
@@ -23,7 +24,7 @@ const validationSnackBar = (text: string) => {
 };
 
 async function changeUserPassword(
-  currentPassword: string,
+  password: string,
   newPassword: string,
   confirmNewPassword: string,
 ): Promise<boolean> {
@@ -38,21 +39,23 @@ async function changeUserPassword(
     return false;
   }
 
-  const changePasswordRequest: any = {
-    currentPassword,
+  const changePasswordRequest: ChangePasswordRequestType = {
+    password,
     newPassword,
-    confirmNewPassword,
   };
   const accessToken = await getAccessToken();
   if (accessToken) {
-    const registerResponse = await changePassword(changePasswordRequest);
+    const registerResponse = await changePassword(
+      changePasswordRequest,
+      accessToken,
+    );
     if (registerResponse) {
       return true;
     } else {
       validationSnackBar(`Wprowadzono niepoprawne hasło`);
-      return false;
     }
   }
+  return false;
 }
 
 export const EditPasswordPage = (props: { navigation: string[] }) => {

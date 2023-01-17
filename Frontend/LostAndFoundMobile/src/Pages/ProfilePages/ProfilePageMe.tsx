@@ -249,6 +249,15 @@ export const ProfilePageMe = (props: any) => {
                 });
               }}
             />
+            <Menu.Item
+              title="Zmień hasło"
+              onPress={() => {
+                setVisible(false);
+                props.navigation.push('Home', {
+                  screen: 'EditPassword',
+                });
+              }}
+            />
             {profile?.pictureUrl ? (
               <Menu.Item
                 title="Usuń zdjęcie"
