@@ -1,4 +1,4 @@
-import { changePassword, ChangePasswordRequestType } from 'commons';
+import { changePwd, EditPwdRequestType } from 'commons';
 import React from 'react';
 import { Appbar } from 'react-native-paper';
 import Snackbar from 'react-native-snackbar';
@@ -24,7 +24,7 @@ const validationSnackBar = (text: string) => {
 };
 
 async function changeUserPassword(
-  password: string,
+  currentPassword: string,
   newPassword: string,
   confirmNewPassword: string,
 ): Promise<boolean> {
@@ -39,15 +39,15 @@ async function changeUserPassword(
     return false;
   }
 
-  const changePasswordRequest: ChangePasswordRequestType = {
-    password,
-    newPassword,
+  const changePasswordRequest: EditPwdRequestType = {
+    Password: currentPassword,
+    NewPassword: newPassword,
   };
   const accessToken = await getAccessToken();
   if (accessToken) {
-    const registerResponse = await changePassword(
-      changePasswordRequest,
+    const registerResponse = await changePwd(
       accessToken,
+      changePasswordRequest,
     );
     if (registerResponse) {
       return true;
