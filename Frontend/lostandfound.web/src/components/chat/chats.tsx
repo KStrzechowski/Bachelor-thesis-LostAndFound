@@ -83,11 +83,7 @@ export default function Chats() {
 				refr={refList}
 				setRef={setRefList}
 			/>
-			<Chat
-				userId={userId}
-				refr={refCur}
-				setRef={setRefCur}
-			/>
+			<Chat userId={userId} refr={refCur} setRef={setRefCur} />
 		</div>
 	);
 }
@@ -107,17 +103,21 @@ function ChatsList({
 	return (
 		<div
 			className="col-4 border border-dark bg-light  p-3 rounded-5 text-start"
-			style={{ height: "90vh", overflow: "scroll" }}
+			style={{ height: "90vh" }}
 		>
-			<span className="h5 text-start me-auto">Czaty:</span>{" "}
-			{users &&
-				chats?.map((x, i) => (
-					<ChatRow
-						chat={x}
-						user={users.find((y) => y.userId == x.chatMember.id)}
-						isSelected={x.chatMember.id === userId}
-					></ChatRow>
-				))}
+			<div style={{ height: "100%", overflow: "scroll" }}>
+				<span className="h5 text-start me-auto">Czaty:</span>{" "}
+				{users &&
+					chats?.map((x, i) => (
+						<ChatRow
+							chat={x}
+							user={users.find(
+								(y) => y.userId == x.chatMember.id
+							)}
+							isSelected={x.chatMember.id === userId}
+						></ChatRow>
+					))}
+			</div>
 		</div>
 	);
 }
@@ -179,6 +179,6 @@ function formatTime(date: Date) {
 		" " +
 		date.getHours() +
 		":" +
-		date.getMinutes()
+		(date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes())
 	);
 }

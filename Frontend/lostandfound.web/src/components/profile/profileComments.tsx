@@ -11,6 +11,7 @@ import { userContext } from "userContext";
 import { AiFillDelete } from "react-icons/ai";
 import { FiEdit, FiStar } from "react-icons/fi";
 import { Rating } from "react-simple-star-rating";
+import { useNavigate } from "react-router";
 
 export default function ProfileComments({
 	profId,
@@ -33,20 +34,14 @@ export default function ProfileComments({
 
 	useEffect(() => {
 		if (ldg === true && profId) {
-			{
-				setLdg(false);
-				if (usrCtx.user.authToken != null)
-					getProfileComments(profId, usrCtx.user.authToken).then(
-						(x) => {
-							if (x?.commentsSection.comments !== undefined) {
-								setComments(x?.commentsSection.comments);
-							}
-							setMyCom(x?.commentsSection.myComment);
-
-							refresh();
-						}
-					);
-			}
+			setLdg(false);
+			if (usrCtx.user.authToken != null)
+				getProfileComments(profId, usrCtx.user.authToken).then((x) => {
+					if (x?.commentsSection.comments !== undefined) {
+						setComments(x?.commentsSection.comments);
+					}
+					setMyCom(x?.commentsSection.myComment);
+				});
 		}
 	}, [profId, ldg]);
 
@@ -66,7 +61,7 @@ export default function ProfileComments({
 								usrCtx.user.authToken ?? ""
 							).then((x) => setLdg(true))
 						}
-						clsFunc={() => {}}
+						clsFunc={() => refresh()}
 						edit={false}
 					/>
 				</>
@@ -102,29 +97,30 @@ export function ProfileComment({ com }: { com: ProfileCommentResponseType }) {
 	return (
 		<div className="rounded-4 p-1 m-3 text-start row d-flex">
 			<div className="col align-self-center">
-				<img
-					className="img-fluid row m-auto align-self-center"
-					style={{ width: "80px" }}
-					src={
-						com?.author?.pictureUrl ??
-						"https://avatars.dicebear.com/api/bottts/stefan.svg"
-					}
-					alt="noimg"
-				></img>
-				<div className="row">
-					<Link
-						className="fw-bold text-center"
-						to={`/profile/${com.author.id}`}
-						style={{ textDecoration: "none" }}
-					>
-						{com.author.username}
-					</Link>
-				</div>
+				<Link to={`/profile/${com.author.id}`}>
+					<img
+						className="img-fluid row m-auto align-self-center"
+						style={{ width: "80px" }}
+						src={
+							com?.author?.pictureUrl ??
+							"https://avatars.dicebear.com/api/bottts/stefan.svg"
+						}
+						alt="noimg"
+					></img>
+					<div className="row">
+						<Link
+							className="fw-bold text-center"
+							to={`/profile/${com.author.id}`}
+							style={{ textDecoration: "none" }}
+						>
+							{com.author.username}
+						</Link>
+					</div>
+				</Link>
 			</div>
+
 			<div className="col-8">
-				<em className="row text-decoration-underline">
-					{com.creationDate.toLocaleDateString()}
-				</em>
+				<em className="row">{com.creationDate.toLocaleDateString()}</em>
 				<div className="d-block row">{com.content}</div>
 			</div>
 			<div className="col fs-2 align-self-center">

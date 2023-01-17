@@ -1,19 +1,21 @@
 export type LoginRequestType = {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 };
 export type LoginResponseType = {
-    accessToken: string;
-    accessTokenExpirationTime: Date;
-    refreshToken: string;
+  accessToken: string;
+  accessTokenExpirationTime: Date;
+  refreshToken: string;
 };
 export type LoginFromServerType = {
-    accessToken: string;
-    accessTokenExpirationTime: string;
-    refreshToken: string;
+  accessToken: string;
+  accessTokenExpirationTime: string;
+  refreshToken: string;
 };
-export declare const mapLoginFromServer: (data: LoginFromServerType) => LoginResponseType;
-export type ChangePasswordRequestType = {
-    password: string;
-    newPassword: string;
+export declare const mapLoginFromServer: (
+  data: LoginFromServerType
+) => LoginResponseType;
+export type EditPwdRequestType = {
+  Password: string;
+  NewPassword: string;
 };

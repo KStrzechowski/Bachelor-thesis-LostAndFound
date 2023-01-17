@@ -7,7 +7,7 @@ import {
 } from "commons";
 import UploadAndDisplayImage from "components/imagePicker";
 import { useContext, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { fileURLToPath } from "url";
 import { userContext } from "userContext";
 import { UserProfile } from "./profile";
@@ -192,6 +192,7 @@ export function ProfileEditInner({
 					></textarea>
 				</div>
 			</div>
+
 			<button
 				className="btn btn-primary m-auto text-center"
 				onClick={() => handleSave()}
