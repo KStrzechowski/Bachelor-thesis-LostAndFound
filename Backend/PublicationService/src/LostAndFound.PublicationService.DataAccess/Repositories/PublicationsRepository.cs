@@ -152,8 +152,8 @@ namespace LostAndFound.PublicationService.DataAccess.Repositories
 
             if (!String.IsNullOrEmpty(resourceParameters.SearchQuery))
             {
-                filter &= (builder.Regex(pub => pub.Description.ToLower(), new BsonRegularExpression($"/{resourceParameters.SearchQuery.ToLower()}/")) |
-                    builder.Regex(pub => pub.Title.ToLower(), new BsonRegularExpression($"/{resourceParameters.SearchQuery.ToLower()}/")));
+                filter &= (builder.Regex(pub => pub.Description, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/", "i")) |
+                    builder.Regex(pub => pub.Title, new BsonRegularExpression($"/{resourceParameters.SearchQuery}/", "i")));
             }
 
             if (resourceParameters.CoordinateBoundaries is not null)
