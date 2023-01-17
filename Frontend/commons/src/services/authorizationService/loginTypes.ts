@@ -23,6 +23,6 @@ export const mapLoginFromServer = (
 });
 
 export type EditPwdRequestType = {
-    Password: string;
-	NewPassword: string;
+  Password: string;
+  NewPassword: string;
 };

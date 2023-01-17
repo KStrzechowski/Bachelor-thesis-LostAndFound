@@ -28,6 +28,7 @@ import {
   SearchPostsPage,
   AddPostPage,
   EditPostPage,
+  EditPasswordPage,
 } from '../Pages';
 import {
   getName,
@@ -220,6 +221,7 @@ export const DrawerScreenStack = () => {
           drawerItemStyle: { display: 'none' },
         }}
       />
+      <DrawerStack.Screen name="EditPassword" component={EditPasswordPage} />
       <DrawerStack.Screen name="AddPost" component={AddPostPage} />
       <DrawerStack.Screen name="EditPost" component={EditPostPage} />
       <DrawerStack.Screen

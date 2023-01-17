@@ -10,6 +10,7 @@ export { SearchPostsPage } from './PostPages/SearchPostsPage';
 export { ProfilePage } from './ProfilePages/ProfilePage';
 export { ProfilePageMe } from './ProfilePages/ProfilePageMe';
 export { EditProfilePage } from './ProfilePages/EditProfilePage';
+export { EditPasswordPage } from './ProfilePages/EditPasswordPage';
 
 export { ChatPage } from './ChatPages/ChatPage';
 export { ChatsPage } from './ChatPages/ChatsPage';

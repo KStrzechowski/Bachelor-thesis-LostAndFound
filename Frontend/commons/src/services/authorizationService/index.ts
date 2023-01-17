@@ -1,13 +1,14 @@
 export {
-	LoginRequestType,
-	LoginResponseType,
-	LoginFromServerType,
-	mapLoginFromServer,
+  LoginRequestType,
+  LoginResponseType,
+  LoginFromServerType,
+  mapLoginFromServer,
+  EditPwdRequestType,
 } from "./loginTypes";
 export {
-	RegisterRequestType,
-	RegisterResponseType,
-	RegisterErrorType,
+  RegisterRequestType,
+  RegisterResponseType,
+  RegisterErrorType,
 } from "./registerTypes";
 export { login } from "./requests/login.request";
 export { logout } from "./requests/logout.request";

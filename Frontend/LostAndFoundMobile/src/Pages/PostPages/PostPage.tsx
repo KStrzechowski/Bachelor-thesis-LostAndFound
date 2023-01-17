@@ -537,7 +537,6 @@ export const PostPage = (props: any) => {
               />
             )}
           </View>
-
           <Text style={{ fontSize: 18 }}>{profile?.username}</Text>
           <ScoreView score={profile?.averageProfileRating} />
         </Pressable>
